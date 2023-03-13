@@ -2,22 +2,33 @@ grammar Krecik;
 	
 s: proc_ahoj EOF;
 
-proc_ahoj: 'prikaz' SP 'ahoj' SP* '(' SP* INT_VAL ',' SP* INT_VAL SP* ')' SP* body;
+proc_ahoj
+    : 'prikaz' SP 'ahoj' SP? '(' SP? INT_VAL ',' SP? INT_VAL SP? ')' SP? body
+    ;
 
-body: '{' SP* expr SP* '}';
+body
+    : '{' SP* (expr SP*)* '}'
+    ;
 
-expr: cislo | logicki;
+expr
+	: operation SP? ';'
+	| instruction SP? body
+	;
 
-/*
-expr: (operacja|instrukcja) SP*
+operation
+	: declaration
+	| definition
+    ;
 
-operacja: 
-// deklaracja, podstawianie, wywołanie funkcji
-// zmiana położenia i orientacji
+/* wywołanie funkcji, zmiana położenia i orientacji */
+instruction
+	: 'XD'
+    ;
+/* if, for */
 
-instrukcja:
-// if, for, 
-*/
+
+
+/* typy danych */
 
 logicki_unary_operator
     : 'ne'
@@ -26,11 +37,12 @@ logicki_unary_operator
 logicki_binary_operator
     : 'nebo' | 'oba' | 'je' | 'neje' | 'wetsi' | 'mensi'
     ;
+/*    ||      &&      ==     !-       >         <       */
 
 logicki
 	: logicki_unary_operator SP logicki
-	| '(' SP* logicki SP*')' 
-	| logicki SP logicki_binary_operator SP logicki
+	| '(' SP? logicki SP? ')' 
+	| logicki SP? logicki_binary_operator SP? logicki
 	| variable 
 	| logic 
 	;
@@ -41,30 +53,39 @@ cislo_unary_operator
 
 cislo_binary_operator
     : '*' | '/'
-    : '+' | '-'
+    | '+' | '-'
     ;
 
 cislo
-	: '(' SP* cislo SP* ')' 
-	| cislo SP cislo_binary_operator SP cislo
+	: '(' SP? cislo SP? ')' 
+	| cislo SP? cislo_binary_operator SP? cislo
 	| variable 
 	| number 
 	;
-    
-/* znienne w programie */
+
+declaration
+	: 'cislo' SP VARIABLE_VAL SP? '=' SP? cislo
+	| 'logicki' SP VARIABLE_VAL SP? '=' SP? logicki
+	;
+	
+definition
+	: VARIABLE_VAL SP? '=' SP? cislo
+	| VARIABLE_VAL SP? '=' SP? logicki
+    ;
+
+
+/* nazwy zmiennych w programie */
 
 number : '-'? INT_VAL | DOUBLE_VAL;
-
-variable: variable_VAL;
-
+variable: VARIABLE_VAL;
 logic: LOGIC_VAL;
+
 
 /* ZMIENNE LEKSERA */
 
 NEWLINE : [\r\n]+ -> skip;
-SP: [ ]+;
+SP: [ \t]+;
 INT_VAL: [0-9]+;
-DOUBLE_VAL   : [0-9]+ '.' [0-9]+ ;
-BOOL_VAL : 'true' | 'false';
-variable_VAL : [a-zA-Z_]+;
-LOGIC_VAL : 'true' | 'false'
+DOUBLE_VAL: [0-9]+ '.' [0-9]+ ;
+VARIABLE_VAL: [a-z_]+;
+LOGIC_VAL: 'true' | 'false';

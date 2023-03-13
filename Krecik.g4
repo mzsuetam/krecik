@@ -1,6 +1,10 @@
 grammar Krecik;	
 	
-s: proc_ahoj EOF;
+s: (SP? prikaz_def)* SP? proc_ahoj EOF;
+
+prikaz_def
+	:  'prikaz' SP variable SP? '()' SP? body
+	;
 
 proc_ahoj
     : 'prikaz' SP 'ahoj' SP? '(' SP? INT_VAL ',' SP? INT_VAL SP? ')' SP? body
@@ -19,12 +23,12 @@ operation
 	: declaration
 	| definition
     ;
+/* brakuje: wywołanie funkcji, operacje graficzne, zmiana położenia i orientacji */
 
-/* wywołanie funkcji, zmiana położenia i orientacji */
 instruction
 	: 'XD'
     ;
-/* if, for */
+/* brakuje: if, for */
 
 
 
@@ -40,7 +44,7 @@ logicki_binary_operator
 /*    ||      &&      ==     !-       >         <       */
 
 logicki
-	: logicki_unary_operator SP logicki
+	: logicki SP logicki_unary_operator SP logicki
 	| '(' SP? logicki SP? ')' 
 	| logicki SP? logicki_binary_operator SP? logicki
 	| variable 

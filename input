@@ -29,12 +29,17 @@ prikaz ahoj(69, 420) {
 	cislo d =43;
 	
 	kdyz(true)pak {
+
+		dopredu(d+4);
 		
 		kdyz(true)pak {
+
+			stetec krecik;
 			
-			opakujte az 4 {
+			opakujte az 4 {	
 				// młody jeżyk,
 				// bo chciałbym tylko przeżyć
+				vlevo(678.8);
 			}
 		}
 	}

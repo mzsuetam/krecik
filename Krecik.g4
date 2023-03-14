@@ -1,6 +1,8 @@
 grammar Krecik;	
 	
-s: (SP? prikaz_def)* SP? proc_ahoj EOF;
+s
+	: (SP? prikaz_def)* SP? proc_ahoj EOF
+	;
 
 prikaz_def
 	:  'prikaz' SP variable SP? '(' SP? ( vartype (SP?',' SP? vartype)* )? SP?')' SP? body
@@ -36,10 +38,25 @@ expr
 operation
 	: declaration
 	| definition
+	| draw_operation
 	| proc_call
-	| 
     ;
-/* brakuje:  operacje graficzne, zmiana położenia i orientacji */
+
+draw_operation
+	: 'stetec' SP stetec
+	| 'dopredu' SP? '(' SP? cislo SP? ')'
+	| 'dozpet' SP? '(' SP? cislo SP? ')'
+	| 'doleva' SP? '(' SP? cislo SP? ')'
+	| 'doprava' SP? '(' SP? cislo SP? ')'
+	| 'vlevo' SP? '(' SP? cislo SP? ')'
+	| 'vpravo' SP? '(' SP? cislo SP? ')'
+	;
+
+stetec
+	: 'krecik'
+	| 'netoperek'
+	| 'naopak'
+	;
 
 proc_call
 	: variable '(' ( SP? proc_arg (SP? ',' SP? proc_arg)* SP? )? ')'
@@ -64,9 +81,6 @@ instruction
     ;
 	
 
-	
-/* typy danych */
-
 logicki_unary_operator
     : 'ne'
     ;
@@ -77,9 +91,9 @@ logicki_binary_operator
 /*    	||      &&      ==     !-     */
 
 logicki_comparison_operator
-: 'wetsi' 
-| 'mensi'
-;
+	: 'wetsi' 
+	| 'mensi'
+	;
 
 logicki
 	: logicki_unary_operator SP logicki
@@ -88,10 +102,6 @@ logicki
 	| cislo SP logicki_comparison_operator SP cislo
 	| logic 
 	| variable 
-	| variable 
-	| logic 
-	| variable
-	| logic 
 	;
 
 cislo_unary_operator

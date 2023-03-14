@@ -25,7 +25,7 @@ proc_ahoj
     ;
 
 body
-    : '{' SP* (expr SP*)* '}'
+    : '{' SP* (expr SP?)* '}'
     ;
 
 expr
@@ -130,9 +130,10 @@ logic: LOGIC_VAL;
 
 /* ZMIENNE LEKSERA */
 
+TAB: '\t' -> skip;
 COMMENT : '//' ~[\r\n]* -> skip;
 NEWLINE : [\r\n]+ -> skip;
-SP: [ \t]+;
+SP: [ ]+;
 DOUBLE_VAL: [0-9]+ '.' [0-9]+ ;
 INT_VAL: [0-9]+;
 LOGIC_VAL: 'true' | 'false';

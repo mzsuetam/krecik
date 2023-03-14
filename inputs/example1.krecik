@@ -1,0 +1,11 @@
+prikaz kwadrat(cislo a) {
+    stetec krecik;
+    opakujte az 4 {
+        dopredu(a);
+        vprawo(90);
+    }
+}
+
+prikaz ahoj(100, 100) {
+    kwadrat(10);
+}

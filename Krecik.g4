@@ -3,7 +3,21 @@ grammar Krecik;
 s: (SP? prikaz_def)* SP? proc_ahoj EOF;
 
 prikaz_def
-	:  'prikaz' SP variable SP? '()' SP? body
+	:  'prikaz' SP variable SP? '(' SP? ( vartype (SP?',' SP? vartype)* )? SP?')' SP? body
+	;
+
+vartype 
+	: cislo_var
+	| logicki_var
+	;
+	
+cislo_var
+	: 'cislo' SP variable
+	;
+
+logicki_var
+	:
+	'logicki' SP variable
 	;
 
 proc_ahoj
@@ -22,16 +36,35 @@ expr
 operation
 	: declaration
 	| definition
+	| proc_call
+	| 
     ;
-/* brakuje: wywołanie funkcji, operacje graficzne, zmiana położenia i orientacji */
+/* brakuje:  operacje graficzne, zmiana położenia i orientacji */
 
+proc_call
+	: variable '(' ( SP? proc_arg (SP? ',' SP? proc_arg)* SP? )? ')'
+	;
+
+proc_arg
+	: logicki
+	| cislo
+	;
+	
+if_instruction
+    : 'kdyz' SP? '(' SP? logicki SP? ')' SP? 'pak'
+    ;
+
+for_instruction
+	: 'opakujte' SP 'az' SP cislo
+	; 
+	
 instruction
-	: 'XD'
+	: if_instruction
+	| for_instruction
     ;
-/* brakuje: if, for */
+	
 
-
-
+	
 /* typy danych */
 
 logicki_unary_operator
@@ -39,15 +72,25 @@ logicki_unary_operator
     ;
 
 logicki_binary_operator
-    : 'nebo' | 'oba' | 'je' | 'neje' | 'wetsi' | 'mensi'
+    : 'nebo' | 'oba' | 'je' | 'neje'
     ;
-/*    ||      &&      ==     !-       >         <       */
+/*    	||      &&      ==     !-     */
+
+logicki_comparison_operator
+: 'wetsi' 
+| 'mensi'
+;
 
 logicki
-	: logicki SP logicki_unary_operator SP logicki
+	: logicki_unary_operator SP logicki
 	| '(' SP? logicki SP? ')' 
 	| logicki SP? logicki_binary_operator SP? logicki
+	| cislo SP logicki_comparison_operator SP cislo
+	| logic 
 	| variable 
+	| variable 
+	| logic 
+	| variable
 	| logic 
 	;
 
@@ -87,9 +130,10 @@ logic: LOGIC_VAL;
 
 /* ZMIENNE LEKSERA */
 
+COMMENT : '//' ~[\r\n]* -> skip;
 NEWLINE : [\r\n]+ -> skip;
 SP: [ \t]+;
-INT_VAL: [0-9]+;
 DOUBLE_VAL: [0-9]+ '.' [0-9]+ ;
-VARIABLE_VAL: [a-z_]+;
+INT_VAL: [0-9]+;
 LOGIC_VAL: 'true' | 'false';
+VARIABLE_VAL: [a-z_]+;

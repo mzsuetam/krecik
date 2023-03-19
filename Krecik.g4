@@ -3,93 +3,98 @@ grammar Krecik;
 
 // PRIMARY EXPRESSION AND MAIN FUNCTION
 s
-	: (SP? function_declaration)* SP? ahoj_declaration EOF
+	: functions_declarations_list? SP? ahoj_declaration SP? functions_declarations_list? SP? EOF
 	;
 
+functions_declarations_list
+    : function_declaration SP? functions_declarations_list
+    | function_declaration
+    ;
+
 ahoj_declaration
-    : Prikaz SP 'ahoj' SP? '(' SP? NUMERIC_VAL ',' SP? NUMERIC_VAL SP? ')' SP? body
+    : Prikaz SP 'ahoj' SP? '()' SP? body
     ;
 
 
 // FUNCTIONS
 function_declaration
-	:  Prikaz SP VARIABLE_NAME SP? '(' SP? declaration_arg_list SP? ')' SP? body
+	:  Prikaz SP VARIABLE_NAME SP? '(' SP? declaration_arg_list? SP? ')' SP? body
 	;
 
 declaration_arg_list
-    : declaration_arg SP? ',' SP? declaration_arg_list
-    | declaration_arg
+    : declaration SP? ',' SP? declaration_arg_list
+    | declaration
     ;
-
-declaration_arg
-	: var_type SP VARIABLE_NAME
-	;
 
 body
-    : '{' SP* (expr SP?)* '}'
+    : '{' SP? body_items_list? SP? '}'
     ;
 
-expr
-	: operation SP? ';'
+body_items_list
+    : body_item SP? body_items_list
+    | body_item
+    ;
+
+body_item
+	: body_line SP? ';'
 	| instruction SP? body
 	;
 
-operation
-	: declaration
+body_line
+    : expression
+	| declaration
 	| assignment
-	| draw_operation
-	| function_call
     ;
 
-draw_operation
-	: Stetec SP brush_option
-	| 'dopredu' SP? '(' SP? numeric_value SP? ')'
-	| 'dozpet' SP? '(' SP? numeric_value SP? ')'
-	| 'doleva' SP? '(' SP? numeric_value SP? ')'
-	| 'doprava' SP? '(' SP? numeric_value SP? ')'
-	| 'vlevo' SP? '(' SP? numeric_value SP? ')'
-	| 'vpravo' SP? '(' SP? numeric_value SP? ')'
-	;
-
-brush_option
-	: Krecik
-	| Netoperek
-	| Naopak
+expression
+	: '(' SP? expression SP? ')'
+	| unary_operator SP? expression
+	| expression SP? binary_operator SP? expression
+	| function_call
+	| VARIABLE_NAME
+	| literal
 	;
 
 function_call
-	: VARIABLE_NAME '(' function_arg_list ')'
+	: VARIABLE_NAME '(' SP? expressions_list? SP? ')'
 	;
 
-function_arg_list
-    : function_arg SP? ',' SP? function_arg_list
-    | function_arg
+expressions_list
+    : expression SP? ',' SP? expressions_list
+    | expression
     ;
-
-function_arg
-	: boolean_value
-	| numeric_value
-	;
 
 
 // CONDITIONAL INSTRUCTIONS AND LOOPS
-if_instruction
-    : Kdyz SP? '(' SP? boolean_value SP? ')' SP? Pak
+conditional_instruction
+    : Kdyz SP? '(' SP? expression SP? ')' SP? Pak
     ;
 
-for_instruction
-	: Opakujte SP Az SP numeric_value
+loop_instruction
+	: Opakujte SP Az SP expression
 	;
 
 instruction
-	: if_instruction
-	| for_instruction
+	: conditional_instruction
+	| loop_instruction
     ;
 
 
 // ARITHMETIC AND LOGIC OPERATIONS
+unary_operator
+    : numeric_unary_operator
+    | boolean_unary_operator
+    ;
+
+binary_operator
+    : numeric_binary_operator
+    | boolean_binary_operator
+    | comparison_operator
+    ;
+
 numeric_unary_operator
-    : '-'
+    : '+'
+    | '-'
     ;
 
 numeric_binary_operator
@@ -123,33 +128,17 @@ var_type
     ;
 
 declaration
-	: Cislo SP VARIABLE_NAME SP? '=' SP? numeric_value
-	| Logicki SP VARIABLE_NAME SP? '=' SP? boolean_value
+	: var_type SP VARIABLE_NAME
 	;
 
-numeric_value
-	: '(' SP? numeric_value SP? ')'
-	| numeric_value SP? numeric_binary_operator SP? numeric_value
-	| VARIABLE_NAME
-	| numeric_unary_operator? NUMERIC_VAL
-	;
-
-boolean_value
-	: boolean_unary_operator SP boolean_value
-	| '(' SP? boolean_value SP? ')'
-	| boolean_value SP? boolean_binary_operator SP? boolean_value
-	| numeric_value SP comparison_operator SP numeric_value
-	| LOGIC_VAL
-	| VARIABLE_NAME
-	;
-
-assignment
-	: VARIABLE_NAME SP? '=' SP? var_value
+literal
+    : LOGIC_VAL
+    | NUMERIC_VAL
     ;
 
-var_value
-    : numeric_value
-    | boolean_value
+assignment
+    : declaration SP? '=' SP? expression
+	| VARIABLE_NAME SP? '=' SP? expression
     ;
 
 
@@ -168,10 +157,6 @@ Pak: 'pak';
 Opakujte: 'opakujte';
 Az: 'az';
 Prikaz: 'prikaz';
-Stetec: 'stetec';
-Krecik: 'krecik';
-Netoperek: 'netoperek';
-Naopak: 'naopak';
 
 SP
     : [ ]+

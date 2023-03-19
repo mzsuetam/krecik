@@ -124,6 +124,7 @@ comparison_operator
 // VARIABLES AND TYPES
 var_type
     : Cislo
+    | Cely
     | Logicki
     ;
 
@@ -134,6 +135,7 @@ declaration
 literal
     : LOGIC_VAL
     | NUMERIC_VAL
+    | INT_VAL
     ;
 
 assignment
@@ -144,6 +146,7 @@ assignment
 
 // KEYWORDS AND OTHER LEXER VARIABLES
 Cislo: 'cislo';
+Cely: 'cely';
 Logicki: 'logicki';
 Ne: 'ne';
 Nebo: 'nebo';
@@ -183,11 +186,15 @@ NUMERIC_VAL
     | INT_VAL
     ;
 
-DOUBLE_VAL
-    : [0-9]+ '.' [0-9]+ ;
+DOUBLE_VAL  // accepts: 10.11 and 10 and 10. and .01 
+    : INT_VAL '.' [0-9]+
+    | INT_VAL '.'?
+    | '0'? '.' [0-9]+
+    ;
 
 INT_VAL // used only for main function
-    : [0-9]+
+    : '0'
+    | [1-9][0-9]*
     ;
 
 LOGIC_VAL

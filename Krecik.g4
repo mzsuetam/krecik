@@ -133,8 +133,8 @@ declaration
 	;
 
 literal
-    : LOGIC_VAL
-    | NUMERIC_VAL
+    : BOOLEAN_VAL
+    | FLOAT_VAL
     | INT_VAL
     ;
 
@@ -181,14 +181,9 @@ VARIABLE_NAME
     : [a-z_]+
     ;
 
-NUMERIC_VAL
-    : DOUBLE_VAL
-    | INT_VAL
-    ;
-
-DOUBLE_VAL  // accepts: 10.11 and 10 and 10. and .01 
-    : INT_VAL '.' [0-9]+
-    | INT_VAL '.'?
+FLOAT_VAL  // accepts: 10.11 and 10 and 10. and .01 
+    : INT_VAL
+    | INT_VAL '.' [0-9]*
     | '0'? '.' [0-9]+
     ;
 
@@ -197,7 +192,7 @@ INT_VAL // used only for main function
     | [1-9][0-9]*
     ;
 
-LOGIC_VAL
+BOOLEAN_VAL
     : 'true'
     | 'false'
     ;

@@ -3,41 +3,41 @@ grammar Krecik;
 
 // PRIMARY EXPRESSION AND MAIN FUNCTION
 s
-	: functions_declarations_list? SP? ahoj_declaration SP? functions_declarations_list? SP? EOF
+	: functions_declarations_list? SP* ahoj_declaration SP* functions_declarations_list? SP* EOF
 	;
 
 functions_declarations_list
-    : function_declaration SP? functions_declarations_list
+    : function_declaration SP* functions_declarations_list
     | function_declaration
     ;
 
 ahoj_declaration
-    : Prikaz SP 'ahoj' SP? '()' SP? body
+    : Prikaz SP 'ahoj' SP* '()' SP* body
     ;
 
 
 // FUNCTIONS
 function_declaration
-	:  Prikaz SP VARIABLE_NAME SP? '(' SP? declaration_arg_list? SP? ')' SP? body
+	:  Prikaz SP VARIABLE_NAME SP* '(' SP* declaration_arg_list? SP* ')' SP* body
 	;
 
 declaration_arg_list
-    : declaration SP? ',' SP? declaration_arg_list
+    : declaration SP* ',' SP* declaration_arg_list
     | declaration
     ;
 
 body
-    : '{' SP? body_items_list? SP? '}'
+    : '{' SP* body_items_list? SP* '}'
     ;
 
 body_items_list
-    : body_item SP? body_items_list
+    : body_item SP* body_items_list
     | body_item
     ;
 
 body_item
-	: body_line SP? ';'
-	| instruction SP? body
+	: body_line SP* ';'
+	| instruction SP* body
 	;
 
 body_line
@@ -47,27 +47,27 @@ body_line
     ;
 
 expression
-	: '(' SP? expression SP? ')'
-	| unary_operator SP? expression
-	| expression SP? binary_operator SP? expression
+	: '(' SP* expression SP* ')'
+	| unary_operator SP* expression
+	| expression SP* binary_operator SP* expression
 	| function_call
 	| VARIABLE_NAME
 	| literal
 	;
 
 function_call
-	: VARIABLE_NAME '(' SP? expressions_list? SP? ')'
+	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
 	;
 
 expressions_list
-    : expression SP? ',' SP? expressions_list
+    : expression SP* ',' SP* expressions_list
     | expression
     ;
 
 
 // CONDITIONAL INSTRUCTIONS AND LOOPS
 conditional_instruction
-    : Kdyz SP? '(' SP? expression SP? ')' SP? Pak
+    : Kdyz SP? '(' SP* expression SP* ')' SP* Pak
     ;
 
 loop_instruction
@@ -162,11 +162,11 @@ Az: 'az';
 Prikaz: 'prikaz';
 
 SP
-    : [ ]+
+    : [ ]
     ;
 
 TAB
-    : '\t' -> skip
+    : '\t' -> type(SP)
     ;
 
 NEWLINE

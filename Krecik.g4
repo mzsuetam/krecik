@@ -176,6 +176,10 @@ SP
     : [ ]
     ;
 
+SPACES
+    : [ ]+ -> type(SP)
+    ;
+
 TAB
     : '\t' -> type(SP)
     ;

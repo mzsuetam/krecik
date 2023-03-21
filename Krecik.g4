@@ -3,7 +3,7 @@ grammar Krecik;
 
 // PRIMARY EXPRESSION AND MAIN FUNCTION
 primary_expression
-	: functions_declarations_list SP? EOF
+	: SP* functions_declarations_list SP* EOF
 	;
 
 functions_declarations_list

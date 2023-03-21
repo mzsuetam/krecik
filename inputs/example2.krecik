@@ -1,5 +1,4 @@
 prikaz spirala(cislo a) {
-    stetec krecik;
     kdyz (a wetsi 0) pak {
         dopredu(a);
         vlevo(90);
@@ -7,9 +6,8 @@ prikaz spirala(cislo a) {
     kdyz (ne (a wetsi 0)) pak {
         spirala(a - 10);
     }
-    stetec netoperek;
 }
 
-prikaz ahoj(100, 100) {
+prikaz ahoj() {
     spirala(10);
 }

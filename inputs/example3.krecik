@@ -1,12 +1,10 @@
-prikaz ahoj(1000, 1000) {
+prikaz ahoj() {
     cislo a = 200;
     opakujte az 4 {
-        stetec krecik;
         opakujte az 4 {
             dopredu(a);
             vlevo(90);
         }
-        stetec nietoperek;
         dopredu(a * 2);
     }
 }

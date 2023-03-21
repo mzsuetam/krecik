@@ -17,10 +17,10 @@ prikaz kutas_kozla(logicki l){
 
 
 
-prikaz kutas_kozla(){
-	dupa();
-}
-prikaz ahoj(69, 420) {
+// prikaz kutas_kozla(){
+// 	  dupa();
+// }
+prikaz ahoj() {
 	cislo adsfa_ds = (69+     -420 *3);
 	logicki logic = (ne ((((true)) oba ((false) je dsfg))));
 	dsfdghkljk = 2137
@@ -33,8 +33,6 @@ prikaz ahoj(69, 420) {
 		dopredu(d+4);
 		
 		kdyz(true)pak {
-
-			stetec krecik;
 			
 			opakujte az 4 {	
 				// młody jeżyk,

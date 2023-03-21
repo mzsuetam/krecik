@@ -1,150 +1,198 @@
-grammar Krecik;	
-	
+grammar Krecik;
+
+
+// PRIMARY EXPRESSION AND MAIN FUNCTION
 s
-	: (SP? prikaz_def)* SP? proc_ahoj EOF
+	: functions_declarations_list? SP* ahoj_declaration SP* functions_declarations_list? SP* EOF
 	;
 
-prikaz_def
-	:  'prikaz' SP variable SP? '(' SP? ( vartype (SP?',' SP? vartype)* )? SP?')' SP? body
+functions_declarations_list
+    : function_declaration SP* functions_declarations_list
+    | function_declaration
+    ;
+
+ahoj_declaration
+    : Prikaz SP 'ahoj' SP* '()' SP* body
+    ;
+
+
+// FUNCTIONS
+function_declaration
+	:  Prikaz SP VARIABLE_NAME SP* '(' SP* declaration_arg_list? SP* ')' SP* body
 	;
 
-vartype 
-	: cislo_var
-	| logicki_var
-	;
-	
-cislo_var
-	: 'cislo' SP variable
-	;
-
-logicki_var
-	:
-	'logicki' SP variable
-	;
-
-proc_ahoj
-    : 'prikaz' SP 'ahoj' SP? '(' SP? INT_VAL ',' SP? INT_VAL SP? ')' SP? body
+declaration_arg_list
+    : declaration SP* ',' SP* declaration_arg_list
+    | declaration
     ;
 
 body
-    : '{' SP* (expr SP?)* '}'
+    : '{' SP* body_items_list? SP* '}'
     ;
 
-expr
-	: operation SP? ';'
-	| instruction SP? body
-	;
-
-operation
-	: declaration
-	| definition
-	| draw_operation
-	| proc_call
+body_items_list
+    : body_item SP* body_items_list
+    | body_item
     ;
 
-draw_operation
-	: 'stetec' SP stetec
-	| 'dopredu' SP? '(' SP? cislo SP? ')'
-	| 'dozpet' SP? '(' SP? cislo SP? ')'
-	| 'doleva' SP? '(' SP? cislo SP? ')'
-	| 'doprava' SP? '(' SP? cislo SP? ')'
-	| 'vlevo' SP? '(' SP? cislo SP? ')'
-	| 'vpravo' SP? '(' SP? cislo SP? ')'
+body_item
+	: body_line SP* ';'
+	| instruction SP* body
 	;
 
-stetec
-	: 'krecik'
-	| 'netoperek'
-	| 'naopak'
-	;
-
-proc_call
-	: variable '(' ( SP? proc_arg (SP? ',' SP? proc_arg)* SP? )? ')'
-	;
-
-proc_arg
-	: logicki
-	| cislo
-	;
-	
-if_instruction
-    : 'kdyz' SP? '(' SP? logicki SP? ')' SP? 'pak'
+body_line
+    : expression
+	| declaration
+	| assignment
     ;
 
-for_instruction
-	: 'opakujte' SP 'az' SP cislo
-	; 
-	
+expression
+	: '(' SP* expression SP* ')'
+	| unary_operator SP* expression
+	| expression SP* binary_operator SP* expression
+	| function_call
+	| VARIABLE_NAME
+	| literal
+	;
+
+function_call
+	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
+	;
+
+expressions_list
+    : expression SP* ',' SP* expressions_list
+    | expression
+    ;
+
+
+// CONDITIONAL INSTRUCTIONS AND LOOPS
+conditional_instruction
+    : Kdyz SP? '(' SP* expression SP* ')' SP* Pak
+    ;
+
+loop_instruction
+	: Opakujte SP Az SP expression
+	;
+
 instruction
-	: if_instruction
-	| for_instruction
-    ;
-	
-
-logicki_unary_operator
-    : 'ne'
+	: conditional_instruction
+	| loop_instruction
     ;
 
-logicki_binary_operator
-    : 'nebo' | 'oba' | 'je' | 'neje'
-    ;
-/*    	||      &&      ==     !-     */
 
-logicki_comparison_operator
-	: 'wetsi' 
-	| 'mensi'
+// ARITHMETIC AND LOGIC OPERATIONS
+unary_operator
+    : numeric_unary_operator
+    | boolean_unary_operator
+    ;
+
+binary_operator
+    : numeric_binary_operator
+    | boolean_binary_operator
+    | comparison_operator
+    ;
+
+numeric_unary_operator
+    : '+'
+    | '-'
+    ;
+
+numeric_binary_operator
+    : '*'
+    | '/'
+    | '+'
+    | '-'
+    ;
+
+boolean_unary_operator
+    : Ne
+    ;
+
+boolean_binary_operator
+    : Nebo
+    | Oba
+    | Je
+    | Neje
+    ;
+
+comparison_operator
+	: Wetsi
+	| Mensi
 	;
 
-logicki
-	: logicki_unary_operator SP logicki
-	| '(' SP? logicki SP? ')' 
-	| logicki SP? logicki_binary_operator SP? logicki
-	| cislo SP logicki_comparison_operator SP cislo
-	| logic 
-	| variable 
-	;
 
-cislo_unary_operator
-    : '-'
+// VARIABLES AND TYPES
+var_type
+    : Cislo
+    | Cely
+    | Logicki
     ;
-
-cislo_binary_operator
-    : '*' | '/'
-    | '+' | '-'
-    ;
-
-cislo
-	: '(' SP? cislo SP? ')' 
-	| cislo SP? cislo_binary_operator SP? cislo
-	| variable 
-	| number 
-	;
 
 declaration
-	: 'cislo' SP VARIABLE_VAL SP? '=' SP? cislo
-	| 'logicki' SP VARIABLE_VAL SP? '=' SP? logicki
+	: var_type SP VARIABLE_NAME
 	;
-	
-definition
-	: VARIABLE_VAL SP? '=' SP? cislo
-	| VARIABLE_VAL SP? '=' SP? logicki
+
+literal
+    : BOOLEAN_VAL
+    | FLOAT_VAL
+    | INT_VAL
+    ;
+
+assignment
+    : declaration SP? '=' SP? expression
+	| VARIABLE_NAME SP? '=' SP? expression
     ;
 
 
-/* nazwy zmiennych w programie */
+// KEYWORDS AND OTHER LEXER VARIABLES
+Cislo: 'cislo';
+Cely: 'cely';
+Logicki: 'logicki';
+Ne: 'ne';
+Nebo: 'nebo';
+Oba: 'oba';
+Je: 'je';
+Neje: 'neje';
+Wetsi: 'wetsi';
+Mensi: 'mensi';
+Kdyz: 'kdyz';
+Pak: 'pak';
+Opakujte: 'opakujte';
+Az: 'az';
+Prikaz: 'prikaz';
 
-number : '-'? INT_VAL | DOUBLE_VAL;
-variable: VARIABLE_VAL;
-logic: LOGIC_VAL;
+SP
+    : [ ]
+    ;
 
+TAB
+    : '\t' -> type(SP)
+    ;
 
-/* ZMIENNE LEKSERA */
+NEWLINE
+    : [\r\n]+ -> skip
+    ;
 
-TAB: '\t' -> skip;
-COMMENT : '//' ~[\r\n]* -> skip;
-NEWLINE : [\r\n]+ -> skip;
-SP: [ ]+;
-DOUBLE_VAL: [0-9]+ '.' [0-9]+ ;
-INT_VAL: [0-9]+;
-LOGIC_VAL: 'true' | 'false';
-VARIABLE_VAL: [a-z_]+;
+COMMENT
+    : '//' ~[\r\n]* -> skip
+    ;
+
+VARIABLE_NAME
+    : [a-z_]+
+    ;
+
+FLOAT_VAL  // accepts: 10.11 and 10 and 10. and .01 
+    : INT_VAL
+    | INT_VAL '.' [0-9]*
+    | '0'? '.' [0-9]+
+    ;
+
+INT_VAL // used only for main function
+    : '0'
+    | [1-9][0-9]*
+    ;
+
+BOOLEAN_VAL
+    : 'true'
+    | 'false'
+    ;

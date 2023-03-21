@@ -2,17 +2,13 @@ grammar Krecik;
 
 
 // PRIMARY EXPRESSION AND MAIN FUNCTION
-s
-	: functions_declarations_list? SP* ahoj_declaration SP* functions_declarations_list? SP* EOF
+primary_expression
+	: functions_declarations_list SP? EOF
 	;
 
 functions_declarations_list
     : function_declaration SP* functions_declarations_list
     | function_declaration
-    ;
-
-ahoj_declaration
-    : Nedostatek SP 'ahoj' SP* '()' SP* body
     ;
 
 
@@ -65,8 +61,9 @@ expressions_list
     ;
 
 vratit
-    : Vratit (SP literal)? SP* ';'
+    : Vratit (SP expression)? SP* ';'
     ;
+
 
 // CONDITIONAL INSTRUCTIONS AND LOOPS
 conditional_instruction
@@ -149,8 +146,12 @@ literal
     ;
 
 assignment
-    : declaration SP? '=' SP? expression
-	| VARIABLE_NAME SP? '=' SP? expression
+    : variable SP? '=' SP? expression
+    ;
+
+variable
+    : declaration
+    | VARIABLE_NAME
     ;
 
 

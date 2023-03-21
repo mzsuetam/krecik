@@ -1,7 +1,7 @@
 // cislo abba = 2137; ASDASDASFAF
 // dupa6969();
 
-prikaz kutas_kozla(cislo c, logicki k){
+nedostatek kutas_kozla(cislo c, logicki k){
 	cislo sdfas  = 4;
 	dsfdg = 32435;
 	hihihihihihihi(true, 2 wetsi 3,     4,43,3,434,4.4546);
@@ -9,18 +9,14 @@ prikaz kutas_kozla(cislo c, logicki k){
 
 
 
-prikaz kutas_kozla(logicki l){
+logicki kutas_kozla(logicki l){
 	logicki abba = false;
-	nikt_ne_ma_malego(2); 
+	vratit nikt_ne_ma_malego(2);
 }
 
 
 
-
-// prikaz kutas_kozla(){
-// 	  dupa();
-// }
-prikaz ahoj() {
+nedostatek ahoj() {
 	cislo adsfa_ds = (69+     -420 *3);
 	logicki logic = (ne ((((true)) oba ((false) je dsfg))));
 	dsfdghkljk = 2137
@@ -40,6 +36,7 @@ prikaz ahoj() {
 				vlevo(678.8);
 			}
 		}
+		vratit;
 	}
 	
 	cislo d =43;

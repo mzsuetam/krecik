@@ -1,10 +1,16 @@
-prikaz kwadrat(cislo a) {
+logicki kwadrat(cislo a) {
     opakujte az 4 {
         dopredu(a);
         vprawo(90);
     }
+
+    cislo a = 4;
+
+    vratit 1234; 
 }
 
-prikaz ahoj() {
+nedostatek ahoj() {
     kwadrat(10);
+
+    vratit;
 }

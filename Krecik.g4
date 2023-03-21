@@ -12,13 +12,13 @@ functions_declarations_list
     ;
 
 ahoj_declaration
-    : Prikaz SP 'ahoj' SP* '()' SP* body
+    : Nedostatek SP 'ahoj' SP* '()' SP* body
     ;
 
 
 // FUNCTIONS
 function_declaration
-	:  Prikaz SP VARIABLE_NAME SP* '(' SP* declaration_arg_list? SP* ')' SP* body
+	:  return_var_type SP VARIABLE_NAME SP* '(' SP* declaration_arg_list? SP* ')' SP* body
 	;
 
 declaration_arg_list
@@ -27,7 +27,7 @@ declaration_arg_list
     ;
 
 body
-    : '{' SP* body_items_list? SP* '}'
+    : '{' SP* body_items_list? SP* vratit? SP*'}'
     ;
 
 body_items_list
@@ -64,6 +64,9 @@ expressions_list
     | expression
     ;
 
+vratit
+    : Vratit (SP literal)? SP* ';'
+    ;
 
 // CONDITIONAL INSTRUCTIONS AND LOOPS
 conditional_instruction
@@ -122,6 +125,13 @@ comparison_operator
 
 
 // VARIABLES AND TYPES
+return_var_type
+    : Cislo
+    | Cely
+    | Logicki
+    | Nedostatek
+    ;
+
 var_type
     : Cislo
     | Cely
@@ -159,7 +169,8 @@ Kdyz: 'kdyz';
 Pak: 'pak';
 Opakujte: 'opakujte';
 Az: 'az';
-Prikaz: 'prikaz';
+Vratit: 'vratit';
+Nedostatek: 'nedostatek';
 
 SP
     : [ ]

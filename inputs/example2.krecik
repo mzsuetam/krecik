@@ -1,13 +1,14 @@
-prikaz spirala(cislo a) {
+nedostatek spirala(cislo a) {
     kdyz (a wetsi 0) pak {
         dopredu(a);
         vlevo(90);
+        vratit; 
     }
     kdyz (ne (a wetsi 0)) pak {
         spirala(a - 10);
     }
 }
 
-prikaz ahoj() {
+nedostatek ahoj() {
     spirala(10);
 }

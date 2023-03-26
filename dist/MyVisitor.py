@@ -3,15 +3,14 @@ from antlr4 import *
 from KrecikLexer import KrecikLexer
 from KrecikParser import KrecikParser
 from KrecikVisitor import KrecikVisitor
-from KrecikWindow import Board
 
 
 class MyVisitor(KrecikVisitor):
     
     actions_list = []
     
-    def __init__(self, _board : Board):
-        self.board = _board
+    def __init__(self,):
+        pass
     
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext):
         # for child in ctx.children:

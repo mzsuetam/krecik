@@ -284,3 +284,20 @@ t.start()
 
 # root.after(500, start)
 root.mainloop()
+
+class KrecikWindow():
+  def __init__(self):
+    self.tk = Tk()
+    self.tk.title("Demo Window")
+    self.tk.geometry("500x500")
+    self.tk.resizable(0, 0)
+    self.tk.mainloop()
+    self.widgets()
+    pass
+  
+  def widgets(self):
+    lbl = Label(self.tk, text="Hello")
+    lbl.pack()
+    pass
+  
+win = KrecikWindow()

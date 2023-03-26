@@ -3,21 +3,7 @@ import os
 import time
 from PIL import ImageTk, Image
 from enum import Enum
-import threading
 import sys
-from antlr4 import *
-from KrecikLexer import KrecikLexer
-from KrecikParser import KrecikParser
-from KrecikVisitor import KrecikVisitor
-from MyVisitor import MyVisitor
-
-
-BG_C = "#ffffff"
-TEXT_C = "white"
-
-WT = 0.5 # wait time [ms]
-
-# ---------------------------------- clases ---------------------------------- #
 
 class Rot(Enum):
     W = 0,
@@ -25,279 +11,278 @@ class Rot(Enum):
     E = 2,
     S = 3
 
-class Krecik:
-    def __init__(self, _field):
-        self.field : Label = _field
-        self.rot = Rot.S
-        self.field.config(image=k_pi_S)
-        
-    def moveN(self, n = 1):
-        if n < 1:
-            return
-        for i in range(n):
-            info = self.field.grid_info()
-            dx, dy = 0, -1
-            try:
-                self.field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
-            except:
-                pass
-            time.sleep(0.5)
-            root.update()
-        
-    def moveS(self, n = 1):
-        if n < 1:
-            return
-        for i in range(n):
-            info = self.field.grid_info()
-            dx, dy = 0, 1
-            try:
-                self.field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
-            except:
-                pass
-            time.sleep(0.5)
-            root.update()
+class KrecikWindow():
 
-    def moveE(self, n = 1):
-        if n < 1:
-            return
-        for i in range(n):
-            info = self.field.grid_info()
-            dx, dy = 1, 0
-            try:
-                self.field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
-            except:
-                pass
-            time.sleep(0.5)
-            root.update()
-        
+    __field_size = 0
 
-    def moveW(self, n = 1):
-        if n < 1:
-            return
-        for i in range(n):
-            info = self.field.grid_info()
-            dx, dy = -1, 0
-            try:
-                self.field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
-            except:
-                pass
-            time.sleep(0.5)
-            root.update()
+    __WT = 0.5 # wait time [s]
 
-    def moveForward(self, n=1):
-        board.setCommandLabelText(f"Move forward ({n})")
-        if ( self.rot == Rot.W ): 
-            self.moveW(n)
-        elif ( self.rot == Rot.N ): 
-            self.moveN(n)
-        elif ( self.rot == Rot.E ): 
-            self.moveE(n)
-        elif ( self.rot == Rot.S ): 
-            self.moveS(n)
+    __root = None
 
-    def moveBackward(self, n=1):
-        board.setCommandLabelText(f"Move backward ({n})")
-        if ( self.rot == Rot.W ): 
-            self.moveE(n)
-        elif ( self.rot == Rot.N ): 
-            self.moveS(n)
-        elif ( self.rot == Rot.E ): 
-            self.moveW(n)
-        elif ( self.rot == Rot.S ): 
-            self.moveN(n)
+    __cmd_label = None
 
-    def moveLeft(self, n=1):
-        board.setCommandLabelText(f"Move left ({n})")
-        if ( self.rot == Rot.W ): 
-            self.moveS(n)
-        elif ( self.rot == Rot.N ): 
-            self.moveW(n)
-        elif ( self.rot == Rot.E ): 
-            self.moveN(n)
-        elif ( self.rot == Rot.S ): 
-            self.moveE(n)
+    __krecik_field = None
+    __krecik_rot = Rot.S
 
-    def moveRight(self, n=1):
-        board.setCommandLabelText(f"Move right ({n})")
-        if ( self.rot == Rot.W ): 
-            self.moveN(n)
-        elif ( self.rot == Rot.N ): 
-            self.moveE(n)
-        elif ( self.rot == Rot.E ): 
-            self.moveS(n)
-        elif ( self.rot == Rot.S ): 
-            self.moveW(n)
+    __images = dict()
+    
+    # ---------------------------------------------------------------------------- #
+    #                                     init                                     #
+    # ---------------------------------------------------------------------------- #
+    
+    def __init__(self, w, h, waiting_time = 0.5):
 
-    def rotateLeft(self):
-        board.setCommandLabelText(f"Rotate left")
-        if ( self.rot == Rot.W ): 
-            self.rot = Rot.S
-            self.field.config(image=k_pi_S)
-        elif ( self.rot == Rot.N ): 
-            self.rot = Rot.W
-            self.field.config(image=k_pi_W)
-        elif ( self.rot == Rot.E ): 
-            self.rot = Rot.N
-            self.field.config(image=k_pi_N)
-        elif ( self.rot == Rot.S ): 
-            self.rot = Rot.E
-            self.field.config(image=k_pi_E)
-        time.sleep(0.5)
-        root.update()
-
-    def rotateRight(self):
-        board.setCommandLabelText(f"Rotate right")
-        if ( self.rot == Rot.W ): 
-            self.rot = Rot.N
-            self.field.config(image=k_pi_N)
-        elif ( self.rot == Rot.N ): 
-            self.rot = Rot.E
-            self.field.config(image=k_pi_E)
-        elif ( self.rot == Rot.E ): 
-            self.rot = Rot.S
-            self.field.config(image=k_pi_S)
-        elif ( self.rot == Rot.S ): 
-            self.rot = Rot.W
-            self.field.config(image=k_pi_W)
-        time.sleep(0.5)
-        root.update()
-            
-class Board:
-    def __init__(self, _w, _h):
-        self.w = _w
-        self.h = _h
+        # ----------------------------------- basic ---------------------------------- #
 
         mi = 100 # min
         mx = 1000 # max
-        n = max(_w,_h)
-        self.field_size = mi if n*mi < 1000 else 1000//n # px
-        self.fields = [[None] * _h] * _w
+        n = max(w,h)
+        self.__field_size = mi if n*mi < mx else mx//n # px
 
-        self.krecik = None
+        self.__WT = waiting_time
 
-        self.command_label = None
+        # ----------------------------- tkinter - window ----------------------------- #
+
+        self.__root = Tk()
+        self.__root.title("Krecik")
+        # self.__root.geometry("1200x800")
+        self.__root.resizable(width=False, height=False)
+
+        # ----------------------------- tkinter - images ----------------------------- #
+
+        self.__formImages()
+
+        # ----------------------------- tkinter - fields ----------------------------- #
+
+        for i in range(w):
+            for j in range(h):
+                l = Label(self.__root, image=self.__images["dirt"], bd=0)
+                l.grid(row=j, column=i, sticky=W)
+
+        # ----------------------------- tkinter - objects ---------------------------- #
+
+        # @FIXME: implement object loading
+
+        # ------------------------ tkinter - objects - krecik ------------------------ #
+
+        _k = Label(self.__root, image="", bd=0, bg='black')
+        _k.grid(row=0, column=0, sticky=W)
+        _k.config(image=self.__images["krecik_idle_S"])
+        self.__krecik_field = _k
+        # # l4.grid_forget() # usuwanie
+
+        # ---------------------------- tkinter - log label --------------------------- #
+
+        _l = Label(self.__root, text="Starting...", font="none 12 bold")
+        _l.grid(row=h+1, column=0, columnspan=w, sticky=W)
+        self.__cmd_label = _l
+
+        # -------------------------- tkinter - window cont. -------------------------- #
+
+        # self.__root.mainloop()
+        # self.__root.update_idletasks()
+        self.__root.update()
+        self.__root.protocol("WM_DELETE_WINDOW", self.__on_closing)
+
+    # ---------------------------------------------------------------------------- #
+    #                              tkinter funny stuff                             #
+    # ---------------------------------------------------------------------------- #
+
+    def __on_closing(self):
+        # @FIXME: closing window by x button generates exception
+        self.__root.destroy()
+        sys.exit()
     
-    def setField(self, _i, _j, _field):
-        self.fields[_i][_j] = _field
+    # ---------------------------------------------------------------------------- #
+    #                                    assets                                    #
+    # ---------------------------------------------------------------------------- #
 
-    def getField(self, _i,_j)  :
-        return self.fields[_i][_j]
+    def __formImages(self):
+
+        # ---------------------------------- obiekty --------------------------------- #
+
+        self.__images.update( {"dirt" : 
+            ImageTk.PhotoImage( Image.open(os.path.join("assets", "dirt.png"))
+            .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
+            })
+
+        # ---------------------------------- krecik ---------------------------------- #
+
+        self.__images.update( {"krecik_idle_W" : 
+            ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_W.png"))
+            .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
+            })
+
+        self.__images.update( {"krecik_idle_N" : 
+            ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_N.png"))
+            .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
+            })
+
+        self.__images.update( {"krecik_idle_E" : 
+            ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_E.png"))
+            .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
+            })
+
+        self.__images.update( {"krecik_idle_S" : 
+            ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_S.png"))
+            .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
+            })
     
-    def addKrecik(self, _krecik : Label):
-        if self.krecik is None:
-            self.krecik = Krecik(_krecik)
-
-    def getKrecik(self):
-        return self.krecik
+    # ---------------------------------------------------------------------------- #
+    #                                 command_label                                #
+    # ---------------------------------------------------------------------------- #
     
-    def addCommandLabel(self, _label: Label):
-        self.command_label = _label
-    
-    def setCommandLabelText(self, _cmd):
-        k = self.krecik
-        info = k.field.grid_info()
-        new_txt = f"At: ({info['row']},{info['column']}), Facing: {k.rot.name}, Doing: {_cmd}" 
-        self.command_label.config(text = new_txt)
-    
-# ---------------------------------------------------------------------------- #
-#                                      app                                     #
-# ---------------------------------------------------------------------------- #
+    def __setCommandLabelText(self, _cmd):
+        k = self.__krecik_field
+        info = k.grid_info()
+        new_txt = f"At: ({info['row']},{info['column']}), Facing: {self.__krecik_rot.name}, Doing: {_cmd}" 
+        self.__cmd_label.config(text = new_txt)
 
-# ---------------------------------- window ---------------------------------- #
+    # ---------------------------------------------------------------------------- #
+    #                                    krecik                                    #
+    # ---------------------------------------------------------------------------- #
+        
+    def __moveN(self, n = 1):
+        if n < 1:
+            return
+        for i in range(n):
+            info = self.__krecik_field.grid_info()
+            dx, dy = 0, -1
+            try:
+                self.__krecik_field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
+            except:
+                pass
+            time.sleep(self.__WT)
+            self.__root.update()
+        
+    def __moveS(self, n = 1):
+        if n < 1:
+            return
+        for i in range(n):
+            info = self.__krecik_field.grid_info()
+            dx, dy = 0, 1
+            try:
+                self.__krecik_field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
+            except:
+                pass
+            time.sleep(self.__WT)
+            self.__root.update()
 
-root = Tk()
-root.title("Krecik")
-# root.geometry("1200x800")
-root.resizable(width=False, height=False)
-# root.configure(background=BG_C)
-board = Board(15,10)
+    def __moveE(self, n = 1):
+        if n < 1:
+            return
+        for i in range(n):
+            info = self.__krecik_field.grid_info()
+            dx, dy = 1, 0
+            try:
+                self.__krecik_field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
+            except:
+                pass
+            time.sleep(self.__WT)
+            self.__root.update()
+        
 
-# ---------------------------------- assets ---------------------------------- #
+    def __moveW(self, n = 1):
+        if n < 1:
+            return
+        for i in range(n):
+            info = self.__krecik_field.grid_info()
+            dx, dy = -1, 0
+            try:
+                self.__krecik_field.grid(row=info["row"]+dy, column=info["column"]+dx, sticky=W)
+            except:
+                pass
+            time.sleep(self.__WT)
+            self.__root.update()
 
-dirt_pi = ImageTk.PhotoImage(
-    Image.open(os.path.join("assets", "dirt.png"))
-    .resize((board.field_size, board.field_size), Image.ANTIALIAS))
+    def moveForward(self, n=1):
+        self.__setCommandLabelText(f"Move forward ({n})")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__moveW(n)
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__moveN(n)
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__moveE(n)
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__moveS(n)
 
-k_pi_W = ImageTk.PhotoImage(
-    Image.open(os.path.join("assets", "krecik_W.png"))
-    .resize((board.field_size, board.field_size), Image.ANTIALIAS))
+    def moveBackward(self, n=1):
+        self.__setCommandLabelText(f"Move backward ({n})")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__moveE(n)
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__moveS(n)
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__moveW(n)
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__moveN(n)
 
-k_pi_N = ImageTk.PhotoImage(
-    Image.open(os.path.join("assets", "krecik_N.png"))
-    .resize((board.field_size, board.field_size), Image.ANTIALIAS))
+    def moveLeft(self, n=1):
+        self.__setCommandLabelText(f"Move left ({n})")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__moveS(n)
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__moveW(n)
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__moveN(n)
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__moveE(n)
 
-k_pi_E = ImageTk.PhotoImage(
-    Image.open(os.path.join("assets", "krecik_E.png"))
-    .resize((board.field_size, board.field_size), Image.ANTIALIAS))
+    def moveRight(self, n=1):
+        self.__setCommandLabelText(f"Move right ({n})")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__moveN(n)
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__moveE(n)
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__moveS(n)
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__moveW(n)
 
-k_pi_S = ImageTk.PhotoImage(
-    Image.open(os.path.join("assets", "krecik_S.png"))
-    .resize((board.field_size, board.field_size), Image.ANTIALIAS))
+    def rotateLeft(self):
+        self.__setCommandLabelText(f"Rotate left")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__krecik_rot = Rot.S
+            self.__krecik_field.config(image=self.__images["krecik_idle_S"])
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__krecik_rot = Rot.W
+            self.__krecik_field.config(image=self.__images["krecik_idle_W"])
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__krecik_rot = Rot.N
+            self.__krecik_field.config(image=self.__images["krecik_idle_N"])
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__krecik_rot = Rot.E
+            self.__krecik_field.config(image=self.__images["krecik_idle_E"])
+        time.sleep(self.__WT)
+        self.__root.update()
 
-# ------------------------------ forming board ------------------------------ #
-
-for i in range(board.w):
-    for j in range(board.h):
-        l = Label(root, image=dirt_pi, bd=0)
-        l.grid(row=j, column=i, sticky=W)
-        board.setField(i,j,l)
-
-_k = Label(root, image="", bd=0, bg='black')
-_k.grid(row=0, column=0, sticky=W)
-board.addKrecik(_k)
-# # l4.grid_forget() # usuwanie
-
-_l = Label(root, text="Starting...", font="none 12 bold")
-_l.grid(row=board.h+1, column=0, columnspan=board.w, sticky=W)
-board.addCommandLabel(_l)
-
-# ---------------------------------------------------------------------------- #
-#                                     start                                    #
-# ---------------------------------------------------------------------------- #
-
-def worker():
-    # f = [ board.getKrecik().rotateLeft ]
-    # for foo in f:
-    #     foo()
-    # time.sleep(2)
-    # board.getKrecik().moveForward(4)
-    board.getKrecik().rotateRight()
-
-    data = None  # InputStream(input(">>> "))
-    with open("inputs/simple.krecik", "r") as file:
-         data = InputStream(file.read())
-
-    # lexer
-    lexer = KrecikLexer(data)
-    stream = CommonTokenStream(lexer)
-    # parser
-    parser = KrecikParser(stream)
-    tree = parser.primary_expression()
-    # evaluator
-    visitor = MyVisitor(board)
-    output = visitor.visit(tree)
-    # print(output)
-
-    
-t = threading.Thread(target=worker, args=[])
-t.start()
-
-# root.after(500, start)
-root.mainloop()
-
-class KrecikWindow():
-  def __init__(self):
-    self.tk = Tk()
-    self.tk.title("Demo Window")
-    self.tk.geometry("500x500")
-    self.tk.resizable(0, 0)
-    self.tk.mainloop()
-    self.widgets()
-    pass
+    def rotateRight(self):
+        self.__setCommandLabelText(f"Rotate right")
+        if ( self.__krecik_rot == Rot.W ): 
+            self.__krecik_rot = Rot.N
+            self.__krecik_field.config(image=self.__images["krecik_idle_N"])
+        elif ( self.__krecik_rot == Rot.N ): 
+            self.__krecik_rot = Rot.E
+            self.__krecik_field.config(image=self.__images["krecik_idle_E"])
+        elif ( self.__krecik_rot == Rot.E ): 
+            self.__krecik_rot = Rot.S
+            self.__krecik_field.config(image=self.__images["krecik_idle_S"])
+        elif ( self.__krecik_rot == Rot.S ): 
+            self.__krecik_rot = Rot.W
+            self.__krecik_field.config(image=self.__images["krecik_idle_W"])
+        time.sleep(self.__WT)
+        self.__root.update()
   
-  def widgets(self):
-    lbl = Label(self.tk, text="Hello")
-    lbl.pack()
-    pass
-  
-win = KrecikWindow()
+# ---------------------------------------------------------------------------- #
+#                                 sample usage                                 #
+# ---------------------------------------------------------------------------- #
+
+if __name__ == "__main__":
+
+    win = KrecikWindow(15,10)
+
+    win.moveForward(5)
+    win.rotateLeft()
+    win.moveForward(5)
+
+    exit = input("Pres enter to exit.\n")

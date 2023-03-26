@@ -3,6 +3,14 @@ import os
 import time
 from PIL import ImageTk, Image
 from enum import Enum
+import threading
+import sys
+from antlr4 import *
+from KrecikLexer import KrecikLexer
+from KrecikParser import KrecikParser
+from KrecikVisitor import KrecikVisitor
+from MyVisitor import MyVisitor
+
 
 BG_C = "#ffffff"
 TEXT_C = "white"
@@ -247,34 +255,32 @@ board.addCommandLabel(_l)
 #                                     start                                    #
 # ---------------------------------------------------------------------------- #
 
-def start():
-    # ------------------------------------ === ----------------------------------- #
-    # -------------------- place commands between these lines -------------------- #
-
-    # board.getKrecik().moveE(6)
-    # board.getKrecik().moveS(5)
-    # board.getKrecik().moveW(4)
-    # board.getKrecik().moveN(3)
-
-    f = [ board.getKrecik().rotateLeft ]
-    for foo in f:
-        foo()
-
-        
-    board.getKrecik().moveForward(4)
+def worker():
+    # f = [ board.getKrecik().rotateLeft ]
+    # for foo in f:
+    #     foo()
+    # time.sleep(2)
+    # board.getKrecik().moveForward(4)
     board.getKrecik().rotateRight()
-    board.getKrecik().moveForward(2)
-    board.getKrecik().rotateRight()
-    board.getKrecik().moveLeft(2)
-    board.getKrecik().moveBackward(2)
 
-    # -------------------- place commands between these lines -------------------- #
-    # ------------------------------------ === ----------------------------------- #
-    board.setCommandLabelText(f"End.")
+    data = None  # InputStream(input(">>> "))
+    with open("inputs/simple.krecik", "r") as file:
+         data = InputStream(file.read())
 
+    # lexer
+    lexer = KrecikLexer(data)
+    stream = CommonTokenStream(lexer)
+    # parser
+    parser = KrecikParser(stream)
+    tree = parser.primary_expression()
+    # evaluator
+    visitor = MyVisitor(board)
+    output = visitor.visit(tree)
+    # print(output)
 
     
-    
+t = threading.Thread(target=worker, args=[])
+t.start()
 
-root.after(500, start)
+# root.after(500, start)
 root.mainloop()

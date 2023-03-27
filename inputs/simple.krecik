@@ -1,7 +1,14 @@
 nedostatek ahoj() {
 
 	do_predu();
-	do_predu();
+	// do_predu();
+	// v_levo();
+	// do_predu(3);
+	// v_pravo();
+	// v_pravo();
+	// v_pravo();
+	// v_pravo();
+	// v_pravo();
 
     vratit;
 }

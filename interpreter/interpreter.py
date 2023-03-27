@@ -1,30 +1,34 @@
 from antlr4 import CommonTokenStream, InputStream
+from antlr4.error.Errors import ParseCancellationException
 
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikParser import KrecikParser
 from board.board import Board
-from board.tile import TileType
-from visitor import Visitor
+from window.window import Window
+from .visitor import Visitor
 
 
-if __name__ == "__main__":
+class Interpreter:
+    def __init__(self) -> None:
+        self.board: Board | None = None
+        self.window: Window | None = None
 
-    with open("../inputs/simple.krecik", "r") as file:
-        data = InputStream(file.read())
+    def set_board(self, board: Board) -> None:
+        self.board = board
+        self.window = Window(board)
 
-    # lexer
-    lexer = KrecikLexer(data)
-    stream = CommonTokenStream(lexer)
-    # parser
-    parser = KrecikParser(stream)
-    tree = parser.primary_expression()
-
-    matrix = [
-        [TileType.GRASS, TileType.GRASS],
-        [TileType.GRASS, TileType.GRASS],
-    ]
-    board = Board(matrix)
-    # evaluator
-    visitor = Visitor(board)
-    output = visitor.visit(tree)
-    print(output)
+    def interpret(self, file_path: str) -> None:
+        if self.board is None:
+            raise RuntimeError("Must specify board before interpreting.")
+        with open(file_path, "r") as file:
+            data = InputStream(file.read())
+        try:
+            lexer = KrecikLexer(data)
+            stream = CommonTokenStream(lexer)
+            parser = KrecikParser(stream)
+            tree = parser.primary_expression()
+        except ParseCancellationException as exc:
+            print(exc)
+            return
+        visitor = Visitor(self.board, self.window)
+        return visitor.visit(tree)

@@ -22,7 +22,7 @@ class Gatherable(Enum):
 
 class Tile:
 
-    _value_to_tile_map = {
+    VALUE_TO_TERRAIN_AND_GATHERABLE_MAP = {
         TileType.GRASS: (Terrain.GRASS, None),
         TileType.ROCKS: (Terrain.ROCKS, None),
         TileType.MOUND: (Terrain.MOUND, None),
@@ -31,7 +31,7 @@ class Tile:
     }
 
     def __init__(self, tile_type: TileType) -> None:
-        self.terrain, self.gatherable = self._value_to_tile_map.get(
+        self.terrain, self.gatherable = Tile.VALUE_TO_TERRAIN_AND_GATHERABLE_MAP.get(
             tile_type,
             (Terrain.GRASS, None),
         )

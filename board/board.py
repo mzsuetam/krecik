@@ -1,4 +1,4 @@
-from .krecik import Krecik
+from .krecik import Krecik, Position, Rotation
 from .tile import Tile, TileType
 
 
@@ -7,8 +7,16 @@ class Board:
     self.matrix is list of rows, row is list of Tiles
     """
 
-    def __init__(self, matrix: list[list[TileType]]) -> None:
-        self.krecik = Krecik()
+    def __init__(
+        self,
+        matrix: list[list[TileType]],
+        krecik_position: Position | None = None,
+        krecik_rotation: Rotation | None = None,
+    ) -> None:
+        self.krecik = Krecik(
+            position=krecik_position,
+            rotation=krecik_rotation,
+        )
         self.width = len(matrix[0])
         self.height = len(matrix)
         self.matrix: list[list[Tile]] = []
@@ -22,10 +30,6 @@ class Board:
         if not self._is_cords_valid(row=row, col=col):
             return None
         return self.matrix[row][col]
-
-    def set(self, row: int, col: int, tile: Tile) -> None:
-        self._is_cords_valid(row=row, col=col)
-        self.matrix[row][col] = tile
 
     def _is_cords_valid(self, col: int, row: int) -> bool:
         if not (0 <= row < self.height):

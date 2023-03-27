@@ -1,7 +1,8 @@
 from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
 from board.board import Board
-from interpreter.window.window import Window
+from interpreter.function_mapper import FunctionMapper
+from window.window import Window
 
 
 class Visitor(KrecikVisitor):
@@ -12,6 +13,7 @@ class Visitor(KrecikVisitor):
     def __init__(self, board: Board, window: Window) -> None:
         self.board = board
         self.window = window
+        self.function_mapper = FunctionMapper()
     
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext):
         # for child in ctx.children:
@@ -23,11 +25,8 @@ class Visitor(KrecikVisitor):
         arguments = []
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
-        print(arguments)
-        if name == "do_predu":
-            self.board.krecik.moveForward()
-        
-        return 
+        function = self.function_mapper.get(str(name))
+        return function(self.board, self.window, *arguments)
 
     def visitExpressions_list(
         self,

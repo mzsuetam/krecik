@@ -1,8 +1,8 @@
 import pytest as pytest
 
-from interpreter.board.board import Board
-from interpreter.board.krecik import Position, Rotation
-from interpreter.board.tile import Gatherable, Terrain, TileType
+from board.board import Board
+from board.krecik import Position, Rotation
+from board.tile import Gatherable, Terrain, TileType
 
 
 @pytest.mark.parametrize(

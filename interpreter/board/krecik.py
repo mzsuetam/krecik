@@ -39,7 +39,7 @@ class Krecik:
         self.rotate(-1)
 
     def rotate(self, value: int) -> None:
-        new_rotation_value = (self.rotation.value() + value) % len(Rotation)
+        new_rotation_value = (self.rotation.value + value) % len(Rotation)
         self.rotation = Rotation(new_rotation_value)
 
     def can_pick(self) -> bool:

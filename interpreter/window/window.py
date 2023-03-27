@@ -25,11 +25,11 @@ class KrecikWindow():
     __krecik_rot = Rot.S
 
     __images = dict()
-    
+
     # ---------------------------------------------------------------------------- #
     #                                     init                                     #
     # ---------------------------------------------------------------------------- #
-    
+
     def __init__(self, w, h, waiting_time = 0.5):
 
         # ----------------------------------- basic ---------------------------------- #
@@ -92,7 +92,7 @@ class KrecikWindow():
         # @FIXME: closing window by x button generates exception
         self.__root.destroy()
         sys.exit()
-    
+
     # ---------------------------------------------------------------------------- #
     #                                    assets                                    #
     # ---------------------------------------------------------------------------- #
@@ -101,47 +101,47 @@ class KrecikWindow():
 
         # ---------------------------------- obiekty --------------------------------- #
 
-        self.__images.update( {"dirt" : 
+        self.__images.update( {"dirt" :
             ImageTk.PhotoImage( Image.open(os.path.join("assets", "dirt.png"))
             .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
             })
 
         # ---------------------------------- krecik ---------------------------------- #
 
-        self.__images.update( {"krecik_idle_W" : 
+        self.__images.update( {"krecik_idle_W" :
             ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_W.png"))
             .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
             })
 
-        self.__images.update( {"krecik_idle_N" : 
+        self.__images.update( {"krecik_idle_N" :
             ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_N.png"))
             .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
             })
 
-        self.__images.update( {"krecik_idle_E" : 
+        self.__images.update( {"krecik_idle_E" :
             ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_E.png"))
             .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
             })
 
-        self.__images.update( {"krecik_idle_S" : 
+        self.__images.update( {"krecik_idle_S" :
             ImageTk.PhotoImage( Image.open(os.path.join("assets", "krecik_S.png"))
             .resize((self.__field_size, self.__field_size), Image.ANTIALIAS))
             })
-    
+
     # ---------------------------------------------------------------------------- #
     #                                 command_label                                #
     # ---------------------------------------------------------------------------- #
-    
+
     def __setCommandLabelText(self, _cmd):
         k = self.__krecik_field
         info = k.grid_info()
-        new_txt = f"At: ({info['row']},{info['column']}), Facing: {self.__krecik_rot.name}, Doing: {_cmd}" 
+        new_txt = f"At: ({info['row']},{info['column']}), Facing: {self.__krecik_rot.name}, Doing: {_cmd}"
         self.__cmd_label.config(text = new_txt)
 
     # ---------------------------------------------------------------------------- #
     #                                    krecik                                    #
     # ---------------------------------------------------------------------------- #
-        
+
     def __moveN(self, n = 1):
         if n < 1:
             return
@@ -197,60 +197,60 @@ class KrecikWindow():
 
     def moveForward(self, n=1):
         self.__setCommandLabelText(f"Move forward ({n})")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__moveW(n)
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__moveN(n)
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__moveE(n)
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__moveS(n)
 
     def moveBackward(self, n=1):
         self.__setCommandLabelText(f"Move backward ({n})")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__moveE(n)
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__moveS(n)
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__moveW(n)
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__moveN(n)
 
     def moveLeft(self, n=1):
         self.__setCommandLabelText(f"Move left ({n})")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__moveS(n)
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__moveW(n)
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__moveN(n)
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__moveE(n)
 
     def moveRight(self, n=1):
         self.__setCommandLabelText(f"Move right ({n})")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__moveN(n)
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__moveE(n)
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__moveS(n)
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__moveW(n)
 
     def rotateLeft(self):
         self.__setCommandLabelText(f"Rotate left")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__krecik_rot = Rot.S
             self.__krecik_field.config(image=self.__images["krecik_idle_S"])
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__krecik_rot = Rot.W
             self.__krecik_field.config(image=self.__images["krecik_idle_W"])
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__krecik_rot = Rot.N
             self.__krecik_field.config(image=self.__images["krecik_idle_N"])
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__krecik_rot = Rot.E
             self.__krecik_field.config(image=self.__images["krecik_idle_E"])
         time.sleep(self.__WT)
@@ -258,21 +258,21 @@ class KrecikWindow():
 
     def rotateRight(self):
         self.__setCommandLabelText(f"Rotate right")
-        if ( self.__krecik_rot == Rot.W ): 
+        if ( self.__krecik_rot == Rot.W ):
             self.__krecik_rot = Rot.N
             self.__krecik_field.config(image=self.__images["krecik_idle_N"])
-        elif ( self.__krecik_rot == Rot.N ): 
+        elif ( self.__krecik_rot == Rot.N ):
             self.__krecik_rot = Rot.E
             self.__krecik_field.config(image=self.__images["krecik_idle_E"])
-        elif ( self.__krecik_rot == Rot.E ): 
+        elif ( self.__krecik_rot == Rot.E ):
             self.__krecik_rot = Rot.S
             self.__krecik_field.config(image=self.__images["krecik_idle_S"])
-        elif ( self.__krecik_rot == Rot.S ): 
+        elif ( self.__krecik_rot == Rot.S ):
             self.__krecik_rot = Rot.W
             self.__krecik_field.config(image=self.__images["krecik_idle_W"])
         time.sleep(self.__WT)
         self.__root.update()
-  
+
 # ---------------------------------------------------------------------------- #
 #                                 sample usage                                 #
 # ---------------------------------------------------------------------------- #

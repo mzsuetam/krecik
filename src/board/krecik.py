@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from .tile import Gatherable
+from board.tile import Gatherable
 
 
 @dataclass
@@ -29,26 +29,9 @@ class Krecik:
         self.inventory: list[Gatherable] = []
         self.inventory_limit = inventory_limit
 
-    def turn_180(self) -> None:
-        self.rotate(2)
-
-    def turn_right(self) -> None:
-        self.rotate(1)
-
-    def turn_left(self) -> None:
-        self.rotate(-1)
-
     def rotate(self, value: int) -> None:
         new_rotation_value = (self.rotation.value + value) % len(Rotation)
         self.rotation = Rotation(new_rotation_value)
-
-    def can_pick(self) -> bool:
-        return len(self.inventory) < self.inventory_limit
-
-    def pop_from_inventory(self) -> Gatherable | None:
-        if not self.inventory:
-            return
-        return self.inventory.pop()
 
     def next_position(self) -> Position:
         if self.rotation == Rotation.N:
@@ -71,3 +54,11 @@ class Krecik:
                 row=self.position.row,
                 col=self.position.col - 1,
             )
+
+    def can_pick(self) -> bool:
+        return len(self.inventory) < self.inventory_limit
+
+    def pop_from_inventory(self) -> Gatherable | None:
+        if not self.inventory:
+            return
+        return self.inventory.pop()

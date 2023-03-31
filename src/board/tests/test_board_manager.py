@@ -1,8 +1,10 @@
 import pytest as pytest
 
 from board.board import Board
+from board.board_manager import BoardManager
 from board.krecik import Position, Rotation
 from board.tile import Gatherable, Terrain, TileType
+from display.board_publisher import BoardPublisher
 
 
 @pytest.mark.parametrize(
@@ -29,8 +31,9 @@ def test_krecik_move(
         [TileType.ROCKS, TileType.TOMATO],
     ]
     board = Board(matrix)
+    board_manager = BoardManager(board, BoardPublisher())
     board.krecik.rotation = initial_rotation
-    board.krecik_move()
+    board_manager.move_forward(1)
     assert board.krecik.position == expected_position
 
 
@@ -53,7 +56,8 @@ def test_krecik_pick(
 ) -> None:
     matrix = [[tile_type]]
     board = Board(matrix)
-    board.krecik_pick()
+    board_manager = BoardManager(board, BoardPublisher())
+    board_manager.pick_up()
     assert board.krecik.inventory == expected_inventory
     assert board.get_krecik_tile().gatherable is None
     assert board.get_krecik_tile().terrain is Terrain.GRASS
@@ -62,9 +66,10 @@ def test_krecik_pick(
 def test_krecik_pickup_limit() -> None:
     matrix = [[TileType.TOMATO]]
     board = Board(matrix)
+    board_manager = BoardManager(board, BoardPublisher())
     assert board.krecik.inventory_limit == 1
     board.krecik.inventory = [Gatherable.MUSHROOM]
-    board.krecik_pick()
+    board_manager.pick_up()
     assert board.krecik.inventory == [Gatherable.MUSHROOM]
     assert board.get_krecik_tile().gatherable == Gatherable.TOMATO
 
@@ -89,8 +94,9 @@ def test_krecik_put(
 ) -> None:
     matrix = [[tile_type]]
     board = Board(matrix)
+    board_manager = BoardManager(board, BoardPublisher())
     board.krecik.inventory = [Gatherable.MUSHROOM]
-    board.krecik_put()
+    board_manager.put()
     assert board.krecik.inventory == expected_inventory
     assert board.get_krecik_tile().gatherable == expected_tile_gatherable
 
@@ -98,7 +104,8 @@ def test_krecik_put(
 def test_krecik_put_nothing() -> None:
     matrix = [[TileType.GRASS]]
     board = Board(matrix)
+    board_manager = BoardManager(board, BoardPublisher())
     board.krecik.inventory = []
-    board.krecik_put()
+    board_manager.put()
     assert board.krecik.inventory == []
     assert board.get_krecik_tile().gatherable is None

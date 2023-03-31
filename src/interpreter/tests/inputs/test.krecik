@@ -1,0 +1,18 @@
+nedostatek ahoj() {
+	pockejte(1.);
+	do_predu(1);
+	pockejte(1.);
+	do_predu(1);
+	pockejte(1.);
+	do_predu(1);
+	pockejte(3.);
+	v_levo();
+	pockejte(.2);
+	v_levo();
+	pockejte(.2);
+	v_levo();
+	pockejte(.2);
+	v_levo();
+	pockejte(5);
+    vratit;
+}

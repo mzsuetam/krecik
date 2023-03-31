@@ -1,16 +1,17 @@
 from pathlib import Path
 from tkinter import Tk, Label
 from tkinter.constants import W
-import time
+
 from PIL import ImageTk, Image
 import sys
 
 from board.board import Board
 from board.krecik import Krecik, Rotation
 from board.tile import Gatherable, Terrain
+from display.base_display import BaseDisplay
 
 
-class Window:
+class Window(BaseDisplay):
 
     ROTATION_TO_IMAGE_NAME_MAP = {
         Rotation.N: "krecik_idle_N",
@@ -33,8 +34,7 @@ class Window:
     MIN_FIELD_SIZE = 100  # in px
     MAX_FIELD_SIZE = 1000  # in px
 
-    def __init__(self, board: Board, wait_time: float = 0.5) -> None:
-        self._wait_time = wait_time  # wait time [s]
+    def __init__(self, board: Board) -> None:
         largest_dimension = max(board.width, board.height)
         self._field_size = (
             Window.MIN_FIELD_SIZE
@@ -115,7 +115,7 @@ class Window:
             tiles_matrix.append(tiles_row)
         return tiles_matrix
 
-    def _init_cmd_label(self, board) -> Label:
+    def _init_cmd_label(self, board: Board) -> Label:
         cmd_label = Label(self._root, text="Starting...", font="none 12 bold")
         cmd_label.grid(
             row=board.height + 1,
@@ -130,10 +130,6 @@ class Window:
         self._root.destroy()
         sys.exit()
 
-    def refresh(self) -> None:
-        time.sleep(self._wait_time)
-        self._root.update()
-
     def update_krecik_position(self, krecik: Krecik) -> None:
         self._krecik_label.grid(
             row=krecik.position.row,
@@ -141,19 +137,19 @@ class Window:
             sticky=W,
         )
         command_label_text = f"Krecik moves to {krecik.position.row}, {krecik.position.col}"
-        self.update_command_label_text(krecik, command_label_text)
+        self.update_command_label_text(command_label_text)
+        self.update()
 
     def update_krecik_rotation(self, krecik: Krecik) -> None:
         image_name = Window.ROTATION_TO_IMAGE_NAME_MAP.get(krecik.rotation)
         image = self._images.get(image_name)
         self._krecik_label.config(image=image)
         command_label_text = f"Krecik rotate to face {krecik.rotation.name}"
-        self.update_command_label_text(krecik, command_label_text)
+        self.update_command_label_text(command_label_text)
+        self.update()
 
-    def update_command_label_text(self, krecik: Krecik, command_label_text: str) -> None:
-        new_text = (
-            f"Position: ({krecik.position.row}, {krecik.position.col}), "
-            f"Rotation: {krecik.rotation.name}, "
-            f"{command_label_text}"
-        )
-        self._cmd_label.config(text=new_text)
+    def update_command_label_text(self, command_label_text: str) -> None:
+        self._cmd_label.config(text=command_label_text)
+
+    def update(self) -> None:
+        self._root.update()

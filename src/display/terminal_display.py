@@ -1,11 +1,23 @@
-from board.krecik import Krecik
+from board.board import Board
 from display.base_display import BaseDisplay
 
 
 class TerminalDisplay(BaseDisplay):
 
-    def update_krecik_position(self, krecik: Krecik) -> None:
-        print(f"krecik moves to (col:{krecik.position.col}, row:{krecik.position.row})")
+    def __init__(self, board: Board) -> None:
+        super().__init__(board)
+        print(
+            "=== new board ===",
+            f"- width: {board.width}",
+            f"- height: {board.height}",
+            f"- krecik: ",
+            f"\t- {board.krecik.position}",
+            f"\t- {board.krecik.rotation}",
+            sep="\n",
+        )
 
-    def update_krecik_rotation(self, krecik: Krecik) -> None:
-        print(f"krecik face {krecik.rotation.name}")
+    def update_krecik_position(self) -> None:
+        print(f"krecik moves to {self.board.krecik.position}")
+
+    def update_krecik_rotation(self) -> None:
+        print(f"krecik face {self.board.krecik.rotation}")

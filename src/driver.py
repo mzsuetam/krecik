@@ -10,6 +10,11 @@ from display.window import Window
 
 
 def main() -> None:
+    """
+    Example usage:
+    $ python src/driver.py src/interpreter/tests/inputs/test.krecik
+    """
+
     parser = ArgumentParser()
     parser.add_argument("source_file_path", metavar="source", type=str, nargs=1)
     args = parser.parse_args()

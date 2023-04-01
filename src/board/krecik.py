@@ -59,6 +59,5 @@ class Krecik:
         return len(self.inventory) < self.inventory_limit
 
     def pop_from_inventory(self) -> Gatherable | None:
-        if not self.inventory:
-            return
-        return self.inventory.pop()
+        if self.inventory:
+            return self.inventory.pop()

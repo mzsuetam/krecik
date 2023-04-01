@@ -6,7 +6,7 @@ from PIL import ImageTk, Image
 import sys
 
 from board.board import Board
-from board.krecik import Krecik, Rotation
+from board.krecik import Rotation
 from board.tile import Gatherable, Terrain
 from display.base_display import BaseDisplay
 
@@ -35,6 +35,7 @@ class Window(BaseDisplay):
     MAX_FIELD_SIZE = 1000  # in px
 
     def __init__(self, board: Board) -> None:
+        super().__init__(board)
         largest_dimension = max(board.width, board.height)
         self._field_size = (
             Window.MIN_FIELD_SIZE
@@ -44,14 +45,14 @@ class Window(BaseDisplay):
 
         self._root = self._init_root()
         self._images = self._init_images()
-        self._tiles = self._init_tiles(board)
-        self._cmd_label = self._init_cmd_label(board)
+        self._tiles = self._init_tiles()
+        self._cmd_label = self._init_cmd_label()
 
         # @FIXME: implement object loading
 
         self._krecik_label = Label(self._root, image="", bd=0, bg='black')
-        self.update_krecik_position(board.krecik)
-        self.update_krecik_rotation(board.krecik)
+        self.update_krecik_position()
+        self.update_krecik_rotation()
         # # l4.grid_forget() # usuwanie
 
         # self.__root.mainloop()
@@ -102,9 +103,9 @@ class Window(BaseDisplay):
         root.resizable(width=False, height=False)
         return root
 
-    def _init_tiles(self, board: Board) -> list[list[Label]]:
+    def _init_tiles(self) -> list[list[Label]]:
         tiles_matrix = []
-        for row_index, row in enumerate(board.matrix):
+        for row_index, row in enumerate(self.board.matrix):
             tiles_row = []
             for col_index, tile in enumerate(row):
                 terrain_image_name = Window.TERRAIN_TO_IMAGE_NAME_MAP[tile.terrain]
@@ -115,12 +116,12 @@ class Window(BaseDisplay):
             tiles_matrix.append(tiles_row)
         return tiles_matrix
 
-    def _init_cmd_label(self, board: Board) -> Label:
+    def _init_cmd_label(self) -> Label:
         cmd_label = Label(self._root, text="Starting...", font="none 12 bold")
         cmd_label.grid(
-            row=board.height + 1,
+            row=self.board.height + 1,
             column=0,
-            columnspan=board.width,
+            columnspan=self.board.width,
             sticky=W,
         )
         return cmd_label
@@ -130,21 +131,23 @@ class Window(BaseDisplay):
         self._root.destroy()
         sys.exit()
 
-    def update_krecik_position(self, krecik: Krecik) -> None:
+    def update_krecik_position(self) -> None:
+        pos = self.board.krecik.position
         self._krecik_label.grid(
-            row=krecik.position.row,
-            column=krecik.position.col,
+            row=pos.row,
+            column=pos.col,
             sticky=W,
         )
-        command_label_text = f"Krecik moves to {krecik.position.row}, {krecik.position.col}"
+        command_label_text = f"krecik moves to {pos}"
         self.update_command_label_text(command_label_text)
         self.update()
 
-    def update_krecik_rotation(self, krecik: Krecik) -> None:
-        image_name = Window.ROTATION_TO_IMAGE_NAME_MAP.get(krecik.rotation)
+    def update_krecik_rotation(self) -> None:
+        rot = self.board.krecik.rotation
+        image_name = Window.ROTATION_TO_IMAGE_NAME_MAP.get(rot)
         image = self._images.get(image_name)
         self._krecik_label.config(image=image)
-        command_label_text = f"Krecik rotate to face {krecik.rotation.name}"
+        command_label_text = f"krecik face {rot}"
         self.update_command_label_text(command_label_text)
         self.update()
 

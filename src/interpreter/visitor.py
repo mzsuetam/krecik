@@ -32,11 +32,11 @@ class Visitor(KrecikVisitor):
     def visitExpression(self, ctx: KrecikParser.ExpressionContext):
         if ctx.function_call():
             value = self.visitChildren(ctx)
-            print("func:", ctx.getText())
+            # print("func:", ctx.getText())
             return value
         if ctx.literal():
             value = self.visit(ctx.children[0])
-            print("lit:", value)
+            # print("lit:", value)
             return value
         return 0
     

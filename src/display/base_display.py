@@ -1,12 +1,15 @@
 from abc import ABC
 
-from board.krecik import Krecik
+from board.board import Board
 
 
 class BaseDisplay(ABC):
 
-    def update_krecik_position(self, krecik: Krecik) -> None:
+    def __init__(self, board: Board) -> None:
+        self.board = board
+
+    def update_krecik_position(self) -> None:
         raise NotImplementedError()
 
-    def update_krecik_rotation(self, krecik: Krecik) -> None:
+    def update_krecik_rotation(self) -> None:
         raise NotImplementedError()

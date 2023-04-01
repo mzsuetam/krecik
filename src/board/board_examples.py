@@ -5,7 +5,7 @@ from board.krecik import Position
 from board.tile import TileType
 
 
-def plains(width: int, height: int) -> Board:
+def plains(width: int = 16, height: int = 10) -> Board:
     return Board([[TileType.GRASS] * width] * height)
 
 
@@ -22,10 +22,13 @@ def jebus_cross() -> Board:
     )
 
 
-def random(width: int, height: int) -> Board:
+def random(width: int = 16, height: int = 10) -> Board:
     number_of_choices = len(TileType)
     matrix = []
     for _ in range(height):
         random_row = [TileType(randrange(number_of_choices)) for _ in range(width)]
         matrix.append(random_row)
-    return Board(matrix)
+    krecik_col = randrange(width - 1)
+    krecik_row = randrange(height - 1)
+    krecik_position = Position(krecik_col, krecik_row)
+    return Board(matrix, krecik_position=krecik_position)

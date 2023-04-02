@@ -58,7 +58,7 @@ def test_krecik_move(
         ("turn_left", Rotation.W),
     ],
 )
-def test_krecik_move(
+def test_krecik_rotate(
     method_name: str,
     expected_rotation: Rotation,
     board_publisher_mock: Mock,

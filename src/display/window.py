@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import Tk, Label
+from tkinter import PhotoImage, Tk, Label
 from tkinter.constants import W
 
 from PIL import ImageTk, Image
@@ -60,7 +60,7 @@ class Window(BaseDisplay):
         self._root.update()
         self._root.protocol("WM_DELETE_WINDOW", self._on_closing)
 
-    def _init_images(self) -> dict[str, ImageTk]:
+    def _init_images(self) -> dict[str, PhotoImage]:
         current_parent_path = Path(__file__).parent.resolve()
         return {
             "dirt": ImageTk.PhotoImage(
@@ -145,7 +145,11 @@ class Window(BaseDisplay):
     def update_krecik_rotation(self) -> None:
         rot = self.board.krecik.rotation
         image_name = Window.ROTATION_TO_IMAGE_NAME_MAP.get(rot)
+        if image_name is None:
+            raise NotImplementedError()
         image = self._images.get(image_name)
+        if image is None:
+            raise NotImplementedError()
         self._krecik_label.config(image=image)
         command_label_text = f"krecik face {rot}"
         self.update_command_label_text(command_label_text)

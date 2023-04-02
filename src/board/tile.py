@@ -36,7 +36,7 @@ class Tile:
             (Terrain.GRASS, None),
         )
 
-    def pick(self) -> Gatherable:
+    def pick(self) -> Gatherable | None:
         gatherable = self.gatherable
         self.gatherable = None
         return gatherable

@@ -54,6 +54,7 @@ class Krecik:
                 row=self.position.row,
                 col=self.position.col - 1,
             )
+        raise NotImplementedError()
 
     def can_pick(self) -> bool:
         return len(self.inventory) < self.inventory_limit
@@ -61,3 +62,4 @@ class Krecik:
     def pop_from_inventory(self) -> Gatherable | None:
         if self.inventory:
             return self.inventory.pop()
+        return None

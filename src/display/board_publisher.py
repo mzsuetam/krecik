@@ -13,7 +13,7 @@ class EventType(Enum):
 class BoardPublisher:
 
     def __init__(self) -> None:
-        self.displays = []
+        self.displays: list[BaseDisplay] = []
         self._event_type_to_method_map = {
             EventType.POSITION: self.notify_position,
             EventType.ROTATION: self.notify_rotation,
@@ -27,6 +27,8 @@ class BoardPublisher:
 
     def notify(self, event_type: EventType) -> None:
         method = self._event_type_to_method_map.get(event_type)
+        if method is None:
+            raise NotImplementedError()
         for display in self.displays:
             method(display)
 

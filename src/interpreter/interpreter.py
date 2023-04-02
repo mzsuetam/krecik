@@ -1,8 +1,8 @@
 from typing import Any
 
-from antlr4 import CommonTokenStream, InputStream
-from antlr4.error.Errors import ParseCancellationException
-from antlr4.tree.Tree import Tree
+from antlr4 import CommonTokenStream, InputStream  # type: ignore
+from antlr4.error.Errors import ParseCancellationException  # type: ignore
+from antlr4.tree.Tree import Tree  # type: ignore
 
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikParser import KrecikParser
@@ -36,7 +36,7 @@ class Interpreter:
             return tree
         except ParseCancellationException as exc:
             print(exc)
-            return
+            return None
 
     def visit_tree(self, parser_tree: Tree) -> Any:
         try:

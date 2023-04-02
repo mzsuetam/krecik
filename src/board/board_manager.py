@@ -50,10 +50,10 @@ class BoardManager:
 
     def pick_up(self) -> None:
         tile = self.board.get_krecik_tile()
-        if self.board.krecik.can_pick() and tile.gatherable is not None:
-            gatherable = tile.pick()
-            self.board.krecik.inventory.append(gatherable)
-            self.board_publisher.notify(EventType.PICK)
+        if self.board.krecik.can_pick():
+            if gatherable := tile.pick():
+                self.board.krecik.inventory.append(gatherable)
+                self.board_publisher.notify(EventType.PICK)
 
     def put(self) -> None:
         tile = self.board.get_krecik_tile()

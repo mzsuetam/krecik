@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from board.tile import Gatherable
 
 
@@ -10,10 +10,10 @@ class Position:
 
 
 class Rotation(Enum):
-    N = auto()
-    E = auto()
-    S = auto()
-    W = auto()
+    N = 0
+    E = 1
+    S = 2
+    W = 3
 
 
 class Krecik:

@@ -1,13 +1,13 @@
-from enum import Enum
+from enum import Enum, auto
 
 from display.base_display import BaseDisplay
 
 
 class EventType(Enum):
-    POSITION = 0
-    ROTATION = 1
-    PICK = 2
-    PUT = 3
+    POSITION = auto()
+    ROTATION = auto()
+    PICK = auto()
+    PUT = auto()
 
 
 class BoardPublisher:

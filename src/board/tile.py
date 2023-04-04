@@ -1,23 +1,23 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class TileType(Enum):
-    GRASS = 0
-    ROCKS = 1
-    MOUND = 2
-    TOMATO = 3
-    MUSHROOM = 4
+    GRASS = auto()
+    ROCKS = auto()
+    MOUND = auto()
+    TOMATO = auto()
+    MUSHROOM = auto()
 
 
 class Terrain(Enum):
-    GRASS = 0
-    ROCKS = 1
-    MOUND = 2
+    GRASS = auto()
+    ROCKS = auto()
+    MOUND = auto()
 
 
 class Gatherable(Enum):
-    TOMATO = 0
-    MUSHROOM = 1
+    TOMATO = auto()
+    MUSHROOM = auto()
 
 
 class Tile:

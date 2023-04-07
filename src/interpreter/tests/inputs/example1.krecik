@@ -1,4 +1,4 @@
-logicki kwadrat(cislo a) {
+logicki kwadrat(cely a) {
     opakujte az 4 {
         dopredu(a);
         vprawo(90);
@@ -11,6 +11,6 @@ logicki kwadrat(cislo a) {
 
 nedostatek ahoj() {
     kwadrat(10);
-
+    
     vratit;
 }

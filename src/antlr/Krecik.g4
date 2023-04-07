@@ -23,7 +23,7 @@ declaration_arg_list
     ;
 
 body
-    : '{' SP* body_items_list? SP* vratit? SP*'}'
+    : '{' SP* body_items_list? SP* vratit? SP* body_items_list? SP*'}'
     ;
 
 body_items_list
@@ -189,8 +189,12 @@ NEWLINE
     : [\r\n]+ -> skip
     ;
 
-COMMENT
+LINECOMMENT
     : '//' ~[\r\n]* -> skip
+    ;
+
+BLOCKCOMMENT
+    : '/*' .*? '*/' -> skip
     ;
 
 VARIABLE_NAME
@@ -198,12 +202,11 @@ VARIABLE_NAME
     ;
 
 FLOAT_VAL  // accepts: 10.11 and 10 and 10. and .01 
-    : INT_VAL
-    | INT_VAL '.' [0-9]*
+    :  INT_VAL '.' [0-9]*
     | '0'? '.' [0-9]+
     ;
 
-INT_VAL // used only for main function
+INT_VAL 
     : '0'
     | [1-9][0-9]*
     ;

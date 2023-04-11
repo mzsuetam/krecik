@@ -1,7 +1,7 @@
 import pytest
 
-from board.board_examples import plains
 from board.board_manager import BoardManager
+from board.tests.board_examples import plains
 from display.board_publisher import BoardPublisher
 from display.terminal_display import TerminalDisplay
 from interpreter.function_mapper import FunctionMapper

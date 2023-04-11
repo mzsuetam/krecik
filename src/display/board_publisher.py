@@ -8,6 +8,10 @@ class EventType(Enum):
     ROTATION = auto()
     PICK = auto()
     PUT = auto()
+    MAKE_MOUND = auto()
+    REMOVE_MOUND = auto()
+    HIDE = auto()
+    GET_OUT = auto()
 
 
 class BoardPublisher:

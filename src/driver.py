@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from board.board_examples import plains
+from board.tests.board_examples import plains
 from board.board_manager import BoardManager
 from display.board_publisher import BoardPublisher
 from interpreter.function_mapper import FunctionMapper

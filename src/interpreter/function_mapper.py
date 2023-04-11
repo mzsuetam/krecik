@@ -8,12 +8,32 @@ class FunctionMapper:
 
     def __init__(self, board_manager: BoardManager) -> None:
         self.build_in_function_map: dict[str, Callable] = {
-            "do_predu": board_manager.move_forward,
-            "v_levo": board_manager.turn_left,
-            "v_pravo": board_manager.turn_right,
+            # changing position and direction
+            "do_predu": board_manager.move_krecik_forward,
+            "v_pravo": board_manager.turn_krecik_right,
+            "v_zad": board_manager.turn_krecik_180,
+            "v_levo": board_manager.turn_krecik_left,
+            # interaction with objects
+            "wzit": board_manager.krecik_pick_up,
+            "poloz": board_manager.krecik_put,
+            "vykop": board_manager.krecik_make_mound,
+            "pohrbit": board_manager.krecik_remove_mound,
+            "skryt": board_manager.krecik_hide_in_mound,
+            "vstavej": board_manager.krecik_get_out_of_mound,
+            "zda_trava": board_manager.is_krecik_on_grass,
+            "zda_trava_pred": board_manager.is_grass_in_front_of_krecik,
+            "zda_kamen": board_manager.is_krecik_on_rocks,
+            "zda_kamen_pred": board_manager.is_rocks_in_front_of_krecik,
+            "zda_kopecek": board_manager.is_krecik_on_mound,
+            "zda_kopecek_pred": board_manager.is_mound_in_front_of_krecik,
+            "zda_rajce": board_manager.is_krecik_on_tomato,
+            "zda_rajce_pred": board_manager.is_tomato_in_front_of_krecik,
+            "zda_muchomur": board_manager.is_krecik_on_mushroom,
+            "zda_muchomur_pred": board_manager.is_mushroom_in_front_of_krecik,
+            # other functions
+            "zda_drzi_rajce": board_manager.is_krecik_holding_tomato,
+            "zda_drzi_muchomur": board_manager.is_krecik_holding_mushroom,
             "pockejte": board_manager.wait,
-            "wzit": board_manager.pick_up,
-            "poloz": board_manager.put,
         }
 
     def call(self, function_name: str, *args: Any) -> Callable:

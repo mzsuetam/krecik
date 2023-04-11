@@ -2,7 +2,6 @@ from unittest.mock import Mock, create_autospec
 
 import pytest
 
-from board.board import Board
 from display.board_publisher import BoardPublisher, EventType
 
 

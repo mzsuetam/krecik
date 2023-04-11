@@ -1,7 +1,7 @@
 from random import randrange
 
 from board.board import Board
-from board.krecik import Position
+from board.krecik import Krecik, Position
 from board.tile import TileType
 
 
@@ -18,7 +18,7 @@ def jebus_cross() -> Board:
             [TileType.ROCKS, TileType.ROCKS, TileType.GRASS, TileType.ROCKS, TileType.ROCKS],
             [TileType.ROCKS, TileType.ROCKS, TileType.GRASS, TileType.ROCKS, TileType.ROCKS],
         ],
-        krecik_position=Position(2, 2),
+        krecik=Krecik(position=Position(2, 2)),
     )
 
 
@@ -30,5 +30,4 @@ def random(width: int = 16, height: int = 10) -> Board:
         matrix.append(random_row)
     krecik_col = randrange(width - 1)
     krecik_row = randrange(height - 1)
-    krecik_position = Position(krecik_col, krecik_row)
-    return Board(matrix, krecik_position=krecik_position)
+    return Board(matrix, krecik=Krecik(position=Position(krecik_col, krecik_row)))

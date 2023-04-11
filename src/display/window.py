@@ -1,13 +1,15 @@
 from pathlib import Path
-from tkinter import PhotoImage, Tk, Label
+from tkinter import Tk, Label
 from tkinter.constants import W
 
 from PIL import ImageTk, Image
 import sys
 
+from PIL.ImageTk import PhotoImage
+
 from board.board import Board
 from board.krecik import Rotation
-from board.tile import Gatherable, Terrain
+from board.enums import Gatherable, Terrain
 from display.base_display import BaseDisplay
 
 

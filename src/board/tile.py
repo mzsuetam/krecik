@@ -1,26 +1,9 @@
-from enum import Enum, auto
+from board.enums import Gatherable, Terrain, TileType
+from board.inventory_mixin import InventoryMixin
 
 
-class TileType(Enum):
-    GRASS = auto()
-    ROCKS = auto()
-    MOUND = auto()
-    TOMATO = auto()
-    MUSHROOM = auto()
-
-
-class Terrain(Enum):
-    GRASS = auto()
-    ROCKS = auto()
-    MOUND = auto()
-
-
-class Gatherable(Enum):
-    TOMATO = auto()
-    MUSHROOM = auto()
-
-
-class Tile:
+class Tile(InventoryMixin):
+    BLOCKING_TERRAIN = {Terrain.ROCKS}
 
     VALUE_TO_TERRAIN_AND_GATHERABLE_MAP = {
         TileType.GRASS: (Terrain.GRASS, None),
@@ -31,33 +14,23 @@ class Tile:
     }
 
     def __init__(self, tile_type: TileType) -> None:
-        self.terrain, self.gatherable = Tile.VALUE_TO_TERRAIN_AND_GATHERABLE_MAP.get(
+        terrain, gatherable = Tile.VALUE_TO_TERRAIN_AND_GATHERABLE_MAP.get(
             tile_type,
             (Terrain.GRASS, None),
         )
-
-    def pick(self) -> Gatherable | None:
-        gatherable = self.gatherable
-        self.gatherable = None
-        return gatherable
+        self.terrain: Terrain = terrain
+        super().__init__()
+        if gatherable is not None:
+            self.append_gatherable(gatherable)
 
     def can_step_on(self) -> bool:
-        return self.terrain != Terrain.ROCKS
+        return self.terrain not in self.BLOCKING_TERRAIN
 
-    def is_grass(self) -> bool:
-        return self.terrain == Terrain.GRASS
+    def is_terrain(self, terrain: Terrain) -> bool:
+        return self.terrain == terrain
 
-    def is_rocks(self) -> bool:
-        return self.terrain == Terrain.ROCKS
-
-    def is_mound(self) -> bool:
-        return self.terrain == Terrain.MOUND
-
-    def is_tomato(self) -> bool:
-        return self.gatherable == Gatherable.TOMATO
-
-    def is_mushroom(self) -> bool:
-        return self.gatherable == Gatherable.MUSHROOM
+    def change_terrain(self, terrain: Terrain) -> None:
+        self.terrain = terrain
 
     def __repr__(self) -> str:
-        return f"<Tile: {self.terrain}, {self.gatherable}>"
+        return f"<Tile: {self.terrain}, {self.inventory}>"

@@ -1,12 +1,10 @@
 import time
-from typing import TypeAlias
 
 from board.board import Board
 from board.enums import Gatherable, Terrain
 from display.board_publisher import BoardPublisher, EventType
-from interpreter.exceptions import IncorrectArgumentTypeError
-
-KrecikFunctionArgument: TypeAlias = int | float | bool
+from interpreter.krecik_types import logicki
+from interpreter.krecik_types.logicki import Logicki
 
 
 class BoardManager:
@@ -16,9 +14,7 @@ class BoardManager:
         self.board_publisher = board_publisher
 
     # changing position and direction:
-    def move_krecik_forward(self, number_of_steps: KrecikFunctionArgument) -> None:
-        number_of_steps = int(number_of_steps)  # FIXME
-        self._validate_int(number_of_steps)
+    def move_krecik_forward(self, number_of_steps: int) -> None:
         for _ in range(number_of_steps):
             is_move_successful = self._make_krecik_move()
             if not is_move_successful:
@@ -85,82 +81,62 @@ class BoardManager:
             krecik.is_in_mound = False
             self.board_publisher.notify(EventType.GET_OUT)
 
-    def is_krecik_on_grass(self) -> bool:
+    def is_krecik_on_grass(self) -> Logicki:
         tile = self.board.get_krecik_tile()
-        return tile.is_terrain(Terrain.GRASS)
+        return Logicki(tile.is_terrain(Terrain.GRASS))
 
-    def is_grass_in_front_of_krecik(self) -> bool:
+    def is_grass_in_front_of_krecik(self) -> Logicki:
         tile = self.board.get_krecik_next_tile()
         if tile is None:
-            return False
-        return tile.is_terrain(Terrain.GRASS)
+            return logicki.KRECIK_FALSE
+        return Logicki(tile.is_terrain(Terrain.GRASS))
 
-    def is_krecik_on_rocks(self) -> bool:
+    def is_krecik_on_rocks(self) -> Logicki:
         tile = self.board.get_krecik_tile()
-        return tile.is_terrain(Terrain.ROCKS)
+        return Logicki(tile.is_terrain(Terrain.ROCKS))
 
-    def is_rocks_in_front_of_krecik(self) -> bool:
+    def is_rocks_in_front_of_krecik(self) -> Logicki:
         tile = self.board.get_krecik_next_tile()
         if tile is None:
-            return True  # out of bound is treated as rocks
-        return tile.is_terrain(Terrain.ROCKS)
+            return logicki.KRECIK_TRUE  # out of bound is treated as rocks
+        return Logicki(tile.is_terrain(Terrain.ROCKS))
 
-    def is_krecik_on_mound(self) -> bool:
+    def is_krecik_on_mound(self) -> Logicki:
         tile = self.board.get_krecik_tile()
-        return tile.is_terrain(Terrain.MOUND)
+        return Logicki(tile.is_terrain(Terrain.MOUND))
 
-    def is_mound_in_front_of_krecik(self) -> bool:
+    def is_mound_in_front_of_krecik(self) -> Logicki:
         tile = self.board.get_krecik_next_tile()
         if tile is None:
-            return False
-        return tile.is_terrain(Terrain.MOUND)
+            return logicki.KRECIK_FALSE
+        return Logicki(tile.is_terrain(Terrain.MOUND))
 
-    def is_krecik_on_tomato(self) -> bool:
+    def is_krecik_on_tomato(self) -> Logicki:
         tile = self.board.get_krecik_tile()
-        return tile.has_gatherable(Gatherable.TOMATO)
+        return Logicki(tile.has_gatherable(Gatherable.TOMATO))
 
-    def is_tomato_in_front_of_krecik(self) -> bool:
+    def is_tomato_in_front_of_krecik(self) -> Logicki:
         tile = self.board.get_krecik_next_tile()
         if tile is None:
-            return False
-        return tile.has_gatherable(Gatherable.TOMATO)
+            return logicki.KRECIK_FALSE
+        return Logicki(tile.has_gatherable(Gatherable.TOMATO))
 
-    def is_krecik_on_mushroom(self) -> bool:
+    def is_krecik_on_mushroom(self) -> Logicki:
         tile = self.board.get_krecik_tile()
-        return tile.has_gatherable(Gatherable.MUSHROOM)
+        return Logicki(tile.has_gatherable(Gatherable.MUSHROOM))
 
-    def is_mushroom_in_front_of_krecik(self) -> bool:
+    def is_mushroom_in_front_of_krecik(self) -> Logicki:
         tile = self.board.get_krecik_next_tile()
         if tile is None:
-            return False
-        return tile.has_gatherable(Gatherable.MUSHROOM)
+            return logicki.KRECIK_FALSE
+        return Logicki(tile.has_gatherable(Gatherable.MUSHROOM))
 
     # other methods:
-    def is_krecik_holding_tomato(self) -> bool:
-        return self.board.krecik.has_gatherable(Gatherable.TOMATO)
+    def is_krecik_holding_tomato(self) -> Logicki:
+        return Logicki(self.board.krecik.has_gatherable(Gatherable.TOMATO))
 
-    def is_krecik_holding_mushroom(self) -> bool:
-        return self.board.krecik.has_gatherable(Gatherable.MUSHROOM)
+    def is_krecik_holding_mushroom(self) -> Logicki:
+        return Logicki(self.board.krecik.has_gatherable(Gatherable.MUSHROOM))
 
-    def wait(self, sleep_time: KrecikFunctionArgument) -> None:
-        self._validate_float(sleep_time)
+    def wait(self, sleep_time: float) -> None:
         time.sleep(sleep_time)
-
-    # arguments validation
-    @staticmethod
-    def _validate_int(arg: KrecikFunctionArgument) -> None:
-        if isinstance(arg, int):
-            return
-        raise IncorrectArgumentTypeError()
-
-    @staticmethod
-    def _validate_float(arg: KrecikFunctionArgument) -> None:
-        if isinstance(arg, float):
-            return
-        raise IncorrectArgumentTypeError()
-
-    @staticmethod
-    def _validate_bool(arg: KrecikFunctionArgument) -> None:
-        if isinstance(arg, bool):
-            return
-        raise IncorrectArgumentTypeError()

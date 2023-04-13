@@ -9,16 +9,7 @@ from interpreter.visitor import Visitor
 from display.window import Window
 
 
-def main() -> None:
-    """
-    Example usage:
-    $ python src/driver.py src/interpreter/tests/inputs/test.krecik
-    """
-
-    parser = ArgumentParser()
-    parser.add_argument("source_file_path", metavar="source", type=str, nargs=1)
-    args = parser.parse_args()
-    file_path = args.source_file_path[0]
+def main(file_path: str) -> None:
 
     board = plains(6, 4)
     board_publisher = BoardPublisher()
@@ -34,4 +25,12 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    """
+    Example usage:
+    $ python src/driver.py src/interpreter/tests/inputs/test.krecik
+    """
+
+    parser = ArgumentParser()
+    parser.add_argument("source_file_path", metavar="source", type=str, nargs=1)
+    args = parser.parse_args()
+    main(args.source_file_path[0])

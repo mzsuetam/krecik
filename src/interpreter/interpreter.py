@@ -1,7 +1,7 @@
 from typing import Any
 
 from antlr4 import CommonTokenStream, InputStream  # type: ignore
-from antlr4.error.Errors import ParseCancellationException  # type: ignore
+from antlr4.error.Errors import RecognitionException  # type: ignore
 from antlr4.tree.Tree import Tree  # type: ignore
 
 from antlr.KrecikLexer import KrecikLexer
@@ -34,7 +34,7 @@ class Interpreter:
             parser = KrecikParser(stream)
             tree = parser.primary_expression()
             return tree
-        except ParseCancellationException as exc:
+        except RecognitionException as exc:
             print(exc)
             return None
 

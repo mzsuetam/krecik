@@ -5,7 +5,6 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 
 class Cislo(KrecikType):
-
     type_name = "cislo"
 
     def _parse_value(self, value: Any) -> float:

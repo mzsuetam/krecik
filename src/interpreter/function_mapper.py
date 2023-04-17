@@ -12,7 +12,6 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 
 class FunctionMapper:
-
     default_value: tuple[None, list] = None, []
 
     def __init__(self, board_manager: BoardManager) -> None:

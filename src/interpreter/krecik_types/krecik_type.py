@@ -3,7 +3,6 @@ from typing import Any
 
 
 class KrecikType(ABC):
-
     type_name: str
 
     def __init__(self, value: Any, name: str | None = None) -> None:

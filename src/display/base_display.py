@@ -4,7 +4,6 @@ from board.board import Board
 
 
 class BaseDisplay(ABC):
-
     def __init__(self, board: Board) -> None:
         self.board = board
 

@@ -3,14 +3,13 @@ from display.base_display import BaseDisplay
 
 
 class TerminalDisplay(BaseDisplay):
-
     def __init__(self, board: Board) -> None:
         super().__init__(board)
         print(
             "=== new board ===",
             f"- width: {board.width}",
             f"- height: {board.height}",
-            f"- krecik: ",
+            "- krecik: ",
             f"\t- {board.krecik.position}",
             f"\t- {board.krecik.rotation}",
             sep="\n",

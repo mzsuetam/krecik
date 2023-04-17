@@ -4,16 +4,16 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 class VariableStack:
 
-    stack: dict[str, list[dict[str, KrecikType]]] = {}
-
-    current_func_stack = []
+    def __init__(self) -> None:
+        self.stack: dict[str, list[dict[str, KrecikType]]] = {}
+        self.current_func_stack: list[tuple[str, int]] = []
 
     def getVarValue(self, var_name: str) -> KrecikType:
         # print(f"Accessed: {var_name} of func {self.__getCurrFunction()} stack {self.__getCurrStack()}")
         var = None
         try:
             # var = self.stack.get(self.__getCurrFunction())[self.__getCurrStack()].get(var_name)
-            for i in range(self.__getCurrStack(),-1,-1):
+            for i in range(self.__getCurrStack(), -1, -1):
                 var = self.stack.get(self.__getCurrFunction())[i].get(var_name)
                 if var is not None:
                     break
@@ -27,7 +27,7 @@ class VariableStack:
         var = None
         try:
             # var = self.stack.get(self.__getCurrFunction())[self.__getCurrStack()].get(var_name)
-            for i in range(self.__getCurrStack(),-1,-1):
+            for i in range(self.__getCurrStack(), -1, -1):
                 var = self.stack.get(self.__getCurrFunction())[i].get(var_name)
                 if var is not None:
                     break
@@ -77,12 +77,12 @@ class VariableStack:
         self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i-1)
 
     def __str__(self):
-        str = ""
+        string = ""
         for key, val in self.stack.items():
-            str += f"Function {key}:\n"
+            string += f"Function {key}:\n"
             for i, stack in enumerate(val):
-                str += f"\tStack: {i}\n"
+                string += f"\tStack: {i}\n"
                 for s_key, s_val in stack.items():
-                    str += f"\t\t{s_val}\n"
-        return str
+                    string += f"\t\t{s_val}\n"
+        return string
 

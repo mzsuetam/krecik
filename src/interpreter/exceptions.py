@@ -70,6 +70,14 @@ class KrecikValueError(KrecikException):
     message_schema = "Invalid value for {type_name}: {value}."
     attrs = {"type_name": "not specified", "value": "not specified"}
 
+class KrecikVariableRedeclarationError(KrecikException):
+    message_schema = "Redeclaration of variabvle: {var_name} in function {func_name}."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
+class KrecikFunctionRedeclarationError(KrecikException):
+    message_schema = "Redeclaration of function: {name}."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
 
 class KrecikSyntaxError(KrecikException):
     message_schema = "Syntax error. {extra_info}"

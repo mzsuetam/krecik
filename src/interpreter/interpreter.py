@@ -2,12 +2,13 @@ from typing import Any
 
 from antlr4 import CommonTokenStream, InputStream  # type: ignore
 from antlr4.error.Errors import RecognitionException  # type: ignore
-from antlr4.tree.Tree import Tree  # type: ignore
+from antlr4.tree.Tree import Tree, ParseTreeWalker  # type: ignore
 
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikParser import KrecikParser
 from interpreter.exceptions import KrecikException
 from interpreter.syntax_error_listener import SyntaxErrorListener
+from interpreter.listener import Listener
 from interpreter.visitor import Visitor
 
 
@@ -25,6 +26,8 @@ class Interpreter:
     def interpret_data(self, input_stream: InputStream) -> None:
         parser_tree = self.get_tree(input_stream)
         if parser_tree is not None:
+            if self.walk(parser_tree):
+                return
             self.visit_tree(parser_tree)
 
     def get_tree(self, input_stream: InputStream) -> Tree | None:
@@ -52,3 +55,14 @@ class Interpreter:
             return self.visitor.visit(parser_tree)
         except KrecikException as exc:
             print(exc)
+            return
+
+    def walk(self, parser_tree: Tree) -> int | None:
+        try:
+            listener = Listener(self.visitor.variable_stack)
+            walker = ParseTreeWalker()
+            walker.walk(listener, parser_tree)
+            return None
+        except KrecikException as exc:
+            print(exc)
+            return -1

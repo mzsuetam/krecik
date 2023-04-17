@@ -44,18 +44,35 @@ class VariableStack:
         return self.current_func_stack[len(self.current_func_stack)-1][1]
 
     def enterFunction(self, func_name: str):
+        """
+            Use to enter given function variable stack pile,
+            e.g. before calling a function
+        """
         self.current_func_stack.append((func_name, 0))
 
     def exitFunction(self):
+        """
+            Use to exit function variable stack pile
+            and automatically go to previous one.
+            e.g. after calling a function
+        """
         self.current_func_stack.pop()
 
     def enterStack(self):
+        """
+            Use to enter next variable stack of current function,
+            e.g. before entering if body
+        """
         if len(self.current_func_stack) > 0:
             func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
             self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i+1)
 
-
     def exitStack(self):
+        """
+            Use to enter exit variable stack of current function
+            and automatically go to previous one.
+            e.g. after exiting if body
+        """
         func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
         self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i-1)
 

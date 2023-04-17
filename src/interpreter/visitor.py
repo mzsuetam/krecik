@@ -34,13 +34,50 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+        '''
+        '(' SP* expression SP* ')'
+        | unary_operator SP* expression
+        | expression SP* binary_operator SP* expression
+        | function_call
+        | VARIABLE_NAME
+        | literal
+        '''
         if ctx.function_call():
             krecik_literal = self.visitChildren(ctx)
             return krecik_literal
         if ctx.literal():
             krecik_literal = self.visit(ctx.children[0])
             return krecik_literal
-        raise NotImplementedError("Unknown expression type")
+        if ctx.unary_operator():
+            match ctx.children[0]:
+                case '+':
+                    return self.visit(ctx.children[1])
+                case '-':
+                    return -self.visit(ctx.children[1])
+                case 'Ne':
+                    return not self.visit(ctx.children[1])
+        if ctx.children[0].getText() == '(':
+            return self.visit(ctx.children[1])
+        if ctx.binary_operator():
+            first_expression = self.visit(ctx.children[0])
+            second_expression = self.visit(ctx.children[2])
+            if not (first_expression.type_name == "cely" and second_expression.type_name == "cely" ) and not (first_expression.type_name == "cislo" and second_expression.type_name == "cislo"):
+                raise TypeError("Wrong expression type")
+            operator = ctx.children[1].getText()
+            match operator:
+                case '+':
+                    return first_expression + second_expression
+                case '-':
+                    return first_expression - second_expression
+                case '*':
+                    return first_expression * second_expression
+                case '/':
+                    return first_expression / second_expression
+                case 'mensi':
+                    return first_expression < second_expression
+                case 'wetsi':
+                    return first_expression > second_expression
+            raise NotImplementedError(operator)
 
     def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
         value = ctx.getText()

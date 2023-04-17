@@ -27,7 +27,7 @@ def main(file_path: str) -> None:
 if __name__ == "__main__":
     """
     Example usage:
-    $ python src/driver.py src/interpreter/tests/inputs/test.krecik
+    $ python src/driver.py src/interpreter/tests/inputs/input.krecik
     """
 
     parser = ArgumentParser()

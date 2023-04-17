@@ -51,30 +51,7 @@ class KrecikVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by KrecikParser#expression.
     def visitExpression(self, ctx:KrecikParser.ExpressionContext):
-        '''
-        '(' SP* expression SP* ')'
-        | unary_operator SP* expression
-        | expression SP* binary_operator SP* expression
-        | function_call
-        | VARIABLE_NAME
-        | literal
-        '''
-        if ctx.getChildCount == 1:
-            return
-        
-        first_child = self.visitChildren(ctx.getChild(0))
-        second_child = self.visitChildren(ctx.getChild(1))
-        if first_child == '(':
-            return second_child
-        if first_child == '+':
-            return second_child
-        if first_child == '-':
-            return -second_child
-        if first_child == 'Ne':
-            return not second_child
-        
-        third_child = self.visitChildren(ctx.getChild(2))
-        return 
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by KrecikParser#function_call.

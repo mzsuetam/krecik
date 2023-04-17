@@ -37,14 +37,18 @@ class Visitor(KrecikVisitor):
     def visitFunction_declaration(self, ctx:KrecikParser.Function_declarationContext):
         name = str(ctx.VARIABLE_NAME())
         self.variable_stack.enterFunction(str(name))
+        ### compute children between these lines ###
         return_value = self.visitChildren(ctx)
+        ############################################
         self.variable_stack.exitFunction()
         return return_value
 
     @handle_exception
     def visitBody(self, ctx:KrecikParser.BodyContext):
         self.variable_stack.enterStack()
+        ### compute children between these lines ###
         val = self.visitChildren(ctx)
+        ############################################
         self.variable_stack.exitStack()
         return val
 
@@ -55,7 +59,9 @@ class Visitor(KrecikVisitor):
             arguments = self.visit(ctx.expressions_list())
         try:
             self.variable_stack.enterFunction(str(name))
+            ### compute children between these lines ###
             return_value = self.function_mapper.call(str(name), arguments)
+            ############################################
             self.variable_stack.exitFunction()
             return return_value
         except KrecikException as exc:

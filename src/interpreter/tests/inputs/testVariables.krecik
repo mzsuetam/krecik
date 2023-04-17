@@ -1,0 +1,20 @@
+nedostatek aaa(cislo i, logicki j){
+    opakujte az 4 {
+        logicki a;
+        opakujte az 4 {
+            cislo i;
+        }
+    }
+}
+
+nedostatek ahoj() {
+    cislo i = 0;
+	do_predu(1);
+
+    logicki a;
+    logicki i;
+
+    logicki l;
+
+    vratit;
+}

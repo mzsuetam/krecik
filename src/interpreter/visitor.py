@@ -84,6 +84,50 @@ class Visitor(KrecikVisitor):
         if ctx.VARIABLE_NAME():
             var = self.variable_stack.getVarValue(ctx.getText())
             return var
+        if unary_operator := ctx.unary_operator():
+            match unary_operator:
+                case '+':
+                    return self.visit(ctx.expression())
+                case '-':
+                    return -self.visit(ctx.expression())
+                case 'Ne':
+                    return not self.visit(ctx.expression())
+        if ctx.children[0].getText() == '(':
+            return self.visit(ctx.expression())
+        if binary_operator := ctx.binary_operator():
+            first_expression = self.visit(ctx.expression(0))
+            second_expression = self.visit(ctx.expression(1))
+            if isinstance(first_expression, Cislo) and isinstance(second_expression, Cislo):
+                binary_operator = ctx.children[1].getText()
+                match binary_operator:
+                    case '+':
+                        return Cislo(first_expression.value + second_expression.value)
+                    case '-':
+                        return Cislo(first_expression.value - second_expression.value)
+                    case '*':
+                        return Cislo(first_expression.value * second_expression.value)
+                    case '/':
+                        return Cislo(first_expression.value / second_expression.value)
+                    case 'mensi':
+                        return Logicki(first_expression.value < second_expression.value)
+                    case 'wetsi':
+                        return Logicki(first_expression.value > second_expression.value)
+            if isinstance(first_expression, Cely) and isinstance(second_expression, Cely):
+                binary_operator = ctx.children[1].getText()
+                match binary_operator:
+                    case '+':
+                        return Cely(first_expression.value + second_expression.value)
+                    case '-':
+                        return Cely(first_expression.value - second_expression.value)
+                    case '*':
+                        return Cely(first_expression.value * second_expression.value)
+                    case '/':
+                        return Cely(first_expression.value / second_expression.value)
+                    case 'mensi':
+                        return Logicki(first_expression.value < second_expression.value)
+                    case 'wetsi':
+                        return Logicki(first_expression.value > second_expression.value)
+            raise NotImplementedError("Incompatible expressions' types")
         raise NotImplementedError("Unknown expression type")
 
     @handle_exception

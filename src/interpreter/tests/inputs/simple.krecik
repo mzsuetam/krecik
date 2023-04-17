@@ -1,14 +1,9 @@
 nedostatek ahoj() {
-
+	cely a = 2+2;
+	do_predu(a);
+	pockejte(6.-2.);
 	do_predu(1);
-	do_predu(1);
-	v_levo();
+	pockejte(3.*3.);
 	do_predu(3);
-	v_pravo();
-	v_pravo();
-	v_pravo();
-	v_pravo();
-	v_pravo();
-
     vratit;
 }

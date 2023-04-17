@@ -2,7 +2,6 @@ from board.enums import Gatherable
 
 
 class InventoryMixin:
-
     def __init__(self, inventory_limit: int | None = 1) -> None:
         """inventory_limit = None means no limit"""
         self.inventory: list[Gatherable] = []

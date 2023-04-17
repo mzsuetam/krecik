@@ -8,7 +8,6 @@ from interpreter.krecik_types.logicki import Logicki
 
 
 class BoardManager:
-
     def __init__(self, board: Board, board_publisher: BoardPublisher) -> None:
         self.board = board
         self.board_publisher = board_publisher

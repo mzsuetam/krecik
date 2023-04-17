@@ -4,7 +4,7 @@ from interpreter.exceptions import KrecikException
 
 if TYPE_CHECKING:
     from typing import Any, Callable
-    from antlr4 import ParserRuleContext  # type: ignore
+    from antlr4 import ParserRuleContext
     from interpreter.visitor import Visitor
 
 

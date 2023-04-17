@@ -1,0 +1,15 @@
+[tool.mypy]
+exclude = "src/antlr"
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "antlr.*"
+ignore_errors = true
+
+[tool.ruff]
+exclude = ["src/antlr"]
+line-length = 100
+
+[tool.black]
+line-length = 100

@@ -1,7 +1,7 @@
-from antlr4 import RecognitionException  # type: ignore
-from antlr4.Recognizer import Recognizer  # type: ignore
-from antlr4.Token import CommonToken  # type: ignore
-from antlr4.error.ErrorListener import ErrorListener  # type: ignore
+from antlr4 import RecognitionException
+from antlr4.Recognizer import Recognizer
+from antlr4.Token import CommonToken
+from antlr4.error.ErrorListener import ErrorListener
 
 from interpreter.exceptions import KrecikSyntaxError
 

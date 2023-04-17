@@ -11,7 +11,6 @@ from display.window import Window
 
 
 def main(file_path: str) -> None:
-
     board = plains(6, 4)
     board_publisher = BoardPublisher()
     board_manager = BoardManager(board, board_publisher)

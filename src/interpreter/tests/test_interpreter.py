@@ -5,7 +5,6 @@ from interpreter.visitor import Visitor
 
 
 class TestInterpreter:
-
     inputs_path = Path(__file__).parent.resolve() / "inputs"
 
     def test_interpreter(self, visitor: Visitor) -> None:

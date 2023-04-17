@@ -18,7 +18,6 @@ class Rotation(Enum):
 
 
 class Krecik(InventoryMixin):
-
     def __init__(
         self,
         position: Position | None = None,

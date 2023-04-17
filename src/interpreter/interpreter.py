@@ -1,8 +1,7 @@
 from typing import Any
 
-from antlr4 import CommonTokenStream, InputStream  # type: ignore
-from antlr4.error.Errors import RecognitionException  # type: ignore
-from antlr4.tree.Tree import Tree, ParseTreeWalker  # type: ignore
+from antlr4 import CommonTokenStream, InputStream
+from antlr4.tree.Tree import ParseTree, ParseTreeWalker
 
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikParser import KrecikParser
@@ -13,7 +12,6 @@ from interpreter.visitor import Visitor
 
 
 class Interpreter:
-
     def __init__(self, visitor: Visitor) -> None:
         self.visitor = visitor
 
@@ -25,12 +23,16 @@ class Interpreter:
 
     def interpret_data(self, input_stream: InputStream) -> None:
         parser_tree = self.get_tree(input_stream)
-        if parser_tree is not None:
-            if self.walk(parser_tree):
-                return
+        if parser_tree is None:
+            return
+        try:
+            self.walk_tree(parser_tree)
             self.visit_tree(parser_tree)
+        except KrecikException as exc:
+            print(exc)
+            return
 
-    def get_tree(self, input_stream: InputStream) -> Tree | None:
+    def get_tree(self, input_stream: InputStream) -> ParseTree | None:
         lexer = KrecikLexer(input_stream)
         stream = CommonTokenStream(lexer)
         parser = self.get_parser(stream)
@@ -44,25 +46,16 @@ class Interpreter:
         return parser
 
     @staticmethod
-    def parse_tree(parser: KrecikParser) -> Tree | None:
+    def parse_tree(parser: KrecikParser) -> ParseTree | None:
         tree = parser.primary_expression()
         if parser.getNumberOfSyntaxErrors() > 0:
             return None
         return tree
 
-    def visit_tree(self, parser_tree: Tree) -> Any:
-        try:
-            return self.visitor.visit(parser_tree)
-        except KrecikException as exc:
-            print(exc)
-            return
+    def walk_tree(self, parser_tree: ParseTree) -> None:
+        listener = Listener(self.visitor.variable_stack)
+        walker = ParseTreeWalker()
+        walker.walk(listener, parser_tree)
 
-    def walk(self, parser_tree: Tree) -> int | None:
-        try:
-            listener = Listener(self.visitor.variable_stack)
-            walker = ParseTreeWalker()
-            walker.walk(listener, parser_tree)
-            return None
-        except KrecikException as exc:
-            print(exc)
-            return -1
+    def visit_tree(self, parser_tree: ParseTree) -> Any:
+        self.visitor.visit(parser_tree)

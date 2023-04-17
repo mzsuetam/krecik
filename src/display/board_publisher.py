@@ -15,7 +15,6 @@ class EventType(Enum):
 
 
 class BoardPublisher:
-
     def __init__(self) -> None:
         self.displays: list[BaseDisplay] = []
         self._event_type_to_method_map = {

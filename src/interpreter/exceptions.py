@@ -1,6 +1,6 @@
 from typing import Any
 
-from antlr4 import ParserRuleContext  # type: ignore
+from antlr4 import ParserRuleContext
 
 
 class KrecikException(Exception):

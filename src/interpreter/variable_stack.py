@@ -1,4 +1,4 @@
-from interpreter.exceptions import KrecikException, KrecikVariableUnassignedError, KrecikVariableUndeclaredError
+from interpreter.exceptions import KrecikException, KrecikVariableUndeclaredError
 from interpreter.krecik_types.cely import Cely
 from interpreter.krecik_types.cislo import Cislo
 from interpreter.krecik_types.krecik_type import KrecikType
@@ -6,89 +6,76 @@ from interpreter.krecik_types.logicki import Logicki
 
 
 class VariableStack:
-
     def __init__(self) -> None:
         self.stack: dict[str, list[dict[str, KrecikType]]] = {}
         self.current_func_stack: list[tuple[str, int]] = []
 
-    def getVarValue(self, var_name: str) -> KrecikType:
-        # print(f"Accessed: {var_name} of func {self.__getCurrFunction()} stack {self.__getCurrStack()}")
+    def get_var_value(self, var_name: str) -> KrecikType:
+        var = self._get_var(var_name)
+        return var
+
+    def set_var_value(self, var_name: str, value: KrecikType) -> None:
+        var = self._get_var(var_name)
+        var.value = value
+
+    def _get_var(self, var_name: str) -> KrecikType:
         var = None
-        try:
-            # var = self.stack.get(self.__getCurrFunction())[self.__getCurrStack()].get(var_name)
-            for i in range(self.__getCurrStack(), -1, -1):
-                var = self.stack.get(self.__getCurrFunction())[i].get(var_name)
-                if var is not None:
-                    break
-        except Exception as e:
-            raise KrecikException()
+        for i in range(self._get_current_stack(), -1, -1):
+            var = self.stack[self._get_current_function()][i][var_name]
+            if var is not None:
+                break
         if not var:
             raise KrecikVariableUndeclaredError(name=var_name)
         return var
 
-    def setVarValue(self, var_name, value) -> None:
-        var = None
-        try:
-            # var = self.stack.get(self.__getCurrFunction())[self.__getCurrStack()].get(var_name)
-            for i in range(self.__getCurrStack(), -1, -1):
-                var = self.stack.get(self.__getCurrFunction())[i].get(var_name)
-                if var is not None:
-                    break
-        except:
-            raise KrecikException()
-        if not var:
-            raise KrecikVariableUndeclaredError(name=var_name)
-        var.value = value
+    def _get_current_function(self) -> str:
+        return self.current_func_stack[len(self.current_func_stack) - 1][0]
 
-    def __getCurrFunction(self):
-        return self.current_func_stack[len(self.current_func_stack)-1][0]
+    def _get_current_stack(self) -> int:
+        return self.current_func_stack[len(self.current_func_stack) - 1][1]
 
-    def __getCurrStack(self):
-        return self.current_func_stack[len(self.current_func_stack)-1][1]
-
-    def enterFunction(self, func_name: str):
+    def enter_function(self, func_name: str) -> None:
         """
-            Use to enter given function variable stack pile,
-            e.g. before calling a function
+        Use to enter given function variable stack pile,
+        e.g. before calling a function
         """
-        # dodajemy zbiór stacków funkcji i ustawiamy ją jako aktualnyą
-        self.stack.update({func_name: []})
-        self.stack.get(func_name).append({})
+        # dodajemy zbiór stacków funkcji i ustawiamy ją jako aktualną
+        self.stack[func_name] = [{}]
         self.current_func_stack.append((func_name, 0))
 
-    def exitFunction(self):
+    def exit_function(self) -> None:
         """
-            Use to exit function variable stack pile
-            and automatically go to previous one.
-            e.g. after calling a function
+        Use to exit function variable stack pile
+        and automatically go to previous one.
+        e.g. after calling a function
         """
         # usuwamy zbiór stacków funkcji i ustawiamy poprzedni jako aktualny
         key, val = self.current_func_stack.pop()
         self.stack.pop(key)
 
-    def enterStack(self):
+    def enter_stack(self) -> None:
         """
-            Use to enter next variable stack of current function,
-            e.g. before entering if body
+        Use to enter next variable stack of current function,
+        e.g. before entering if body
         """
         # dodajemy stack do obecnej funkcji, ustawiamy go jako aktualny
         if len(self.current_func_stack) > 0:
-            func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
-            self.stack.get(func_name).append({})
-            self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i+1)
+            func_name, i = self.current_func_stack[len(self.current_func_stack) - 1]
+            self.stack[func_name].append({})
+            self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i + 1)
 
-    def exitStack(self):
+    def exit_stack(self) -> None:
         """
-            Use to enter exit variable stack of current function
-            and automatically go to previous one.
-            e.g. after exiting if body
+        Use to enter exit variable stack of current function
+        and automatically go to previous one.
+        e.g. after exiting if body
         """
         # usuwamy obecny stack z obecnej funkcji, ustawiamy poprzedni jako aktualny
-        func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
-        self.stack.get(func_name).pop()
-        self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i-1)
+        func_name, i = self.current_func_stack[len(self.current_func_stack) - 1]
+        self.stack[func_name].pop()
+        self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i - 1)
 
-    def __str__(self):
+    def __str__(self) -> str:
         string = ""
         for key, val in self.stack.items():
             string += f"Function {key}:\n"
@@ -110,7 +97,7 @@ class VariableStack:
             raise KrecikException()
 
         # dodajemy zmienną do obecnego stacka w obecnej funkcji
-        func = self.__getCurrFunction()
-        stack = self.__getCurrStack()
-        self.stack.get(func)[stack].update({var_name: var})
+        func = self._get_current_function()
+        stack = self._get_current_stack()
+        self.stack[func][stack][var_name] = var
         return var

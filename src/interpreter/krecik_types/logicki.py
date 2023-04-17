@@ -5,7 +5,6 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 
 class Logicki(KrecikType):
-
     type_name = "logicki"
     true_values = {"pravda", "true", "1"}
     false_values = {"nepravda", "false", "0"}

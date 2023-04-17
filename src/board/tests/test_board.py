@@ -15,11 +15,7 @@ from board.tile import Tile
         (1, 1, TileType.ROCKS),
     ],
 )
-def test_board_get_tile(
-    row: int,
-    col: int,
-    expected_tile_type: TileType
-) -> None:
+def test_board_get_tile(row: int, col: int, expected_tile_type: TileType) -> None:
     matrix = [
         [TileType.GRASS, TileType.TOMATO],
         [TileType.MOUND, TileType.ROCKS],

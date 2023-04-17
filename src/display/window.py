@@ -14,7 +14,6 @@ from display.base_display import BaseDisplay
 
 
 class Window(BaseDisplay):
-
     ROTATION_TO_IMAGE_NAME_MAP = {
         Rotation.N: "krecik_idle_N",
         Rotation.E: "krecik_idle_E",
@@ -52,7 +51,7 @@ class Window(BaseDisplay):
 
         # @FIXME: implement object loading
 
-        self._krecik_label = Label(self._root, image="", bd=0, bg='black')
+        self._krecik_label = Label(self._root, image="", bd=0, bg="black")
         self.update_krecik_position()
         self.update_krecik_rotation()
         # # l4.grid_forget() # usuwanie
@@ -67,34 +66,29 @@ class Window(BaseDisplay):
         return {
             "dirt": ImageTk.PhotoImage(
                 Image.open(current_parent_path / "assets" / "dirt.png").resize(
-                    (self._field_size, self._field_size),
-                    Image.ANTIALIAS
+                    (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_W": ImageTk.PhotoImage(
                 Image.open(current_parent_path / "assets" / "krecik_W.png").resize(
-                    (self._field_size, self._field_size),
-                    Image.ANTIALIAS
+                    (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_N": ImageTk.PhotoImage(
                 Image.open(current_parent_path / "assets" / "krecik_N.png").resize(
-                    (self._field_size, self._field_size),
-                    Image.ANTIALIAS
+                    (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_E": ImageTk.PhotoImage(
                 Image.open(current_parent_path / "assets" / "krecik_E.png").resize(
-                    (self._field_size, self._field_size),
-                    Image.ANTIALIAS
+                    (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_S": ImageTk.PhotoImage(
                 Image.open(current_parent_path / "assets" / "krecik_S.png").resize(
-                    (self._field_size, self._field_size),
-                    Image.ANTIALIAS
+                    (self._field_size, self._field_size), Image.ANTIALIAS
                 )
-            )
+            ),
         }
 
     @staticmethod

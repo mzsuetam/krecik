@@ -7,6 +7,7 @@ from antlr4.tree.Tree import Tree  # type: ignore
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikParser import KrecikParser
 from interpreter.exceptions import KrecikException
+from interpreter.syntax_error_listener import SyntaxErrorListener
 from interpreter.visitor import Visitor
 
 
@@ -22,31 +23,32 @@ class Interpreter:
         self.interpret_data(input_stream)
 
     def interpret_data(self, input_stream: InputStream) -> None:
-        parser_tree = self.parse_tree(input_stream)
-        if parser_tree:
+        parser_tree = self.get_tree(input_stream)
+        if parser_tree is not None:
             self.visit_tree(parser_tree)
 
-    def parse_tree(self, input_stream: InputStream) -> Tree | None:
-        try:
-            lexer = KrecikLexer(input_stream)
-            stream = CommonTokenStream(lexer)
-            parser = self.get_parser(stream)
-            tree = parser.primary_expression()
-            return tree
-        except RecognitionException as exc:
-            print(exc)
-            return None
+    def get_tree(self, input_stream: InputStream) -> Tree | None:
+        lexer = KrecikLexer(input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = self.get_parser(stream)
+        return self.parse_tree(parser)
 
     @staticmethod
     def get_parser(stream: CommonTokenStream) -> KrecikParser:
         parser = KrecikParser(stream)
         parser.removeErrorListeners()
-        # parser.addErrorListener()
+        parser.addErrorListener(SyntaxErrorListener())
         return parser
+
+    @staticmethod
+    def parse_tree(parser: KrecikParser) -> Tree | None:
+        tree = parser.primary_expression()
+        if parser.getNumberOfSyntaxErrors() > 0:
+            return None
+        return tree
 
     def visit_tree(self, parser_tree: Tree) -> Any:
         try:
             return self.visitor.visit(parser_tree)
         except KrecikException as exc:
             print(exc)
-            return

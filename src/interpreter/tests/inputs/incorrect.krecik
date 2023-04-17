@@ -1,3 +1,4 @@
 nedostatek ahoj() {
+    logicki vysledek = pravda;
     incorrect
 }

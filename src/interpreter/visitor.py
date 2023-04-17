@@ -68,7 +68,7 @@ class Visitor(KrecikVisitor):
                 case '+':
                     return first_expression + second_expression
                 case '-':
-                    return first_expression - second_expression
+                    return first_expression.value - second_expression.value
                 case '*':
                     return first_expression * second_expression
                 case '/':

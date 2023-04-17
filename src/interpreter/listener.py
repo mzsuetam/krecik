@@ -5,27 +5,28 @@ from interpreter.krecik_types.cely import Cely
 from interpreter.krecik_types.cislo import Cislo
 from interpreter.krecik_types.krecik_type import KrecikType
 from interpreter.krecik_types.logicki import Logicki
+from interpreter.variable_stack import VariableStack
 
 
 class Listener(KrecikListener):
 
-    variable_set = {} # dist of stacks of dicts {str, list[{str, KrecikType}]}
-        # dict: append(), pop()
+    variable_stack: VariableStack = None
 
-    current_func : str | None = None
-    current_stack : int | None = None
-    await_for_body : bool = True
+    current_func: str | None = None
+    current_stack: int | None = None
+
+    def __init__(self, variable_stack: VariableStack) -> None:
+        self.variable_stack = variable_stack
 
     # Otwieramy top level dict
     def enterFunction_declaration(self, ctx:KrecikParser.Function_declarationContext):
-        func_name = ctx.VARIABLE_NAME()
-        if self.variable_set.get(func_name):
+        func_name = ctx.VARIABLE_NAME().__str__()
+        if self.variable_stack.stack.get(func_name):
             raise KrecikVariableRedeclarationError(name=func_name)
-        self.variable_set.update({func_name: []})
+        self.variable_stack.stack.update({func_name: []})
         self.current_func = func_name
-        self.variable_set.get(self.current_func).append({}) # obligatory because of arg list
+        self.variable_stack.stack.get(self.current_func).append({}) # obligatory because of arg list
         self.current_stack = 0
-        self.await_for_body = True
 
     # Zamykamy top level dict
     def exitFunction_declaration(self, ctx:KrecikParser.Function_declarationContext):
@@ -33,10 +34,8 @@ class Listener(KrecikListener):
 
     # Otwieramy stack
     def enterBody(self, ctx:KrecikParser.BodyContext):
-        if self.await_for_body:
-            self.await_for_body = False
-        else:
-            self.variable_set.get(self.current_func).append({})
+        if len(self.variable_stack.stack.get(self.current_func)) > 0:
+            self.variable_stack.stack.get(self.current_func).append({})
             self.current_stack += 1
 
     # Zamykamy stack
@@ -57,11 +56,8 @@ class Listener(KrecikListener):
         if not var:
             raise KrecikException()
 
-        # print( self.current_func, self.current_stack, var_name)
-        if self.variable_set.get(self.current_func)[self.current_stack].get(var_name):
+        # tylko ten sam stack, bo niżej możemy miec 'stare zmienne'
+        if self.variable_stack.stack.get(self.current_func)[self.current_stack].get(var_name):
             raise KrecikVariableRedeclarationError(var_name=var_name, func_name=self.current_func)
 
-        self.variable_set.get(self.current_func)[self.current_stack].update({var_name: var})
-
-    def getVariablesSet(self) -> {str, KrecikType}:
-        return self.variable_set
+        self.variable_stack.stack.get(self.current_func)[self.current_stack].update({var_name: var})

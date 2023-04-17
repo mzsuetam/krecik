@@ -5,6 +5,7 @@ from board.tests.board_examples import plains
 from display.board_publisher import BoardPublisher
 from display.terminal_display import TerminalDisplay
 from interpreter.function_mapper import FunctionMapper
+from interpreter.variable_stack import VariableStack
 from interpreter.visitor import Visitor
 
 
@@ -18,5 +19,6 @@ def visitor() -> Visitor:
     board_publisher.subscribe(window)
 
     function_mapper = FunctionMapper(board_manager)
-    visitor = Visitor(function_mapper)
+    variable_stack = VariableStack()
+    visitor = Visitor(function_mapper, variable_stack)
     return visitor

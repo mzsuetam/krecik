@@ -78,6 +78,21 @@ class KrecikFunctionRedeclarationError(KrecikException):
     message_schema = "Redeclaration of function: {name}."
     attrs = {"type_name": "not specified", "name": "not specified"}
 
+class KrecikVariableUndeclaredError(KrecikException):
+    message_schema = "Undeclared variable: {name}."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
+class KrecikVariableUnassignedError(KrecikException):
+    message_schema = "Unassigned variable: {name}."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
+class KrecikVariableValueUnassignableError(KrecikException):
+    message_schema = "Expression '{expr}' does not return value, thus cannot be assigned."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
+class KrecikVariableAssignedTypeError(KrecikException):
+    message_schema = "Cannot assign value type {val_type} to variable {name} of type {type}."
+    attrs = {"type_name": "not specified", "name": "not specified"}
 
 class KrecikSyntaxError(KrecikException):
     message_schema = "Syntax error. {extra_info}"

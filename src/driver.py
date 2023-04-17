@@ -5,6 +5,7 @@ from board.board_manager import BoardManager
 from display.board_publisher import BoardPublisher
 from interpreter.function_mapper import FunctionMapper
 from interpreter.interpreter import Interpreter
+from interpreter.variable_stack import VariableStack
 from interpreter.visitor import Visitor
 from display.window import Window
 
@@ -19,7 +20,8 @@ def main(file_path: str) -> None:
     board_publisher.subscribe(window)
 
     function_mapper = FunctionMapper(board_manager)
-    visitor = Visitor(function_mapper)
+    variable_stack = VariableStack()
+    visitor = Visitor(function_mapper, variable_stack)
     interpreter = Interpreter(visitor)
     interpreter.interpret_file(file_path)
 

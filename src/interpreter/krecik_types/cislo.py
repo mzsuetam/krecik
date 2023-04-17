@@ -7,9 +7,6 @@ from interpreter.krecik_types.krecik_type import KrecikType
 class Cislo(KrecikType):
 
     type_name = "cislo"
-    def __init__(self, value: Any) -> None:
-        self.value = self._parse_value(value)
-
 
     def _parse_value(self, value: Any) -> float:
         if isinstance(value, float):

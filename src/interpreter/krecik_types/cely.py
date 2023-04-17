@@ -8,9 +8,6 @@ class Cely(KrecikType):
 
     type_name = "cely"
 
-    def __init__(self, value: Any) -> None:
-        self.value = self._parse_value(value)
-
     def _parse_value(self, value: Any) -> int:
         if isinstance(value, int):
             return value

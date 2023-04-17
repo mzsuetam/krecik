@@ -1,5 +1,7 @@
 from typing import Any
 
+from antlr4 import ParserRuleContext  # type: ignore
+
 
 class KrecikException(Exception):
     message_schema: str = "Error occurred."
@@ -35,6 +37,12 @@ class KrecikException(Exception):
             return f"sloupec: {self.start_column}"
         return f"sloupce: {self.start_column}-{self.stop_column}"
 
+    def inject_context_to_exc(self, ctx: "ParserRuleContext") -> None:
+        self.start_line = ctx.start.line
+        self.stop_line = ctx.stop.line
+        self.start_column = ctx.start.column
+        self.stop_column = ctx.stop.column
+
 
 class NotDefinedFunctionError(KrecikException):
     message_schema = "Function `{unrecognized_function_name}` is not defined."
@@ -61,3 +69,8 @@ class IncorrectArgumentTypeError(KrecikException):
 class KrecikValueError(KrecikException):
     message_schema = "Invalid value for {type_name}: {value}."
     attrs = {"type_name": "not specified", "value": "not specified"}
+
+
+class KrecikSyntaxError(KrecikException):
+    message_schema = "Syntax error. {extra_info}"
+    attrs = {"extra_info": "not specified"}

@@ -1,6 +1,6 @@
 nedostatek ahoj() {
-	pockejte(1.);
-	do_predu(1);
+	pockejte(1.*4.);
+	do_predu(1+1);
 	pockejte(1.);
 	do_predu(1);
 	pockejte(1.);

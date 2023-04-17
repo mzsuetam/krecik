@@ -26,17 +26,23 @@ class Interpreter:
         if parser_tree:
             self.visit_tree(parser_tree)
 
-    @staticmethod
-    def parse_tree(input_stream: InputStream) -> Tree | None:
+    def parse_tree(self, input_stream: InputStream) -> Tree | None:
         try:
             lexer = KrecikLexer(input_stream)
             stream = CommonTokenStream(lexer)
-            parser = KrecikParser(stream)
+            parser = self.get_parser(stream)
             tree = parser.primary_expression()
             return tree
         except RecognitionException as exc:
             print(exc)
             return None
+
+    @staticmethod
+    def get_parser(stream: CommonTokenStream) -> KrecikParser:
+        parser = KrecikParser(stream)
+        parser.removeErrorListeners()
+        # parser.addErrorListener()
+        return parser
 
     def visit_tree(self, parser_tree: Tree) -> Any:
         try:

@@ -87,7 +87,7 @@ class KrecikVariableUndeclaredError(KrecikException):
 
 
 class KrecikVariableUnassignedError(KrecikException):
-    message_schema = "Unassigned variable: {name}."
+    message_schema = "Usage of unassigned variable: {name}."
     attrs = {"name": "not specified"}
 
 

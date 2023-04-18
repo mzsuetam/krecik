@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Type
 
 from antlr4.tree.Tree import ErrorNodeImpl
 
@@ -6,6 +6,7 @@ from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
 from interpreter.decorators import handle_exception
 from interpreter.exceptions import (
+    KrecikVariableUnassignedError,
     KrecikVariableValueUnassignableError,
     KrecikVariableAssignedTypeError,
     KrecikSyntaxError,
@@ -73,24 +74,29 @@ class Visitor(KrecikVisitor):
         if literal := ctx.literal():
             return self.visit(literal)
         if ctx.VARIABLE_NAME():
-            var = self.variable_stack.get_var_value(ctx.getText())
+            name = ctx.VARIABLE_NAME().symbol.text
+            var = self.variable_stack.get_var_value(name)
+            if var.value is None:
+                raise KrecikVariableUnassignedError(name=var)
             return var
         if unary_operator := ctx.unary_operator():
+            symbol = self.visit(unary_operator)
             expression = self.visit(ctx.expression())
-            match unary_operator:
+            match symbol:
                 case "+":
                     return Cislo(expression.value)
                 case "-":
                     return Cislo(-expression.value)
-                case "Ne":
+                case "ne":
                     return Logicki(not expression.value)
         if ctx.children[0].getText() == "(":
             return self.visit(ctx.expression())
         if binary_operator := ctx.binary_operator():
+            symbol = self.visit(binary_operator)
             first_expression = self.visit(ctx.expression(0))
             second_expression = self.visit(ctx.expression(1))
             if isinstance(first_expression, Cislo) and isinstance(second_expression, Cislo):
-                match binary_operator:
+                match symbol:
                     case "+":
                         return Cislo(first_expression.value + second_expression.value)
                     case "-":
@@ -104,7 +110,7 @@ class Visitor(KrecikVisitor):
                     case "wetsi":
                         return Logicki(first_expression.value > second_expression.value)
             if isinstance(first_expression, Cely) and isinstance(second_expression, Cely):
-                match binary_operator:
+                match symbol:
                     case "+":
                         return Cely(first_expression.value + second_expression.value)
                     case "-":
@@ -120,6 +126,12 @@ class Visitor(KrecikVisitor):
             raise NotImplementedError("Incompatible expressions' types")
         raise NotImplementedError("Unknown expression type")
 
+    def visitUnary_operator(self, ctx: KrecikParser.Unary_operatorContext) -> str:
+        return ctx.getText()
+
+    def visitBinary_operator(self, ctx: KrecikParser.Binary_operatorContext) -> str:
+        return ctx.getText()
+
     @handle_exception
     def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
         value = ctx.getText()
@@ -132,23 +144,20 @@ class Visitor(KrecikVisitor):
         raise NotImplementedError("Unknown literal type")
 
     @handle_exception
-    def visitVar_type(self, ctx: KrecikParser.Var_typeContext) -> str:
-        if ctx.Cislo():
-            return Cislo.type_name
-        if ctx.Cely():
-            return Cely.type_name
-        if ctx.Logicki():
-            return Logicki.type_name
-        raise NotImplementedError("Unknown var type")
-
-    @handle_exception
     def visitDeclaration(self, ctx: KrecikParser.DeclarationContext) -> KrecikType:
-        v_type = self.visit(ctx.var_type())
-        name = str(ctx.VARIABLE_NAME())
-        var = self.variable_stack.declare(v_type, name)
-        if var.type_name != v_type:
-            raise RuntimeError(f"Variable declared type differ ({var.type_name},{v_type})")
+        var_type = self.visit(ctx.var_type())
+        name = ctx.VARIABLE_NAME().symbol.text
+        var = self.variable_stack.declare(var_type, name)
         return var
+
+    def visitVar_type(self, ctx: KrecikParser.Var_typeContext) -> Type[KrecikType]:
+        if ctx.Cislo():
+            return Cislo
+        if ctx.Cely():
+            return Cely
+        if ctx.Logicki():
+            return Logicki
+        raise NotImplementedError("Unknown var type")
 
     @handle_exception
     def visitAssignment(self, ctx: KrecikParser.AssignmentContext) -> None:

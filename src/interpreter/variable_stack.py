@@ -1,8 +1,7 @@
-from interpreter.exceptions import KrecikException, KrecikVariableUndeclaredError
-from interpreter.krecik_types.cely import Cely
-from interpreter.krecik_types.cislo import Cislo
+from typing import Type
+
+from interpreter.exceptions import KrecikVariableUndeclaredError
 from interpreter.krecik_types.krecik_type import KrecikType
-from interpreter.krecik_types.logicki import Logicki
 
 
 class VariableStack:
@@ -11,22 +10,18 @@ class VariableStack:
         self.current_func_stack: list[tuple[str, int]] = []
 
     def get_var_value(self, var_name: str) -> KrecikType:
-        var = self._get_var(var_name)
-        return var
-
-    def set_var_value(self, var_name: str, value: KrecikType) -> None:
-        var = self._get_var(var_name)
-        var.value = value
-
-    def _get_var(self, var_name: str) -> KrecikType:
         var = None
         for i in range(self._get_current_stack(), -1, -1):
-            var = self.stack[self._get_current_function()][i][var_name]
+            var = self.stack[self._get_current_function()][i].get(var_name)
             if var is not None:
                 break
         if not var:
             raise KrecikVariableUndeclaredError(name=var_name)
         return var
+
+    def set_var_value(self, var_name: str, value: KrecikType) -> None:
+        var = self.get_var_value(var_name)
+        var.value = value
 
     def _get_current_function(self) -> str:
         return self.current_func_stack[len(self.current_func_stack) - 1][0]
@@ -85,17 +80,8 @@ class VariableStack:
                     string += f"\t\t{s_val}\n"
         return string
 
-    def declare(self, var_type: str, var_name: str) -> KrecikType:
-        var: KrecikType | None = None
-        if var_type == Cely.type_name:
-            var = Cely(None, var_name)
-        if var_type == Cislo.type_name:
-            var = Cislo(None, var_name)
-        if var_type == Logicki.type_name:
-            var = Logicki(None, var_name)
-        if not var:
-            raise KrecikException()
-
+    def declare(self, var_type: Type[KrecikType], var_name: str) -> KrecikType:
+        var = var_type(None, name=var_name)
         # dodajemy zmienną do obecnego stacka w obecnej funkcji
         func = self._get_current_function()
         stack = self._get_current_stack()

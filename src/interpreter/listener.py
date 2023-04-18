@@ -30,6 +30,7 @@ class Listener(KrecikListener):
 
     # Zamykamy top level dict
     def exitFunction_declaration(self, ctx:KrecikParser.Function_declarationContext):
+        self.variable_stack.stack.pop(self.current_func)
         self.current_func = None
 
     # Otwieramy stack
@@ -40,6 +41,7 @@ class Listener(KrecikListener):
 
     # Zamykamy stack
     def exitBody(self, ctx:KrecikParser.BodyContext):
+        self.variable_stack.stack.get(self.current_func).pop()
         self.current_stack -= 1
         pass
 

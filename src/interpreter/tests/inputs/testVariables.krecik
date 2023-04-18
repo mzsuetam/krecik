@@ -1,3 +1,8 @@
+nedostatek aaa(cislo i){
+    cislo a = 3.;
+    cislo i;
+}
+
 nedostatek ahoj() {
 
     cislo j = 4.;
@@ -9,12 +14,13 @@ nedostatek ahoj() {
     opakujte az 4 {
         cely i = 2;
         opakujte az 4 {
-            cely i = 3;
+            i = 3;
+            cely k=0;
         }
     }
-    /*opakujte az 4 {
+    opakujte az 4 {
         cely i = 10;
-    }*/
+    }
 
 
 	pockejte(j);

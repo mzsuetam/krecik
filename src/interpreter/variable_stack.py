@@ -1,5 +1,8 @@
 from interpreter.exceptions import KrecikException, KrecikVariableUnassignedError, KrecikVariableUndeclaredError
+from interpreter.krecik_types.cely import Cely
+from interpreter.krecik_types.cislo import Cislo
 from interpreter.krecik_types.krecik_type import KrecikType
+from interpreter.krecik_types.logicki import Logicki
 
 
 class VariableStack:
@@ -48,6 +51,9 @@ class VariableStack:
             Use to enter given function variable stack pile,
             e.g. before calling a function
         """
+        # dodajemy zbiór stacków funkcji i ustawiamy ją jako aktualnyą
+        self.stack.update({func_name: []})
+        self.stack.get(func_name).append({})
         self.current_func_stack.append((func_name, 0))
 
     def exitFunction(self):
@@ -56,15 +62,19 @@ class VariableStack:
             and automatically go to previous one.
             e.g. after calling a function
         """
-        self.current_func_stack.pop()
+        # usuwamy zbiór stacków funkcji i ustawiamy poprzedni jako aktualny
+        key, val = self.current_func_stack.pop()
+        self.stack.pop(key)
 
     def enterStack(self):
         """
             Use to enter next variable stack of current function,
             e.g. before entering if body
         """
+        # dodajemy stack do obecnej funkcji, ustawiamy go jako aktualny
         if len(self.current_func_stack) > 0:
             func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
+            self.stack.get(func_name).append({})
             self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i+1)
 
     def exitStack(self):
@@ -73,7 +83,9 @@ class VariableStack:
             and automatically go to previous one.
             e.g. after exiting if body
         """
+        # usuwamy obecny stack z obecnej funkcji, ustawiamy poprzedni jako aktualny
         func_name, i = self.current_func_stack[len(self.current_func_stack)-1]
+        self.stack.get(func_name).pop()
         self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i-1)
 
     def __str__(self):
@@ -86,3 +98,19 @@ class VariableStack:
                     string += f"\t\t{s_val}\n"
         return string
 
+    def declare(self, var_type: str, var_name: str) -> KrecikType:
+        var: KrecikType | None = None
+        if var_type == Cely.type_name:
+            var = Cely(None, var_name)
+        if var_type == Cislo.type_name:
+            var = Cislo(None, var_name)
+        if var_type == Logicki.type_name:
+            var = Logicki(None, var_name)
+        if not var:
+            raise KrecikException()
+
+        # dodajemy zmienną do obecnego stacka w obecnej funkcji
+        func = self.__getCurrFunction()
+        stack = self.__getCurrStack()
+        self.stack.get(func)[stack].update({var_name: var})
+        return var

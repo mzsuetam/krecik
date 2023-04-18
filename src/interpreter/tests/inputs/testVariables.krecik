@@ -1,17 +1,7 @@
-nedostatek aaa(cislo i, logicki j){
-    cislo i;
-    opakujte az 4 {
-        logicki i;
-        opakujte az 4 {
-            cislo c;
-        }
-    }
-    cislo d;
-}
-
 nedostatek ahoj() {
+
     cislo j = 4.;
-    j = 2.;
+    j = 1.;
     cely i = 1;
 
 	do_predu(i);
@@ -22,6 +12,10 @@ nedostatek ahoj() {
             cely i = 3;
         }
     }
+    /*opakujte az 4 {
+        cely i = 10;
+    }*/
+
 
 	pockejte(j);
 

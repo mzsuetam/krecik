@@ -94,6 +94,10 @@ class KrecikVariableAssignedTypeError(KrecikException):
     message_schema = "Cannot assign value type {val_type} to variable {name} of type {type}."
     attrs = {"type_name": "not specified", "name": "not specified"}
 
+class KrecikVariableUsedBeforeDeclarationError(KrecikException):
+    message_schema = "Variable {name} used before declaration."
+    attrs = {"type_name": "not specified", "name": "not specified"}
+
 class KrecikSyntaxError(KrecikException):
     message_schema = "Syntax error. {extra_info}"
     attrs = {"extra_info": "not specified"}

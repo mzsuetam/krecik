@@ -7,7 +7,7 @@ from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
 from interpreter.decorators import handle_exception
 from interpreter.exceptions import KrecikException, KrecikVariableValueUnassignableError, \
-    KrecikVariableAssignedTypeError, KrecikSyntaxError
+    KrecikVariableAssignedTypeError, KrecikSyntaxError, KrecikVariableUsedBeforeDeclarationError
 from interpreter.function_mapper import FunctionMapper
 
 from interpreter.krecik_types.cely import Cely
@@ -83,7 +83,10 @@ class Visitor(KrecikVisitor):
             krecik_literal = self.visit(ctx.children[0])
             return krecik_literal
         if ctx.VARIABLE_NAME():
-            return self.variable_stack.getVarValue(ctx.getText())
+            var = self.variable_stack.getVarValue(ctx.getText())
+            if not var.idDeclared():
+                raise KrecikVariableUsedBeforeDeclarationError(name=var.name)
+            return var
         raise NotImplementedError("Unknown expression type")
 
     def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
@@ -111,6 +114,7 @@ class Visitor(KrecikVisitor):
         var = self.variable_stack.getVarValue(name)
         if var.type_name != v_type:
             raise RuntimeError(f"Variable declared type differ ({var.type_name},{v_type})")
+        var.declare()
         return var
 
     def visitAssignment(self, ctx:KrecikParser.AssignmentContext):
@@ -129,6 +133,8 @@ class Visitor(KrecikVisitor):
             var = self.visit(ctx.children[0])
         if ctx.VARIABLE_NAME():
             var = self.variable_stack.getVarValue(str(ctx.VARIABLE_NAME()))
+            if not var.idDeclared():
+                raise KrecikVariableUsedBeforeDeclarationError(name=var.name)
         return var
 
     def visitErrorNode(self, error_node: ErrorNodeImpl) -> None:

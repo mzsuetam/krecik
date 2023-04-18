@@ -1,4 +1,4 @@
-    # Generated from .\antlr\Krecik.g4 by ANTLR 4.12.0
+# Generated from C:/Users/Tomasz/Documents/GitHub/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .KrecikParser import KrecikParser

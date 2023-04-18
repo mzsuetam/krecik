@@ -21,7 +21,7 @@ class Visitor(KrecikVisitor):
     """
     Visitor is controller that performs game logic in Board and presents results in Window.
     """
-    
+
     def __init__(self, function_mapper: FunctionMapper, variable_stack: VariableStack) -> None:
         self.function_mapper = function_mapper
         self.variable_stack = variable_stack
@@ -32,7 +32,7 @@ class Visitor(KrecikVisitor):
         return return_value
 
     @handle_exception
-    def visitFunction_declaration(self, ctx:KrecikParser.Function_declarationContext):
+    def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext):
         name = str(ctx.VARIABLE_NAME())
         self.variable_stack.enterFunction(str(name))
         ### compute children between these lines ###
@@ -42,7 +42,7 @@ class Visitor(KrecikVisitor):
         return return_value
 
     @handle_exception
-    def visitBody(self, ctx:KrecikParser.BodyContext):
+    def visitBody(self, ctx: KrecikParser.BodyContext):
         self.variable_stack.enterStack()
         ### compute children between these lines ###
         val = self.visitChildren(ctx)
@@ -98,7 +98,7 @@ class Visitor(KrecikVisitor):
         raise NotImplementedError("Unknown literal type")
 
     @handle_exception
-    def visitVar_type(self, ctx:KrecikParser.Var_typeContext):
+    def visitVar_type(self, ctx: KrecikParser.Var_typeContext):
         if ctx.Cislo():
             return Cislo.type_name
         if ctx.Cely():
@@ -108,7 +108,7 @@ class Visitor(KrecikVisitor):
         raise RuntimeError("Unknown var type")
 
     @handle_exception
-    def visitDeclaration(self, ctx:KrecikParser.DeclarationContext):
+    def visitDeclaration(self, ctx: KrecikParser.DeclarationContext):
         v_type = self.visit(ctx.var_type())
         name = str(ctx.VARIABLE_NAME())
         var = self.variable_stack.declare(v_type, name)
@@ -117,7 +117,7 @@ class Visitor(KrecikVisitor):
         return var
 
     @handle_exception
-    def visitAssignment(self, ctx:KrecikParser.AssignmentContext):
+    def visitAssignment(self, ctx: KrecikParser.AssignmentContext):
         var: KrecikType = self.visit(ctx.variable())
         expr: KrecikType = self.visit(ctx.expression())
         if not expr:
@@ -128,7 +128,7 @@ class Visitor(KrecikVisitor):
         var.value = expr.value
 
     @handle_exception
-    def visitVariable(self, ctx:KrecikParser.VariableContext):
+    def visitVariable(self, ctx: KrecikParser.VariableContext):
         var = None
         if ctx.declaration():
             var = self.visit(ctx.children[0])
@@ -140,3 +140,24 @@ class Visitor(KrecikVisitor):
         exc = KrecikSyntaxError(extra_info=str(error_node))
         exc.inject_context_to_exc(error_node.parentCtx)
 
+    @handle_exception
+    def visitConditional_instruction(self, ctx: KrecikParser.Conditional_instructionContext) -> KrecikType:
+        return self.visit(ctx.expression())
+
+    @handle_exception
+    def visitInstruction(self, ctx:KrecikParser.InstructionContext) -> bool:
+        if cond_expr := ctx.conditional_instruction():
+            logicki = self.visit(cond_expr)
+            flag = logicki.value
+            return flag
+
+    @handle_exception
+    def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
+        if instruction := ctx.instruction():
+            if self.visit(instruction):
+                self.visit(ctx.body())
+            return
+        if body_line := ctx.body_line():
+            self.visitChildren(ctx)
+            return
+        raise NotImplementedError("Unknown body item.")

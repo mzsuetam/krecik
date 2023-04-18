@@ -14,6 +14,7 @@ def visitor() -> Visitor:
     board = plains(6, 6)
     board_publisher = BoardPublisher()
     board_manager = BoardManager(board, board_publisher)
+    board_manager.wait = lambda *args, **kwargs: None  # type: ignore
 
     window = TerminalDisplay(board)
     board_publisher.subscribe(window)

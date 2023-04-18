@@ -7,23 +7,23 @@ nedostatek ahoj() {
 
     cislo j = 4.;
     j = 1.;
-    cely i = 1;
+    cely i = 2;
 
-	do_predu(i);
+    do_predu(i);
 
-    opakujte az 4 {
+    kdyz ( true ) pak {
         cely i = 2;
-        opakujte az 4 {
+        kdyz (true) pak{
             i = 3;
             cely k=0;
         }
     }
-    opakujte az 4 {
+    kdyz ( true ) pak {
         cely i = 10;
     }
 
 
-	pockejte(j);
+    pockejte(j);
 
     vratit;
 }

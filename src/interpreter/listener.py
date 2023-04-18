@@ -17,7 +17,7 @@ class Listener(KrecikListener):
     # Otwieramy top level dict
     def enterFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> None:
         func_name = ctx.VARIABLE_NAME().symbol.text
-        if self.variable_stack.stack[func_name]:
+        if self.variable_stack.stack.get(func_name):
             raise KrecikVariableRedeclarationError(name=func_name)
         self.variable_stack.stack.update({func_name: []})
         self.current_func = func_name
@@ -54,7 +54,6 @@ class Listener(KrecikListener):
             raise KrecikException()
 
         # tylko ten sam stack, bo niżej możemy miec 'stare zmienne'
-        if self.variable_stack.stack[self.current_func][self.current_stack][var_name]:
+        if self.variable_stack.stack[self.current_func][self.current_stack].get(var_name):
             raise KrecikVariableRedeclarationError(var_name=var_name, func_name=self.current_func)
-
         self.variable_stack.stack[self.current_func][self.current_stack][var_name] = var

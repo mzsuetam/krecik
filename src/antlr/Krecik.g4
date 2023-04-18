@@ -197,21 +197,25 @@ BLOCKCOMMENT
     : '/*' .*? '*/' -> skip
     ;
 
-VARIABLE_NAME
-    : [a-z_]+
-    ;
-
-FLOAT_VAL  // accepts: 10.11 and 10 and 10. and .01 
-    :  INT_VAL '.' [0-9]*
-    | '0'? '.' [0-9]+
-    ;
-
-INT_VAL 
-    : '0'
-    | [1-9][0-9]*
-    ;
-
 BOOLEAN_VAL
     : 'true'
     | 'false'
     ;
+
+FLOAT_VAL  // accepts: 10.11 and 10 and 10. and .01
+    :  INT_VAL '.' [0-9]*
+    | '0'? '.' [0-9]+
+    ;
+
+INT_VAL
+    : '0'
+    | [1-9][0-9]*
+    ;
+
+VARIABLE_NAME
+    : [a-z_]+
+    ;
+
+
+
+

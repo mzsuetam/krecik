@@ -70,33 +70,36 @@ class KrecikValueError(KrecikException):
     message_schema = "Invalid value for {type_name}: {value}."
     attrs = {"type_name": "not specified", "value": "not specified"}
 
+
 class KrecikVariableRedeclarationError(KrecikException):
     message_schema = "Redeclaration of variabvle: {var_name} in function {func_name}."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"var_name": "not specified", "func_name": "not specified"}
+
 
 class KrecikFunctionRedeclarationError(KrecikException):
     message_schema = "Redeclaration of function: {name}."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"name": "not specified"}
+
 
 class KrecikVariableUndeclaredError(KrecikException):
     message_schema = "Undeclared variable: {name}."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"name": "not specified"}
+
 
 class KrecikVariableUnassignedError(KrecikException):
     message_schema = "Unassigned variable: {name}."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"name": "not specified"}
+
 
 class KrecikVariableValueUnassignableError(KrecikException):
     message_schema = "Expression '{expr}' does not return value, thus cannot be assigned."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"expr": "not specified"}
+
 
 class KrecikVariableAssignedTypeError(KrecikException):
     message_schema = "Cannot assign value type {val_type} to variable {name} of type {type}."
-    attrs = {"type_name": "not specified", "name": "not specified"}
+    attrs = {"type_name": "not specified", "name": "not specified", "type": "not specified"}
 
-class KrecikVariableUsedBeforeDeclarationError(KrecikException):
-    message_schema = "Variable {name} used before declaration."
-    attrs = {"type_name": "not specified", "name": "not specified"}
 
 class KrecikSyntaxError(KrecikException):
     message_schema = "Syntax error. {extra_info}"

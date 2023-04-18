@@ -9,13 +9,6 @@ class KrecikType(ABC):
     def __init__(self, value: Any, name: str | None = None) -> None:
         self.value = self._parse_value(value) if value is not None else None
         self.name = name
-        self.__declare = False
-
-    def declare(self):
-        self.__declare = True
-
-    def idDeclared(self) -> bool:
-        return self.__declare
 
     @abstractmethod
     def _parse_value(self, value: str) -> Any:

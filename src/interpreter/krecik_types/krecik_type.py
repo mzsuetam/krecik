@@ -7,7 +7,7 @@ class KrecikType(ABC):
 
     def __init__(self, value: Any, name: str | None = None) -> None:
         self.value = value
-        self.name = name
+        self.name = name or "<no name>"
 
     @property
     def value(self) -> Any:

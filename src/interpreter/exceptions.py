@@ -91,12 +91,12 @@ class KrecikVariableUnassignedError(KrecikException):
     attrs = {"name": "not specified"}
 
 
-class KrecikVariableValueUnassignableError(KrecikException):
+class KrecikVariableAssigningNoneValueError(KrecikException):
     message_schema = "Expression '{expr}' does not return value, thus cannot be assigned."
     attrs = {"expr": "not specified"}
 
 
-class KrecikVariableAssignedTypeError(KrecikException):
+class KrecikVariableDifferentTypeAssignedError(KrecikException):
     message_schema = "Cannot assign value type {val_type} to variable {name} of type {type}."
     attrs = {"type_name": "not specified", "name": "not specified", "type": "not specified"}
 

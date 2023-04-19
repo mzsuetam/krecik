@@ -7,8 +7,8 @@ from antlr.KrecikVisitor import KrecikVisitor
 from interpreter.decorators import handle_exception
 from interpreter.exceptions import (
     KrecikVariableUnassignedError,
-    KrecikVariableValueUnassignableError,
-    KrecikVariableAssignedTypeError,
+    KrecikVariableAssigningNoneValueError,
+    KrecikVariableDifferentTypeAssignedError,
     KrecikSyntaxError,
     KrecikIncompatibleTypes,
 )
@@ -182,9 +182,9 @@ class Visitor(KrecikVisitor):
         expr: KrecikType = self.visit(ctx.expression())
         if not expr:
             e_name = ctx.getText().split(" = ")[1]
-            raise KrecikVariableValueUnassignableError(expr=e_name)
+            raise KrecikVariableAssigningNoneValueError(expr=e_name)
         if var.type_name != expr.type_name:
-            raise KrecikVariableAssignedTypeError(
+            raise KrecikVariableDifferentTypeAssignedError(
                 name=var.name, type=var.type_name, val_type=expr.type_name
             )
         var.value = expr.value

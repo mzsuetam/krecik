@@ -1,0 +1,28 @@
+nedostatek aaa(cislo i){
+    cislo a = 3.;
+    cislo i;
+}
+
+nedostatek ahoj() {
+
+    // declaration
+    cislo ci = 4.;
+    logicki lo;
+    cely ce;
+
+    // Assignment
+    lo = true;
+    ce = 2;
+    cislo ci_dwa = ci;
+
+    kdyz ( true ) pak {
+        cely ce = 2;
+        kdyz (true) pak{
+            ce = 3;
+            cely ce = 0;
+        }
+    }
+    kdyz ( true ) pak {
+        cely de = 10;
+    }
+}

@@ -1,0 +1,4 @@
+nedostatek ahoj() {
+    cislo i;
+    cely i = 4;
+}

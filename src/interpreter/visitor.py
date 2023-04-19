@@ -10,6 +10,7 @@ from interpreter.exceptions import (
     KrecikVariableValueUnassignableError,
     KrecikVariableAssignedTypeError,
     KrecikSyntaxError,
+    KrecikIncompatibleTypes,
 )
 from interpreter.function_mapper import FunctionMapper
 
@@ -25,9 +26,15 @@ class Visitor(KrecikVisitor):
     Visitor is controller that performs game logic in Board and presents results in Window.
     """
 
-    def __init__(self, function_mapper: FunctionMapper, variable_stack: VariableStack) -> None:
+    def __init__(
+        self,
+        function_mapper: FunctionMapper,
+        variable_stack: VariableStack,
+        debug: bool = False,
+    ) -> None:
         self.function_mapper = function_mapper
         self.variable_stack = variable_stack
+        self._debug = debug
 
     @handle_exception
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> Any:
@@ -77,11 +84,11 @@ class Visitor(KrecikVisitor):
             name = ctx.VARIABLE_NAME().symbol.text
             var = self.variable_stack.get_var_value(name)
             if var.value is None:
-                raise KrecikVariableUnassignedError(name=var)
+                raise KrecikVariableUnassignedError(name=var.name)
             return var
         if unary_operator := ctx.unary_operator():
             symbol = self.visit(unary_operator)
-            expression = self.visit(ctx.expression())
+            expression = self.visit(ctx.expression(0))
             match symbol:
                 case "+":
                     return Cislo(expression.value)
@@ -90,7 +97,7 @@ class Visitor(KrecikVisitor):
                 case "ne":
                     return Logicki(not expression.value)
         if ctx.children[0].getText() == "(":
-            return self.visit(ctx.expression())
+            return self.visit(ctx.expression(0))
         if binary_operator := ctx.binary_operator():
             symbol = self.visit(binary_operator)
             first_expression = self.visit(ctx.expression(0))
@@ -123,7 +130,17 @@ class Visitor(KrecikVisitor):
                         return Logicki(first_expression.value < second_expression.value)
                     case "wetsi":
                         return Logicki(first_expression.value > second_expression.value)
-            raise NotImplementedError("Incompatible expressions' types")
+            if isinstance(first_expression, Logicki) and isinstance(second_expression, Logicki):
+                match symbol:
+                    case "nebo":
+                        return Logicki(first_expression.value or second_expression.value)
+                    case "oba":
+                        return Logicki(first_expression.value and second_expression.value)
+                    case "je":
+                        return Logicki(first_expression.value == second_expression.value)
+                    case "neje":
+                        return Logicki(first_expression.value != second_expression.value)
+            raise KrecikIncompatibleTypes()
         raise NotImplementedError("Unknown expression type")
 
     def visitUnary_operator(self, ctx: KrecikParser.Unary_operatorContext) -> str:

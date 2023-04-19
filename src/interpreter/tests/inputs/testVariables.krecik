@@ -1,29 +1,4 @@
-nedostatek aaa(cislo i){
-    cislo a = 3.;
-    cislo i;
-}
-
 nedostatek ahoj() {
-
-    cislo j = 4.;
-    j = 1.;
-    cely i = 2;
-
-    do_predu(i);
-
-    kdyz ( true ) pak {
-        cely i = 2;
-        kdyz (true) pak{
-            i = 3;
-            cely k=0;
-        }
-    }
-    kdyz ( true ) pak {
-        cely i = 10;
-    }
-
-
-    pockejte(j);
-
-    vratit;
+    cely a = 1+7*3;
+    print(a);
 }

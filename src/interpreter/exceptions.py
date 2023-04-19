@@ -104,3 +104,7 @@ class KrecikVariableAssignedTypeError(KrecikException):
 class KrecikSyntaxError(KrecikException):
     message_schema = "Syntax error. {extra_info}"
     attrs = {"extra_info": "not specified"}
+
+
+class KrecikIncompatibleTypes(KrecikException):
+    message_schema = "Incompatible expressions' types"

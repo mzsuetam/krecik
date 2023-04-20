@@ -89,57 +89,69 @@ class Visitor(KrecikVisitor):
         if unary_operator := ctx.unary_operator():
             symbol = self.visit(unary_operator)
             expression = self.visit(ctx.expression(0))
-            match symbol:
-                case "+":
-                    return Cislo(expression.value)
-                case "-":
-                    return Cislo(-expression.value)
-                case "ne":
-                    return Logicki(not expression.value)
+            exp_val = expression.value
+            if isinstance(expression, Cislo):
+                match symbol:
+                    case "+":
+                        return Cislo(exp_val)
+                    case "-":
+                        return Cislo(-exp_val)
+                    case "ne":
+                        return Logicki(not exp_val)
+            if isinstance(expression, Cely):
+                match symbol:
+                    case "+":
+                        return Cely(exp_val)
+                    case "-":
+                        return Cely(-exp_val)
+                    case "ne":
+                        return Logicki(not exp_val)
         if ctx.children[0].getText() == "(":
             return self.visit(ctx.expression(0))
         if binary_operator := ctx.binary_operator():
             symbol = self.visit(binary_operator)
             first_expression = self.visit(ctx.expression(0))
             second_expression = self.visit(ctx.expression(1))
+            first_value = first_expression.value
+            second_value = second_expression.value
             if isinstance(first_expression, Cislo) and isinstance(second_expression, Cislo):
                 match symbol:
                     case "+":
-                        return Cislo(first_expression.value + second_expression.value)
+                        return Cislo(first_value + second_value)
                     case "-":
-                        return Cislo(first_expression.value - second_expression.value)
+                        return Cislo(first_value - second_value)
                     case "*":
-                        return Cislo(first_expression.value * second_expression.value)
+                        return Cislo(first_value * second_value)
                     case "/":
-                        return Cislo(first_expression.value / second_expression.value)
+                        return Cislo(first_value / second_value)
                     case "mensi":
-                        return Logicki(first_expression.value < second_expression.value)
+                        return Logicki(first_value < second_value)
                     case "wetsi":
-                        return Logicki(first_expression.value > second_expression.value)
+                        return Logicki(first_value > second_value)
             if isinstance(first_expression, Cely) and isinstance(second_expression, Cely):
                 match symbol:
                     case "+":
-                        return Cely(first_expression.value + second_expression.value)
+                        return Cely(first_value + second_value)
                     case "-":
-                        return Cely(first_expression.value - second_expression.value)
+                        return Cely(first_value - second_value)
                     case "*":
-                        return Cely(first_expression.value * second_expression.value)
+                        return Cely(first_value * second_value)
                     case "/":
-                        return Cely(first_expression.value / second_expression.value)
+                        return Cely(first_value / second_value)
                     case "mensi":
-                        return Logicki(first_expression.value < second_expression.value)
+                        return Logicki(first_value < second_value)
                     case "wetsi":
-                        return Logicki(first_expression.value > second_expression.value)
+                        return Logicki(first_value > second_value)
             if isinstance(first_expression, Logicki) and isinstance(second_expression, Logicki):
                 match symbol:
                     case "nebo":
-                        return Logicki(first_expression.value or second_expression.value)
+                        return Logicki(first_value or second_value)
                     case "oba":
-                        return Logicki(first_expression.value and second_expression.value)
+                        return Logicki(first_value and second_value)
                     case "je":
-                        return Logicki(first_expression.value == second_expression.value)
+                        return Logicki(first_value == second_value)
                     case "neje":
-                        return Logicki(first_expression.value != second_expression.value)
+                        return Logicki(first_value != second_value)
             raise KrecikIncompatibleTypes()
         raise NotImplementedError("Unknown expression type")
 

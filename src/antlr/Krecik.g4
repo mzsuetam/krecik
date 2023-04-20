@@ -42,22 +42,20 @@ body_line
 	| assignment
     ;
 
+expression
+	: unary_operator SP* '(' SP* expression SP* ')'
+	| product SP* ('+' | '-') SP* expression
+	;
+
 product
-    :
-    VARIABLE_NAME ('*' | '/') product
+    : product SP* (('*' | '/') SP* product)*
+    | '(' SP* expression SP* ')'
+    | unary_operator SP* product
     | VARIABLE_NAME
-    | expression
+    | literal
+    | function_call
     ;
 
-expression
-	: '(' SP* expression SP* ')'
-	| unary_operator SP* expression
-	| product SP* ('+' | '-') SP* expression
-    | product
-	| function_call
-	| VARIABLE_NAME
-	| literal
-	;
 
 function_call
 	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'

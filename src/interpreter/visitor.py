@@ -76,6 +76,62 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+        if product := ctx.product():
+            symbol = self.visit(ctx.children[1])
+            product = self.visit(ctx.product(0))
+            prod_val = product.value
+            expression = self.visit(ctx.expression(0))
+            exp_val = expression.value
+            if isinstance(product, Cislo) and isinstance(expression, Cislo):
+                match symbol:
+                    case '+':
+                        return Cislo(prod_val + exp_val)
+                    case '-':
+                        return Cislo(prod_val + exp_val)
+            if isinstance(product, Cely) and isinstance(expression, Cely):
+                match symbol:
+                    case '+':
+                        return Cely(prod_val + exp_val)
+                    case '-':
+                        return Cely(prod_val + exp_val)
+    @handle_exception
+    def visitProduct(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+        if func_call := ctx.function_call():
+            return self.visit(func_call)
+        if literal := ctx.literal():
+            return self.visit(literal)
+        if ctx.VARIABLE_NAME():
+            name = ctx.VARIABLE_NAME().symbol.text
+            var = self.variable_stack.get_var_value(name)
+            if var.value is None:
+                raise KrecikVariableUnassignedError(name=var.name)
+            return var
+        if ctx.children[0].getText() == "(":
+            return self.visit(ctx.expression(0))
+        if unary_operator := ctx.unary_operator():
+            symbol = self.visit(unary_operator)
+            expression = self.visit(ctx.product(0))
+            exp_val = expression.value
+            if isinstance(expression, Cislo):
+                match symbol:
+                    case "+":
+                        return Cislo(exp_val)
+                    case "-":
+                        return Cislo(-exp_val)
+                    case "ne":
+                        return Logicki(not exp_val)
+            if isinstance(expression, Cely):
+                match symbol:
+                    case "+":
+                        return Cely(exp_val)
+                    case "-":
+                        return Cely(-exp_val)
+                    case "ne":
+                        return Logicki(not exp_val)
+
+    '''
+    @handle_exception
+    def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
         if func_call := ctx.function_call():
             return self.visit(func_call)
         if literal := ctx.literal():
@@ -154,7 +210,7 @@ class Visitor(KrecikVisitor):
                         return Logicki(first_value != second_value)
             raise KrecikIncompatibleTypes()
         raise NotImplementedError("Unknown expression type")
-
+    '''
     def visitUnary_operator(self, ctx: KrecikParser.Unary_operatorContext) -> str:
         return ctx.getText()
 

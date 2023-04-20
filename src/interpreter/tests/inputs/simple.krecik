@@ -1,9 +1,10 @@
 nedostatek ahoj() {
-	cely a = 2 + 2;
+	cely a = 2 + 2*2;
 	cislo b = 3.14;
 	do_predu(a);
 	pockejte(6. - b);
 	do_predu(1);
+	v_levo();
 	pockejte(3. * 3.);
 	do_predu(3);
     vratit;

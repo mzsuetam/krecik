@@ -45,11 +45,11 @@ class Listener(KrecikListener):
         var: KrecikType | None = None
 
         if var_type == Cely.type_name:  # TODO: dont use .type_name
-            var = Cely(None, var_name)
+            var = Cely(None)
         if var_type == Cislo.type_name:  # TODO: dont use .type_name
-            var = Cislo(None, var_name)
+            var = Cislo(None)
         if var_type == Logicki.type_name:  # TODO: dont use .type_name
-            var = Logicki(None, var_name)
+            var = Logicki(None)
         if not var:
             raise KrecikException()
 

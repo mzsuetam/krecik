@@ -81,7 +81,7 @@ class VariableStack:
         return string
 
     def declare(self, var_type: Type[KrecikType], var_name: str) -> KrecikType:
-        var = var_type(None, name=var_name)
+        var = var_type(None)
         # dodajemy zmienną do obecnego stacka w obecnej funkcji
         func = self._get_current_function()
         stack = self._get_current_stack()

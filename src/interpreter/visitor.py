@@ -11,6 +11,7 @@ from interpreter.exceptions import (
     KrecikVariableAssignedTypeError,
     KrecikSyntaxError,
     KrecikIncompatibleTypes,
+    NullValueUsageError,
 )
 from interpreter.function_mapper import FunctionMapper
 
@@ -34,7 +35,7 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> None:
-        self.visitChildren(ctx)
+        return self.visitChildren(ctx)
 
     @handle_exception
     def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> Any:
@@ -51,6 +52,188 @@ class Visitor(KrecikVisitor):
         self.variable_stack.exit_stack()
         return val
 
+    def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
+        if cond_expr := ctx.conditional_instruction():
+            logicki = self.visit(cond_expr)
+            if logicki.value:
+                self.visit(ctx.body()[0])
+            elif len(ctx.body()) > 1:
+                self.visit(ctx.body()[1])
+            return
+        if body_line := ctx.body_line():
+            self.visitChildren(body_line)
+            return
+        raise NotImplementedError("Unknown body item.")
+
+    @handle_exception
+    def visitExpressions_list(self, ctx: KrecikParser.Expressions_listContext) -> list[KrecikType]:
+        expr_list = [self.visit(ctx.expression())]
+        if rest := ctx.expressions_list():
+            expr_list += self.visit(rest)
+        return expr_list
+
+    @handle_exception
+    def visitExpressionUnaryOperator(
+        self, ctx: KrecikParser.ExpressionUnaryOperatorContext
+    ) -> KrecikType:
+        symbol = self.visit(ctx.secondary_operator())
+        expression = self.visit(ctx.expression())
+        if expression is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        match symbol:
+            case "+":
+                return expression
+            case "-":
+                return -expression
+            case "ne":
+                return ~expression
+        raise NotImplementedError("Bad symbol: ", symbol)
+
+    @handle_exception
+    def visitExpressionPrimaryOperator(
+        self, ctx: KrecikParser.ExpressionPrimaryOperatorContext
+    ) -> KrecikType:
+        left = self.visit(ctx.expression(0))
+        symbol = self.visit(ctx.primary_operator())
+        right = self.visit(ctx.expression(1))
+        if left is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        if right is None:
+            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+        if type(left) is type(right):
+            # print(left, right, symbol)
+            match symbol:
+                case "*":
+                    return left * right
+                case "/":
+                    return left / right
+        raise KrecikIncompatibleTypes(
+            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+        )
+
+    def visitPrimary_operator(self, ctx: KrecikParser.Primary_operatorContext) -> str:
+        return ctx.getText()
+
+    @handle_exception
+    def visitExpressionSecondaryOperator(
+        self, ctx: KrecikParser.ExpressionSecondaryOperatorContext
+    ) -> KrecikType:
+        left = self.visit(ctx.expression(0))
+        symbol = self.visit(ctx.secondary_operator())
+        right = self.visit(ctx.expression(1))
+        if left is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        if right is None:
+            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+        if type(left) is type(right):
+            match symbol:
+                case "+":
+                    return left + right
+                case "-":
+                    return left - right
+        raise KrecikIncompatibleTypes(
+            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+        )
+
+    def visitSecondary_operator(self, ctx: KrecikParser.Secondary_operatorContext) -> str:
+        return ctx.getText()
+
+    @handle_exception
+    def visitExpressionComparisonOperator(
+        self, ctx: KrecikParser.ExpressionComparisonOperatorContext
+    ) -> Logicki:
+        left = self.visit(ctx.expression(0))
+        symbol = self.visit(ctx.comparison_operator())
+        right = self.visit(ctx.expression(1))
+        if left is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        if right is None:
+            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+        if type(left) is type(right):
+            # print(left, right, symbol)
+            match symbol:
+                case "mensi":
+                    return left < right
+                case "wetsi":
+                    return left > right
+                case "je":
+                    return left == right
+                case "neje":
+                    return left != right
+        raise KrecikIncompatibleTypes(
+            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+        )
+
+    def visitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext) -> str:
+        return ctx.getText()
+
+    @handle_exception
+    def visitExpressionLogicalAndOperator(
+        self, ctx: KrecikParser.ExpressionLogicalAndOperatorContext
+    ) -> Logicki:
+        left = self.visit(ctx.expression(0))
+        right = self.visit(ctx.expression(1))
+        if left is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        if right is None:
+            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+        if type(left) is type(right):
+            return left and right
+        raise KrecikIncompatibleTypes(
+            operand_type="oba", type_1=left.type_name, type_2=right.type_name
+        )
+
+    @handle_exception
+    def visitExpressionLogicalOrOperator(
+        self, ctx: KrecikParser.ExpressionLogicalOrOperatorContext
+    ) -> Logicki:
+        left = self.visit(ctx.expression(0))
+        right = self.visit(ctx.expression(1))
+        if left is None:
+            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+        if right is None:
+            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+        if type(left) is type(right):
+            return left or right
+        raise KrecikIncompatibleTypes(
+            operand_type="nebo", type_1=left.type_name, type_2=right.type_name
+        )
+
+    @handle_exception
+    def visitParenthesisedExpression(
+        self, ctx: KrecikParser.ParenthesisedExpressionContext
+    ) -> KrecikType | None:
+        return self.visit(ctx.expression())
+
+    @handle_exception
+    def visitAtomExpression(self, ctx: KrecikParser.AtomExpressionContext) -> KrecikType | None:
+        return self.visit(ctx.atom())
+
+    @handle_exception
+    def visitAtom(self, ctx: KrecikParser.AtomContext) -> KrecikType | None:
+        if func_call := ctx.function_call():
+            return self.visit(func_call)
+        if literal := ctx.literal():
+            return self.visit(literal)
+        if ctx.VARIABLE_NAME():
+            name = ctx.VARIABLE_NAME().symbol.text
+            var = self.variable_stack.get_var_value(name)
+            if var.value is None:
+                raise KrecikVariableUnassignedError(name=name)
+            return var
+        raise NotImplementedError("Unknown product.")
+
+    @handle_exception
+    def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
+        value = ctx.getText()
+        if ctx.BOOLEAN_VAL():
+            return Logicki(value)
+        if ctx.FLOAT_VAL():
+            return Cislo(value)
+        if ctx.INT_VAL():
+            return Cely(value)
+        raise NotImplementedError("Unknown literal type")
+
     @handle_exception
     def visitFunction_call(self, ctx: KrecikParser.Function_callContext) -> KrecikType:
         name = ctx.VARIABLE_NAME().symbol.text
@@ -65,102 +248,6 @@ class Visitor(KrecikVisitor):
         return_value = self.function_mapper.call(name, arguments)
         self.variable_stack.exit_function()
         return return_value
-
-    @handle_exception
-    def visitExpressions_list(self, ctx: KrecikParser.Expressions_listContext) -> list[KrecikType]:
-        expr_list = [self.visit(ctx.expression())]
-        if rest := ctx.expressions_list():
-            expr_list += self.visit(rest)
-        return expr_list
-
-    @handle_exception
-    def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
-        if func_call := ctx.function_call():
-            return self.visit(func_call)
-        if literal := ctx.literal():
-            return self.visit(literal)
-        if ctx.VARIABLE_NAME():
-            name = ctx.VARIABLE_NAME().symbol.text
-            var = self.variable_stack.get_var_value(name)
-            if var.value is None:
-                raise KrecikVariableUnassignedError(name=var.name)
-            return var
-        if unary_operator := ctx.unary_operator():
-            symbol = self.visit(unary_operator)
-            expression = self.visit(ctx.expression(0))
-            match symbol:
-                case "+":
-                    return Cislo(expression.value)
-                case "-":
-                    return Cislo(-expression.value)
-                case "ne":
-                    return Logicki(not expression.value)
-        if ctx.children[0].getText() == "(":
-            return self.visit(ctx.expression(0))
-        if binary_operator := ctx.binary_operator():
-            symbol = self.visit(binary_operator)
-            first_expression = self.visit(ctx.expression(0))
-            second_expression = self.visit(ctx.expression(1))
-            if isinstance(first_expression, Cislo) and isinstance(second_expression, Cislo):
-                match symbol:
-                    case "+":
-                        return Cislo(first_expression.value + second_expression.value)
-                    case "-":
-                        return Cislo(first_expression.value - second_expression.value)
-                    case "*":
-                        return Cislo(first_expression.value * second_expression.value)
-                    case "/":
-                        return Cislo(first_expression.value / second_expression.value)
-                    case "mensi":
-                        return Logicki(first_expression.value < second_expression.value)
-                    case "wetsi":
-                        return Logicki(first_expression.value > second_expression.value)
-            if isinstance(first_expression, Cely) and isinstance(second_expression, Cely):
-                match symbol:
-                    case "+":
-                        return Cely(first_expression.value + second_expression.value)
-                    case "-":
-                        return Cely(first_expression.value - second_expression.value)
-                    case "*":
-                        return Cely(first_expression.value * second_expression.value)
-                    case "/":
-                        return Cely(first_expression.value / second_expression.value)
-                    case "mensi":
-                        return Logicki(first_expression.value < second_expression.value)
-                    case "wetsi":
-                        return Logicki(first_expression.value > second_expression.value)
-            if isinstance(first_expression, Logicki) and isinstance(second_expression, Logicki):
-                match symbol:
-                    case "nebo":
-                        return Logicki(first_expression.value or second_expression.value)
-                    case "oba":
-                        return Logicki(first_expression.value and second_expression.value)
-                    case "je":
-                        return Logicki(first_expression.value == second_expression.value)
-                    case "neje":
-                        return Logicki(first_expression.value != second_expression.value)
-            raise KrecikIncompatibleTypes(
-                type_1=first_expression.type_name,
-                type_2=second_expression.type_name,
-            )
-        raise NotImplementedError("Unknown expression type")
-
-    def visitUnary_operator(self, ctx: KrecikParser.Unary_operatorContext) -> str:
-        return ctx.getText()
-
-    def visitBinary_operator(self, ctx: KrecikParser.Binary_operatorContext) -> str:
-        return ctx.getText()
-
-    @handle_exception
-    def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
-        value = ctx.getText()
-        if ctx.BOOLEAN_VAL():
-            return Logicki(value)
-        if ctx.FLOAT_VAL():
-            return Cislo(value)
-        if ctx.INT_VAL():
-            return Cely(value)
-        raise NotImplementedError("Unknown literal type")
 
     @handle_exception
     def visitDeclaration(self, ctx: KrecikParser.DeclarationContext) -> KrecikType:
@@ -183,11 +270,11 @@ class Visitor(KrecikVisitor):
         var: KrecikType = self.visit(ctx.variable())
         expr: KrecikType = self.visit(ctx.expression())
         if not expr:
-            e_name = ctx.getText().split(" = ")[1]
+            e_name = ctx.getText().split("=")[1]
             raise KrecikVariableValueUnassignableError(expr=e_name)
         if var.type_name != expr.type_name:
             raise KrecikVariableAssignedTypeError(
-                name=var.name, type=var.type_name, val_type=expr.type_name
+                name=ctx.getText().split("=")[0], type=var.type_name, val_type=expr.type_name
             )
         var.value = expr.value
 
@@ -208,22 +295,3 @@ class Visitor(KrecikVisitor):
         self, ctx: KrecikParser.Conditional_instructionContext
     ) -> KrecikType:
         return self.visit(ctx.expression())
-
-    @handle_exception
-    def visitInstruction(self, ctx: KrecikParser.InstructionContext) -> bool:
-        if cond_expr := ctx.conditional_instruction():
-            logicki = self.visit(cond_expr)
-            flag = logicki.value
-            return flag
-        raise NotImplementedError("Unknown instruction.")
-
-    @handle_exception
-    def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
-        if instruction := ctx.instruction():
-            if self.visit(instruction):
-                self.visit(ctx.body())
-            return
-        if body_line := ctx.body_line():
-            self.visitChildren(body_line)
-            return
-        raise NotImplementedError("Unknown body item.")

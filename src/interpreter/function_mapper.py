@@ -5,6 +5,7 @@ from interpreter.exceptions import (
     IncorrectArgumentTypeError,
     IncorrectArgumentsNumberError,
     NotDefinedFunctionError,
+    NullArgumentError,
 )
 from interpreter.krecik_types.cely import Cely
 from interpreter.krecik_types.cislo import Cislo
@@ -76,7 +77,10 @@ class FunctionMapper:
             if isinstance(arg, expected_arg_type):
                 parsed_args.append(arg)
                 continue
-            raise IncorrectArgumentTypeError(
-                expected=expected_arg_type.type_name,
-                got=arg.type_name,
-            )
+            if arg is not None:
+                raise IncorrectArgumentTypeError(
+                    expected=expected_arg_type.type_name,
+                    got=arg.type_name,
+                )
+            else:
+                raise NullArgumentError(expected=expected_arg_type.type_name)

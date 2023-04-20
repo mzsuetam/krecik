@@ -19,6 +19,12 @@ class Logicki(KrecikType):
                 return False
         raise KrecikValueError(type_name=self.type_name, value=value)
 
+    def __invert__(self) -> KrecikType:
+        return Logicki(not self.value)
+
+    def __bool__(self) -> bool:
+        return self.value
+
 
 KRECIK_TRUE = Logicki(True)
 KRECIK_FALSE = Logicki(False)

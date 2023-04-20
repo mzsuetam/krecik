@@ -1,0 +1,11 @@
+nedostatek ahoj() {
+    cely a = 1;
+    cely b = a + 1;
+    cely c = a;
+    do_predu(a);
+    pockejte(2.);
+    do_predu(b);
+    pockejte(2.);
+    do_predu(c);
+    pockejte(2.);
+}

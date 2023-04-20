@@ -73,6 +73,11 @@ class IncorrectArgumentTypeError(KrecikException):
     attrs = {"expected": "not specified", "got": "not specified"}
 
 
+class NullArgumentError(KrecikException):
+    message_schema = "No argument. Expected {expected}."
+    attrs = {"expected": "not specified", "got": "not specified"}
+
+
 class KrecikValueError(KrecikException):
     message_schema = "Invalid value for {type_name}: {value}."
     attrs = {"type_name": "not specified", "value": "not specified"}
@@ -114,10 +119,18 @@ class KrecikSyntaxError(KrecikException):
 
 
 class KrecikIncompatibleTypes(KrecikException):
-    message_schema = "Incompatible expressions' types: {type_1} and {type_2}."
-    attrs = {"type_1": "not specified", "type_2": "not specified"}
+    message_schema = "Unsupported operand types for {operand_type}: {type_1} and {type_2}."
+    attrs = {"operand_type": "not specified", "type_1": "not specified", "type_2": "not specified"}
 
 
 class KrecikRecognitionError(KrecikException):
     message_schema = "Recognition error. {extra_info}"
     attrs = {"extra_info": "not specified"}
+
+
+class NullValueUsageError(KrecikException):
+    message_schema = (
+        "Expression {operand_number} of {operation}"
+        " returns nothing thus cannot be used as operand."
+    )
+    attrs = {"operand_number": "not specified", "operation:": "not specified"}

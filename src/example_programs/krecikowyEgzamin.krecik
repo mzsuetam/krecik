@@ -1,0 +1,38 @@
+nedostatek ahoj() {
+	cely a = (3*3+3*3) * - ( 1 ) * -1;
+    logicki l = ne(true);
+	cislo b = 3.14;
+	cely c = (3+6)*(3+6)+7;
+    cely d = -2;
+	do_predu(a*5-c-d);
+	pockejte(6. - b);
+	v_levo();
+    v_pravo();
+    v_pravo();
+    v_levo();
+	pockejte(2.+2.*2.);
+    kdyz(l) pak
+    {
+       do_predu(2);
+       kdyz(18 mensi 88 nebo 18 wetsi -2) pak
+       {
+           do_predu(2);
+           pockejte(3.);
+       }
+       jiny
+       {
+           do_predu(1);
+           pockejte(3.);
+       }
+    }
+    jiny {
+        do_predu(1);
+        pockejte(2.);
+        kdyz(true nebo true oba false) pak 
+        {
+            do_predu(1);
+            pockejte(2.);
+        }
+    }
+    vratit;
+}

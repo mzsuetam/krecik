@@ -33,7 +33,8 @@ body_items_list
 
 body_item
 	: body_line SP* ';'
-	| instruction SP* body
+	| conditional_instruction SP* body SP* (Jiny SP* body SP*)?
+	| loop_instruction SP* body
 	;
 
 body_line
@@ -43,13 +44,33 @@ body_line
     ;
 
 expression
-	: '(' SP* expression SP* ')'
-	| unary_operator SP* expression
-	| expression SP* binary_operator SP* expression
-	| function_call
-	| VARIABLE_NAME
-	| literal
-	;
+    :   secondary_operator SP* expression                   # expressionUnaryOperator
+    |   expression SP* primary_operator SP* expression      # expressionPrimaryOperator
+    |   expression SP* secondary_operator SP* expression    # expressionSecondaryOperator
+    |   expression SP* comparison_operator SP* expression   # expressionComparisonOperator
+    |   expression SP* Oba SP* expression                   # expressionLogicalAndOperator
+    |   expression SP* Nebo SP* expression                  # expressionLogicalOrOperator
+    |   '(' SP* expression SP* ')'                          # parenthesisedExpression
+    |   atom                                                # atomExpression
+    ;
+
+primary_operator
+    : ( '*' | '/' )
+    ;
+
+secondary_operator
+    : ( '+' | '-' | Ne)
+    ;
+
+comparison_operator
+    :  ( Mensi | Wetsi | Je | Neje )
+    ;
+
+atom
+    : VARIABLE_NAME
+    | literal
+    | function_call
+    ;
 
 function_call
 	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
@@ -70,56 +91,13 @@ conditional_instruction
     : Kdyz SP? '(' SP* expression SP* ')' SP* Pak
     ;
 
+else_instruction
+    : Jiny
+    ;
+
 loop_instruction
 	: Opakujte SP Az SP expression
 	;
-
-instruction
-	: conditional_instruction
-	| loop_instruction
-    ;
-
-
-// ARITHMETIC AND LOGIC OPERATIONS
-unary_operator
-    : numeric_unary_operator
-    | boolean_unary_operator
-    ;
-
-binary_operator
-    : numeric_binary_operator
-    | boolean_binary_operator
-    | comparison_operator
-    ;
-
-numeric_unary_operator
-    : '+'
-    | '-'
-    ;
-
-numeric_binary_operator
-    : '*'
-    | '/'
-    | '+'
-    | '-'
-    ;
-
-boolean_unary_operator
-    : Ne
-    ;
-
-boolean_binary_operator
-    : Nebo
-    | Oba
-    | Je
-    | Neje
-    ;
-
-comparison_operator
-	: Wetsi
-	| Mensi
-	;
-
 
 // VARIABLES AND TYPES
 return_var_type
@@ -168,6 +146,7 @@ Wetsi: 'wetsi';
 Mensi: 'mensi';
 Kdyz: 'kdyz';
 Pak: 'pak';
+Jiny: 'jiny';
 Opakujte: 'opakujte';
 Az: 'az';
 Vratit: 'vratit';

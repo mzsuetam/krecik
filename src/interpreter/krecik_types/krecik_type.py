@@ -5,9 +5,8 @@ from typing import Any
 class KrecikType(ABC):
     type_name: str
 
-    def __init__(self, value: Any, name: str | None = None) -> None:
+    def __init__(self, value: Any) -> None:
         self.value = value
-        self.name = name or "<no name>"
 
     @property
     def value(self) -> Any:
@@ -22,7 +21,7 @@ class KrecikType(ABC):
         pass
 
     def __str__(self) -> str:
-        return f"{self.type_name} {self.name} = {self.value}"
+        return f"{self.type_name}: {self.value}"
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, KrecikType):
@@ -30,7 +29,6 @@ class KrecikType(ABC):
         return all(
             (
                 self.value == other.value,
-                self.name == other.name,
                 self.type_name == other.type_name,
             ),
         )

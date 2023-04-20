@@ -1,4 +1,6 @@
 nedostatek ahoj() {
-    cely a = 1+7*3;
-    print(a);
+    cely a = 2 + 2;
+    a = (2+(2+1))*(1);
+    do_predu((2+2)*2);
+    pockejte(3.);
 }

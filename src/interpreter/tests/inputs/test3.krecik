@@ -1,0 +1,15 @@
+nedostatek ahoj() {
+    kdyz(true) pak
+    {
+       do_predu(2);
+        kdyz(false) pak
+        {
+        }
+        jiny
+        {
+            pockejte(3.);
+        }
+    }
+
+	vratit;
+}

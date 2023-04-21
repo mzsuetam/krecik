@@ -23,13 +23,13 @@ class Window(BaseDisplay):
 
     TERRAIN_TO_IMAGE_NAME_MAP = {
         Terrain.GRASS: "dirt",
-        Terrain.ROCKS: "dirt",
-        Terrain.MOUND: "dirt",
+        Terrain.ROCKS: "rock",
+        Terrain.MOUND: "mound",
     }
 
     GATHERABLE_TO_IMAGE_NAME_MAP = {
-        Gatherable.TOMATO: "",
-        Gatherable.MUSHROOM: "",
+        Gatherable.TOMATO: "tomato",
+        Gatherable.MUSHROOM: "mushroom",
     }
 
     MIN_FIELD_SIZE = 100  # in px
@@ -65,27 +65,47 @@ class Window(BaseDisplay):
         current_parent_path = Path(__file__).parent.resolve()
         return {
             "dirt": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "dirt.png").resize(
+                Image.open(current_parent_path / "assets" / "dirtv2.png").resize(
+                    (self._field_size, self._field_size), Image.ANTIALIAS
+                )
+            ),
+            "rock": ImageTk.PhotoImage(
+                Image.open(current_parent_path / "assets" / "kamykv3.png").resize(
+                    (self._field_size, self._field_size), Image.ANTIALIAS
+                )
+            ),
+            "mound": ImageTk.PhotoImage(
+                Image.open(current_parent_path / "assets" / "kopiecv3.png").resize(
+                    (self._field_size, self._field_size), Image.ANTIALIAS
+                )
+            ),
+            "tomato": ImageTk.PhotoImage(
+                Image.open(current_parent_path / "assets" / "pomidorv3.png").resize(
+                    (self._field_size, self._field_size), Image.ANTIALIAS
+                )
+            ),
+            "mushroom": ImageTk.PhotoImage(
+                Image.open(current_parent_path / "assets" / "muchomorv3.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_W": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "krecik_W.png").resize(
+                Image.open(current_parent_path / "assets" / "krecikv3_W.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_N": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "krecik_N.png").resize(
+                Image.open(current_parent_path / "assets" / "krecikv3_N.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_E": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "krecik_E.png").resize(
+                Image.open(current_parent_path / "assets" / "krecikv3_E.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),
             "krecik_idle_S": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "krecik_S.png").resize(
+                Image.open(current_parent_path / "assets" / "krecikv3_E.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),

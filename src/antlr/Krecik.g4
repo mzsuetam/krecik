@@ -33,7 +33,8 @@ body_items_list
 
 body_item
 	: body_line SP* ';'
-	| instruction SP* body
+	| conditional_instruction SP* body SP* (Jiny SP* body SP*)*
+	| loop_instruction SP* body
 	;
 
 body_line
@@ -73,14 +74,18 @@ conditional_instruction
     : Kdyz SP? '(' SP* expression SP* ')' SP* Pak
     ;
 
+else_instruction
+    : Jiny
+    ;
+
 loop_instruction
 	: Opakujte SP Az SP expression
 	;
 
-instruction
-	: conditional_instruction
-	| loop_instruction
-    ;
+//instruction
+//	: conditional_instruction
+//	| loop_instruction
+//    ;
 
 
 // ARITHMETIC AND LOGIC OPERATIONS
@@ -171,6 +176,7 @@ Wetsi: 'wetsi';
 Mensi: 'mensi';
 Kdyz: 'kdyz';
 Pak: 'pak';
+Jiny: 'jiny';
 Opakujte: 'opakujte';
 Az: 'az';
 Vratit: 'vratit';

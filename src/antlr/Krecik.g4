@@ -44,16 +44,13 @@ body_line
 
 expression
 	: unary_operator SP* '(' SP* expression SP* ')'
-	| product SP* ('+' | '-') SP* expression
+	| product SP* (('+' | '-') SP* product)*
 	;
 
 product
-    : product SP* (('*' | '/') SP* product)*
+    : (VARIABLE_NAME | literal | function_call) SP* (('*' | '/') SP* product)*
     | '(' SP* expression SP* ')'
-    | unary_operator SP* product
-    | VARIABLE_NAME
-    | literal
-    | function_call
+    | unary_operator SP* (VARIABLE_NAME | literal | function_call)
     ;
 
 

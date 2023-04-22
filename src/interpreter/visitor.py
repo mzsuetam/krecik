@@ -74,112 +74,112 @@ class Visitor(KrecikVisitor):
             expr_list += self.visit(rest)
         return expr_list
 
-    @handle_exception
-    def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
-        if unary_operator := ctx.unary_operator():
-            symbol = self.visit(unary_operator)
-            expression = self.visit(ctx.expression(0))
-            exp_val = expression.value
-            if isinstance(expression, Cislo):
-                match symbol:
-                    case "+":
-                        return Cislo(exp_val)
-                    case "-":
-                        return Cislo(-exp_val)
-                    #case "ne":
-                    #    return Logicki(not exp_val)
-            if isinstance(expression, Cely):
-                match symbol:
-                    case "+":
-                        return Cely(exp_val)
-                    case "-":
-                        return Cely(-exp_val)
-                    #case "ne":
-                    #    return Logicki(not exp_val)
-            if isinstance(expression, Logicki):
-                if symbol == "ne":
-                    return Logicki(not exp_val)
-        if product := ctx.product():
-            first_product = self.visit(ctx.product(0))
-            fp_value = first_product.value
-            second_product = self.visit(ctx.product(1))
-            sp_value = second_product.value
-            symbol = ctx.children[1].getText()
-            if isinstance(first_product, Cislo) and isinstance(second_product,Cislo):
-                match symbol:
-                    case "+":
-                        return Cislo(fp_value + sp_value)
-                    case "-":
-                        return Cislo(fp_value - sp_value)
-            if isinstance(first_product, Cely) and isinstance(second_product,Cely):
-                match symbol:
-                    case "+":
-                        return Cislo(fp_value + sp_value)
-                    case "-":
-                        return Cislo(fp_value - sp_value)
-            raise KrecikIncompatibleTypes("Rozne typy wartosci")
-        raise KrecikIncompatibleTypes("Nei ma czegosi takego")
-        
-    @handle_exception
-    def visitProduct(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
-        if ctx.children[1].getText() == "*" or ctx.children[1].getText() == "/":
-            first_product = self.visit(ctx.children[0])
-            fp_value = first_product.value
-            second_product = self.visit(ctx.product(0))
-            sp_value = second_product.value
-            symbol = ctx.children[1].getText()
-            if isinstance(first_product, Cislo) and isinstance(second_product, Cislo):
-                match symbol:
-                    case "*":
-                        return Cislo(fp_value * sp_value)
-                    case "/":
-                        return Cislo(fp_value / sp_value)
-            if isinstance(first_product, Cely) and isinstance(second_product, Cely):
-                match symbol:
-                    case "*":
-                        return Cislo(fp_value * sp_value)
-                    case "/":
-                        return Cislo(fp_value / sp_value)
-            raise KrecikIncompatibleTypes("Rozne typy wartosci")        
-        '''
-        if func_call := ctx.function_call():
-            return self.visit(func_call)
-        if literal := ctx.literal():
-            return self.visit(literal)
-        if ctx.VARIABLE_NAME():
-            name = ctx.VARIABLE_NAME().symbol.text
-            var = self.variable_stack.get_var_value(name)
-            if var.value is None:
-                raise KrecikVariableUnassignedError(name=var.name)
-            return var
-        '''
-        #
-        if ctx.children[0].getText() == "(":
-            return self.visit(ctx.expression(0))
-        #
-        if unary_operator := ctx.unary_operator():
-            symbol = self.visit(unary_operator)
-            expression = self.visit(ctx.children[0])
-            exp_val = expression.value
-            if isinstance(expression, Cislo):
-                match symbol:
-                    case "+":
-                        return Cislo(exp_val)
-                    case "-":
-                        return Cislo(-exp_val)
-                    #case "ne":
-                    #    return Logicki(not exp_val)
-            if isinstance(expression, Cely):
-                match symbol:
-                    case "+":
-                        return Cely(exp_val)
-                    case "-":
-                        return Cely(-exp_val)
-                    #case "ne":
-                    #    return Logicki(not exp_val)
-            if isinstance(expression, Logicki):
-                if symbol == "ne":
-                    return Logicki(not exp_val)
+    # @handle_exception
+    # def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+    #     if unary_operator := ctx.unary_operator():
+    #         symbol = self.visit(unary_operator)
+    #         expression = self.visit(ctx.expression(0))
+    #         exp_val = expression.value
+    #         if isinstance(expression, Cislo):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cislo(exp_val)
+    #                 case "-":
+    #                     return Cislo(-exp_val)
+    #                 #case "ne":
+    #                 #    return Logicki(not exp_val)
+    #         if isinstance(expression, Cely):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cely(exp_val)
+    #                 case "-":
+    #                     return Cely(-exp_val)
+    #                 #case "ne":
+    #                 #    return Logicki(not exp_val)
+    #         if isinstance(expression, Logicki):
+    #             if symbol == "ne":
+    #                 return Logicki(not exp_val)
+    #     if product := ctx.product():
+    #         first_product = self.visit(ctx.product(0))
+    #         fp_value = first_product.value
+    #         second_product = self.visit(ctx.product(1))
+    #         sp_value = second_product.value
+    #         symbol = ctx.children[1].getText()
+    #         if isinstance(first_product, Cislo) and isinstance(second_product,Cislo):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cislo(fp_value + sp_value)
+    #                 case "-":
+    #                     return Cislo(fp_value - sp_value)
+    #         if isinstance(first_product, Cely) and isinstance(second_product,Cely):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cislo(fp_value + sp_value)
+    #                 case "-":
+    #                     return Cislo(fp_value - sp_value)
+    #         raise KrecikIncompatibleTypes("Rozne typy wartosci")
+    #     raise KrecikIncompatibleTypes("Nei ma czegosi takego")
+    #
+    # @handle_exception
+    # def visitProduct(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+    #     if ctx.children[1].getText() == "*" or ctx.children[1].getText() == "/":
+    #         first_product = self.visit(ctx.children[0])
+    #         fp_value = first_product.value
+    #         second_product = self.visit(ctx.product(0))
+    #         sp_value = second_product.value
+    #         symbol = ctx.children[1].getText()
+    #         if isinstance(first_product, Cislo) and isinstance(second_product, Cislo):
+    #             match symbol:
+    #                 case "*":
+    #                     return Cislo(fp_value * sp_value)
+    #                 case "/":
+    #                     return Cislo(fp_value / sp_value)
+    #         if isinstance(first_product, Cely) and isinstance(second_product, Cely):
+    #             match symbol:
+    #                 case "*":
+    #                     return Cislo(fp_value * sp_value)
+    #                 case "/":
+    #                     return Cislo(fp_value / sp_value)
+    #         raise KrecikIncompatibleTypes("Rozne typy wartosci")
+    #     '''
+    #     if func_call := ctx.function_call():
+    #         return self.visit(func_call)
+    #     if literal := ctx.literal():
+    #         return self.visit(literal)
+    #     if ctx.VARIABLE_NAME():
+    #         name = ctx.VARIABLE_NAME().symbol.text
+    #         var = self.variable_stack.get_var_value(name)
+    #         if var.value is None:
+    #             raise KrecikVariableUnassignedError(name=var.name)
+    #         return var
+    #     '''
+    #     #
+    #     if ctx.children[0].getText() == "(":
+    #         return self.visit(ctx.expression(0))
+    #     #
+    #     if unary_operator := ctx.unary_operator():
+    #         symbol = self.visit(unary_operator)
+    #         expression = self.visit(ctx.children[0])
+    #         exp_val = expression.value
+    #         if isinstance(expression, Cislo):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cislo(exp_val)
+    #                 case "-":
+    #                     return Cislo(-exp_val)
+    #                 #case "ne":
+    #                 #    return Logicki(not exp_val)
+    #         if isinstance(expression, Cely):
+    #             match symbol:
+    #                 case "+":
+    #                     return Cely(exp_val)
+    #                 case "-":
+    #                     return Cely(-exp_val)
+    #                 #case "ne":
+    #                 #    return Logicki(not exp_val)
+    #         if isinstance(expression, Logicki):
+    #             if symbol == "ne":
+    #                 return Logicki(not exp_val)
     ''' old shit, narazie zostawiam, wyjebie się jak będzie w 100% działać
     @handle_exception
     def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
@@ -336,9 +336,12 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
-        if instruction := ctx.conditional_instruction():
-            if self.visit(instruction):
-                self.visit(ctx.body())
+        if cond_expr := ctx.conditional_instruction():
+            logicki = self.visit(cond_expr)
+            if logicki.value:
+                self.visit(ctx.body()[0])
+            else:
+                self.visit(ctx.body()[1])
             return
         if body_line := ctx.body_line():
             self.visitChildren(body_line)

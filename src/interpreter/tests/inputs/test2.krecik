@@ -1,7 +1,23 @@
 nedostatek ahoj() {
-    kdyz(true) pak{
+    kdyz(false) pak{
         do_predu(2);
     }
-	pockejte(3.);
+    jiny
+    {
+        kdyz(false) pak
+        {
+        do_predu(3);
+        pockejte(1.);
+        }
+        jiny
+        {
+        do_predu(2);
+        pockejte(3.);
+        }
+        v_levo();
+        do_predu(2);
+    }
+
+    pockejte(3.);
     vratit;
 }

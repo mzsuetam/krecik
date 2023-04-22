@@ -1,7 +1,9 @@
-krecik_tescik:
+lint:
 	mypy ./src
 	ruff check ./src
 	black ./src --diff --check
+
+test:
 	pytest ./src
 
 fix:

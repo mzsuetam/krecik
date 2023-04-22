@@ -40,7 +40,7 @@ class Visitor(KrecikVisitor):
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> Any:
         return_value = self.visitChildren(ctx)
         return return_value
-
+    
     @handle_exception
     def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> Any:
         name = str(ctx.VARIABLE_NAME())
@@ -76,26 +76,72 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
-        if product := ctx.product():
-            symbol = self.visit(ctx.children[1])
-            product = self.visit(ctx.product(0))
-            prod_val = product.value
+        if unary_operator := ctx.unary_operator():
+            symbol = self.visit(unary_operator)
             expression = self.visit(ctx.expression(0))
             exp_val = expression.value
-            if isinstance(product, Cislo) and isinstance(expression, Cislo):
+            if isinstance(expression, Cislo):
                 match symbol:
-                    case '+':
-                        return Cislo(prod_val + exp_val)
-                    case '-':
-                        return Cislo(prod_val + exp_val)
-            if isinstance(product, Cely) and isinstance(expression, Cely):
+                    case "+":
+                        return Cislo(exp_val)
+                    case "-":
+                        return Cislo(-exp_val)
+                    #case "ne":
+                    #    return Logicki(not exp_val)
+            if isinstance(expression, Cely):
                 match symbol:
-                    case '+':
-                        return Cely(prod_val + exp_val)
-                    case '-':
-                        return Cely(prod_val + exp_val)
+                    case "+":
+                        return Cely(exp_val)
+                    case "-":
+                        return Cely(-exp_val)
+                    #case "ne":
+                    #    return Logicki(not exp_val)
+            if isinstance(expression, Logicki):
+                if symbol == "ne":
+                    return Logicki(not exp_val)
+        if product := ctx.product():
+            first_product = self.visit(ctx.product(0))
+            fp_value = first_product.value
+            second_product = self.visit(ctx.product(1))
+            sp_value = second_product.value
+            symbol = ctx.children[1].getText()
+            if isinstance(first_product, Cislo) and isinstance(second_product,Cislo):
+                match symbol:
+                    case "+":
+                        return Cislo(fp_value + sp_value)
+                    case "-":
+                        return Cislo(fp_value - sp_value)
+            if isinstance(first_product, Cely) and isinstance(second_product,Cely):
+                match symbol:
+                    case "+":
+                        return Cislo(fp_value + sp_value)
+                    case "-":
+                        return Cislo(fp_value - sp_value)
+            raise KrecikIncompatibleTypes("Rozne typy wartosci")
+        raise KrecikIncompatibleTypes("Nei ma czegosi takego")
+        
     @handle_exception
     def visitProduct(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
+        if ctx.children[1].getText() == "*" or ctx.children[1].getText() == "/":
+            first_product = self.visit(ctx.children[0])
+            fp_value = first_product.value
+            second_product = self.visit(ctx.product(0))
+            sp_value = second_product.value
+            symbol = ctx.children[1].getText()
+            if isinstance(first_product, Cislo) and isinstance(second_product, Cislo):
+                match symbol:
+                    case "*":
+                        return Cislo(fp_value * sp_value)
+                    case "/":
+                        return Cislo(fp_value / sp_value)
+            if isinstance(first_product, Cely) and isinstance(second_product, Cely):
+                match symbol:
+                    case "*":
+                        return Cislo(fp_value * sp_value)
+                    case "/":
+                        return Cislo(fp_value / sp_value)
+            raise KrecikIncompatibleTypes("Rozne typy wartosci")        
+        '''
         if func_call := ctx.function_call():
             return self.visit(func_call)
         if literal := ctx.literal():
@@ -106,11 +152,14 @@ class Visitor(KrecikVisitor):
             if var.value is None:
                 raise KrecikVariableUnassignedError(name=var.name)
             return var
+        '''
+        #
         if ctx.children[0].getText() == "(":
             return self.visit(ctx.expression(0))
+        #
         if unary_operator := ctx.unary_operator():
             symbol = self.visit(unary_operator)
-            expression = self.visit(ctx.product(0))
+            expression = self.visit(ctx.children[0])
             exp_val = expression.value
             if isinstance(expression, Cislo):
                 match symbol:
@@ -118,18 +167,20 @@ class Visitor(KrecikVisitor):
                         return Cislo(exp_val)
                     case "-":
                         return Cislo(-exp_val)
-                    case "ne":
-                        return Logicki(not exp_val)
+                    #case "ne":
+                    #    return Logicki(not exp_val)
             if isinstance(expression, Cely):
                 match symbol:
                     case "+":
                         return Cely(exp_val)
                     case "-":
                         return Cely(-exp_val)
-                    case "ne":
-                        return Logicki(not exp_val)
-
-    '''
+                    #case "ne":
+                    #    return Logicki(not exp_val)
+            if isinstance(expression, Logicki):
+                if symbol == "ne":
+                    return Logicki(not exp_val)
+    ''' old shit, narazie zostawiam, wyjebie się jak będzie w 100% działać
     @handle_exception
     def visitExpression(self, ctx: KrecikParser.ExpressionContext) -> KrecikType:
         if func_call := ctx.function_call():

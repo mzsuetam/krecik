@@ -326,17 +326,17 @@ class Visitor(KrecikVisitor):
     ) -> KrecikType:
         return self.visit(ctx.expression())
 
-    @handle_exception
-    def visitInstruction(self, ctx: KrecikParser.InstructionContext) -> bool:
-        if cond_expr := ctx.conditional_instruction():
-            logicki = self.visit(cond_expr)
-            flag = logicki.value
-            return flag
-        raise NotImplementedError("Unknown instruction.")
+    # @handle_exception
+    # def visitInstruction(self, ctx: KrecikParser.InstructionContext) -> bool:
+    #     if cond_expr := ctx.conditional_instruction():
+    #         logicki = self.visit(cond_expr)
+    #         flag = logicki.value
+    #         return flag
+    #     raise NotImplementedError("Unknown instruction.")
 
     @handle_exception
     def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
-        if instruction := ctx.instruction():
+        if instruction := ctx.conditional_instruction():
             if self.visit(instruction):
                 self.visit(ctx.body())
             return

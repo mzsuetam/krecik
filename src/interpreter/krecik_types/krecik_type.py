@@ -23,3 +23,14 @@ class KrecikType(ABC):
 
     def __str__(self) -> str:
         return f"{self.type_name} {self.name} = {self.value}"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, KrecikType):
+            return False
+        return all(
+            (
+                self.value == other.value,
+                self.name == other.name,
+                self.type_name == other.type_name,
+            ),
+        )

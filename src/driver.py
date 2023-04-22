@@ -1,10 +1,15 @@
 from argparse import ArgumentParser
 
+from antlr4 import ParseTreeWalker, TokenStream
+
 from board.tests.board_examples import plains
 from board.board_manager import BoardManager
 from display.board_publisher import BoardPublisher
 from interpreter.function_mapper import FunctionMapper
 from interpreter.interpreter import Interpreter
+from interpreter.lexer import CustomLexer
+from interpreter.listener import Listener
+from interpreter.parser import CustomParser
 from interpreter.variable_stack import VariableStack
 from interpreter.visitor import Visitor
 from display.window import Window
@@ -20,8 +25,13 @@ def main(file_path: str) -> None:
 
     function_mapper = FunctionMapper(board_manager)
     variable_stack = VariableStack()
-    visitor = Visitor(function_mapper, variable_stack)
-    interpreter = Interpreter(visitor)
+    interpreter = Interpreter(
+        CustomLexer(),
+        CustomParser(TokenStream()),
+        Listener(variable_stack),
+        ParseTreeWalker(),
+        Visitor(function_mapper, variable_stack),
+    )
     interpreter.interpret_file(file_path)
 
 

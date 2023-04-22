@@ -21,7 +21,12 @@ class KrecikException(Exception):
     def __str__(self) -> str:
         line_info = self.line_info()
         column_info = self.column_info()
-        return f"\033[91mPozor {line_info}, {column_info}!!!\n\t{self.message}\033[0m"
+        if not line_info:
+            return f"\033[91mPozor!!!\n\t{self.message}\033[0m"
+        elif not column_info:
+            return f"\033[91mPozor {line_info}!!!\n\t{self.message}\033[0m"
+        else:
+            return f"\033[91mPozor {line_info}, {column_info}!!!\n\t{self.message}\033[0m"
 
     def line_info(self) -> str:
         if self.start_line is None or self.stop_line is None:
@@ -107,4 +112,10 @@ class KrecikSyntaxError(KrecikException):
 
 
 class KrecikIncompatibleTypes(KrecikException):
-    message_schema = "Incompatible expressions' types"
+    message_schema = "Incompatible expressions' types: {type_1} and {type_2}."
+    attrs = {"type_1": "not specified", "type_2": "not specified"}
+
+
+class KrecikRecognitionError(KrecikException):
+    message_schema = "Recognition error. {extra_info}"
+    attrs = {"extra_info": "not specified"}

@@ -22,10 +22,6 @@ from interpreter.variable_stack import VariableStack
 
 
 class Visitor(KrecikVisitor):
-    """
-    Visitor is controller that performs game logic in Board and presents results in Window.
-    """
-
     def __init__(
         self,
         function_mapper: FunctionMapper,
@@ -37,9 +33,8 @@ class Visitor(KrecikVisitor):
         self._debug = debug
 
     @handle_exception
-    def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> Any:
-        return_value = self.visitChildren(ctx)
-        return return_value
+    def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> None:
+        self.visitChildren(ctx)
 
     @handle_exception
     def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> Any:
@@ -140,7 +135,10 @@ class Visitor(KrecikVisitor):
                         return Logicki(first_expression.value == second_expression.value)
                     case "neje":
                         return Logicki(first_expression.value != second_expression.value)
-            raise KrecikIncompatibleTypes()
+            raise KrecikIncompatibleTypes(
+                type_1=first_expression.type_name,
+                type_2=second_expression.type_name,
+            )
         raise NotImplementedError("Unknown expression type")
 
     def visitUnary_operator(self, ctx: KrecikParser.Unary_operatorContext) -> str:

@@ -1,9 +1,19 @@
+from typing import Any
+
 from antlr4 import RecognitionException
 from antlr4.Recognizer import Recognizer
 from antlr4.Token import CommonToken
 from antlr4.error.ErrorListener import ErrorListener
 
 from interpreter.exceptions import KrecikSyntaxError
+
+
+class RecognizerWithCustomListener(Recognizer):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__()
+        self.removeErrorListeners()
+        listener = SyntaxErrorListener()
+        self.addErrorListener(listener)
 
 
 class SyntaxErrorListener(ErrorListener):

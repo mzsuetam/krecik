@@ -1,25 +1,40 @@
-import pytest
+from pathlib import Path
+from typing import Callable
+from unittest.mock import create_autospec
 
-from board.board_manager import BoardManager
-from board.tests.board_examples import plains
-from display.board_publisher import BoardPublisher
-from display.terminal_display import TerminalDisplay
+import pytest
+from antlr4 import CommonTokenStream, InputStream
+
+from antlr.KrecikParser import KrecikParser
 from interpreter.function_mapper import FunctionMapper
+from interpreter.lexer import CustomLexer
+from interpreter.parser import CustomParser
 from interpreter.variable_stack import VariableStack
 from interpreter.visitor import Visitor
 
 
 @pytest.fixture()
 def visitor() -> Visitor:
-    board = plains(6, 6)
-    board_publisher = BoardPublisher()
-    board_manager = BoardManager(board, board_publisher)
-    board_manager.wait = lambda *args, **kwargs: None  # type: ignore
-
-    window = TerminalDisplay(board)
-    board_publisher.subscribe(window)
-
-    function_mapper = FunctionMapper(board_manager)
-    variable_stack = VariableStack()
+    function_mapper = create_autospec(FunctionMapper)
+    variable_stack = create_autospec(VariableStack)
     visitor = Visitor(function_mapper, variable_stack)
     return visitor
+
+
+@pytest.fixture()
+def get_input_path() -> Callable[[str], str]:
+    def _(source_file_name: str = "test.krecik") -> str:
+        return str(Path(__file__).parent / "inputs" / source_file_name)
+
+    return _
+
+
+@pytest.fixture()
+def get_parser_from_input() -> Callable[[str], KrecikParser]:
+    def _(input_string: str) -> KrecikParser:
+        input_stream = InputStream(input_string)
+        lexer = CustomLexer(input_stream)
+        token_stream = CommonTokenStream(lexer)
+        return CustomParser(token_stream)
+
+    return _

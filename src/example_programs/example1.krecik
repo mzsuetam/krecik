@@ -1,7 +1,7 @@
 logicki kwadrat(cely a) {
     opakujte az 4 {
-        dopredu(a);
-        vprawo(90);
+        do_predu(a);
+        v_pravo(90);
     }
 
     cislo a = 4;

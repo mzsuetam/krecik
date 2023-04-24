@@ -2,9 +2,9 @@ nedostatek ahoj() {
     cislo a = 200;
     opakujte az 4 {
         opakujte az 4 {
-            dopredu(a);
-            vlevo(90);
+            do_predu(a);
+            v_levo(90);
         }
-        dopredu(a * 2);
+        do_predu(a * 2);
     }
 }

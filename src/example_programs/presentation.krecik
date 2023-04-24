@@ -1,10 +1,9 @@
+// do prezentacji:
+// $ python src/driver.py --debug true --display none
+
 nedostatek ahoj() {
 	cely a = 2 + 2;
-	cislo b = 3.14;
-	do_predu(a);
-	v_levo();
-	do_predu(1);
-	pockejte(3. * 3.);
-	do_predu(3);
-	pockejte(6. - b);
+	cislo b = 2.0;
+	cislo c = 2.0;
+	print(a, b * c + b * c);
 }

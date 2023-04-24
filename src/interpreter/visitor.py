@@ -17,7 +17,7 @@ from interpreter.function_mapper import FunctionMapper
 from interpreter.krecik_types.cely import Cely
 from interpreter.krecik_types.cislo import Cislo
 from interpreter.krecik_types.krecik_type import KrecikType
-from interpreter.krecik_types.logicki import Logicki
+from interpreter.krecik_types.logicki import KRECIK_TRUE, Logicki
 from interpreter.variable_stack import VariableStack
 
 
@@ -52,11 +52,15 @@ class Visitor(KrecikVisitor):
         return val
 
     @handle_exception
-    def visitFunction_call(self, ctx: KrecikParser.Function_callContext) -> Any:
+    def visitFunction_call(self, ctx: KrecikParser.Function_callContext) -> KrecikType:
         name = ctx.VARIABLE_NAME().symbol.text
         arguments = []
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
+        if name == "print" and self._debug:
+            values = [str(argument.value) for argument in arguments]
+            print(", ".join(values))
+            return KRECIK_TRUE
         self.variable_stack.enter_function(name)
         return_value = self.function_mapper.call(name, arguments)
         self.variable_stack.exit_function()

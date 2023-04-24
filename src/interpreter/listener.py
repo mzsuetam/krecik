@@ -44,11 +44,11 @@ class Listener(KrecikListener):
         var_type, var_name = ctx.getText().split(" ")
         var: KrecikType | None = None
 
-        if var_type == Cely.type_name:
+        if var_type == Cely.type_name:  # TODO: dont use .type_name
             var = Cely(None, var_name)
-        if var_type == Cislo.type_name:
+        if var_type == Cislo.type_name:  # TODO: dont use .type_name
             var = Cislo(None, var_name)
-        if var_type == Logicki.type_name:
+        if var_type == Logicki.type_name:  # TODO: dont use .type_name
             var = Logicki(None, var_name)
         if not var:
             raise KrecikException()

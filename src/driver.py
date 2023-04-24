@@ -3,9 +3,10 @@ from pathlib import Path
 
 from antlr4 import ParseTreeWalker, TokenStream
 
-from board.tests.board_examples import plains
+from board.tests.board_examples import jebus_cross, plains, random
 from board.board_manager import BoardManager
 from display.board_publisher import BoardPublisher
+from display.terminal_display import TerminalDisplay
 from interpreter.function_mapper import FunctionMapper
 from interpreter.interpreter import Interpreter
 from interpreter.lexer import CustomLexer
@@ -16,15 +17,32 @@ from interpreter.visitor import Visitor
 from display.window import Window
 
 
-def main(file_path: str, debug: bool) -> None:
+def main(
+    width: int,
+    height: int,
+    board_type: str,
+    file_path: str,
+    debug: bool,
+    display: str,
+) -> None:
     # board segment
-    board = plains(10, 10)
+    board_mapping = {
+        "plains": plains,
+        "random": random,
+        "cross": jebus_cross,
+    }
+    board_generator = board_mapping.get(board_type, plains)
+    board = board_generator(width, height)
     board_publisher = BoardPublisher()
     board_manager = BoardManager(board, board_publisher)
 
     # display segment
-    window = Window(board)
-    board_publisher.subscribe(window)
+    if display in {"window", "both"}:
+        window = Window(board)
+        board_publisher.subscribe(window)
+    if display in {"terminal", "both"}:
+        terminal = TerminalDisplay(board)
+        board_publisher.subscribe(terminal)
 
     # interpreter segment
     function_mapper = FunctionMapper(board_manager)
@@ -48,8 +66,9 @@ if __name__ == "__main__":
 
     Example usages:
     $ python driver.py
-    $ python driver.py --debug true
     $ python driver.py ./example_programs/example1.krecik
+    $ python driver.py ./example_programs/example1.krecik --width 12 --height 12 --board-type random
+    $ python driver.py ./example_programs/example1.krecik --display window
     $ python driver.py ./example_programs/example2.krecik --debug true
     """
 
@@ -62,13 +81,48 @@ if __name__ == "__main__":
         default="./example_programs/presentation.krecik",
     )
     parser.add_argument(
+        "--width",
+        metavar="width of the board",
+        type=int,
+        nargs="?",
+        default=8,
+    )
+    parser.add_argument(
+        "--height",
+        metavar="height of the board",
+        type=int,
+        nargs="?",
+        default=8,
+    )
+    parser.add_argument(
+        "--board-type",
+        metavar="type of the board",
+        type=str,
+        nargs="?",
+        default="plains",
+    )
+    parser.add_argument(
         "--debug",
         metavar="is debug mode",
         type=bool,
         nargs="?",
         default=False,
     )
+    parser.add_argument(
+        "--display",
+        metavar="type of display",
+        type=str,
+        nargs="?",
+        default="both",
+    )
 
     args = parser.parse_args()
     source_file_path = Path(__file__).parent / args.source
-    main(file_path=str(source_file_path), debug=args.debug)
+    main(
+        width=args.width,
+        height=args.height,
+        board_type=args.board_type,
+        file_path=str(source_file_path),
+        debug=args.debug,
+        display=args.display,
+    )

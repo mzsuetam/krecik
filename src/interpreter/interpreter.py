@@ -16,12 +16,14 @@ class Interpreter:
         listener: KrecikListener,
         walker: ParseTreeWalker,
         visitor: KrecikVisitor,
+        debug: bool = False,
     ) -> None:
         self.lexer = lexer
         self.parser = parser
         self.listener = listener
         self.walker = walker
         self.visitor = visitor
+        self._debug = debug
 
     def interpret_file(self, file_path: str) -> None:
         with open(file_path, "r") as file:
@@ -34,8 +36,7 @@ class Interpreter:
         pe_ctx = self.get_primary_expression_ctx()
         if pe_ctx is None or self.parser.getNumberOfSyntaxErrors() > 0:
             return
-        self.walk_tree(pe_ctx)
-        self.visit_tree(pe_ctx)
+        self.walk_and_visit_tree(pe_ctx)
 
     def set_input(self, input_stream: InputStream) -> None:
         self.lexer.inputStream = input_stream
@@ -50,18 +51,14 @@ class Interpreter:
             self._handle_exception(krecik_exc)
             return None
 
-    def walk_tree(self, ctx: KrecikParser.Primary_expressionContext) -> None:
+    def walk_and_visit_tree(self, ctx: KrecikParser.Primary_expressionContext) -> None:
         try:
             self.walker.walk(self.listener, ctx)
-        except KrecikException as exc:
-            self._handle_exception(exc)
-
-    def visit_tree(self, ctx: KrecikParser.Primary_expressionContext) -> None:
-        try:
             self.visitor.visit(ctx)
         except KrecikException as exc:
             self._handle_exception(exc)
 
-    @staticmethod
-    def _handle_exception(exc: KrecikException) -> None:
+    def _handle_exception(self, exc: KrecikException) -> None:
+        if self._debug:
+            raise exc
         print(exc)

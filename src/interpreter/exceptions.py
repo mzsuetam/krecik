@@ -43,6 +43,8 @@ class KrecikException(Exception):
         return f"sloupce: {self.start_column}-{self.stop_column}"
 
     def inject_context_to_exc(self, ctx: "ParserRuleContext") -> None:
+        if self.start_line is not None or self.stop_line is not None:
+            return
         self.start_line = ctx.start.line
         self.stop_line = ctx.stop.line
         self.start_column = ctx.start.column

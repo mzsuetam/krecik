@@ -1,7 +1,7 @@
 nedostatek spirala(cislo a) {
     kdyz (a wetsi 0) pak {
-        dopredu(a);
-        vlevo(90);
+        do_predu(a);
+        v_levo(90);
         vratit; 
     }
     kdyz (ne (a wetsi 0)) pak {

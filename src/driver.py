@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from pathlib import Path
 
 from antlr4 import ParseTreeWalker, TokenStream
 
@@ -15,14 +16,17 @@ from interpreter.visitor import Visitor
 from display.window import Window
 
 
-def main(file_path: str) -> None:
+def main(file_path: str, debug: bool) -> None:
+    # board segment
     board = plains(10, 10)
     board_publisher = BoardPublisher()
     board_manager = BoardManager(board, board_publisher)
 
+    # display segment
     window = Window(board)
     board_publisher.subscribe(window)
 
+    # interpreter segment
     function_mapper = FunctionMapper(board_manager)
     variable_stack = VariableStack()
     interpreter = Interpreter(
@@ -30,18 +34,41 @@ def main(file_path: str) -> None:
         CustomParser(TokenStream()),
         Listener(variable_stack),
         ParseTreeWalker(),
-        Visitor(function_mapper, variable_stack),
+        Visitor(function_mapper, variable_stack, debug=debug),
+        debug=debug,
     )
+
+    # running interpreter
     interpreter.interpret_file(file_path)
 
 
 if __name__ == "__main__":
     """
-    Example usage:
-    $ python src/driver.py src/interpreter/tests/inputs/test.krecik
+    Runs interpreter on given file from /src/ directory.
+
+    Example usages:
+    $ python driver.py
+    $ python driver.py --debug true
+    $ python driver.py ./example_programs/example1.krecik
+    $ python driver.py ./example_programs/example2.krecik --debug true
     """
 
     parser = ArgumentParser()
-    parser.add_argument("source_file_path", metavar="source", type=str, nargs=1)
+    parser.add_argument(
+        "source",
+        metavar="source file name",
+        type=str,
+        nargs="?",
+        default="./example_programs/presentation.krecik",
+    )
+    parser.add_argument(
+        "--debug",
+        metavar="is debug mode",
+        type=bool,
+        nargs="?",
+        default=False,
+    )
+
     args = parser.parse_args()
-    main(args.source_file_path[0])
+    source_file_path = Path(__file__).parent / args.source
+    main(file_path=str(source_file_path), debug=args.debug)

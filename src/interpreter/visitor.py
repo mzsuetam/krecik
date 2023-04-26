@@ -241,7 +241,7 @@ class Visitor(KrecikVisitor):
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
         if name == "print" and self._debug:
-            values = [str(argument.value) for argument in arguments]
+            values = [f"[print line {ctx.start.line}] {argument.value}" for argument in arguments]
             print(", ".join(values))
             return KRECIK_TRUE
         self.variable_stack.enter_function(name)
@@ -267,8 +267,8 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitAssignment(self, ctx: KrecikParser.AssignmentContext) -> None:
-        var: KrecikType = self.visit(ctx.variable())
         expr: KrecikType = self.visit(ctx.expression())
+        var: KrecikType = self.visit(ctx.variable())
         if not expr:
             e_name = ctx.getText().split("=")[1]
             raise KrecikVariableValueUnassignableError(expr=e_name)

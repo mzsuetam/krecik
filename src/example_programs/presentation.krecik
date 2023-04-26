@@ -2,8 +2,52 @@
 // $ python src/driver.py --debug true --display none
 
 nedostatek ahoj() {
-	cely a = 2 + 2;
+
+    cely x;
+    // cely x = x;
+    // x = x;
+    // print(x);
+
+    /*
+    x = 4;
+    x = -x;
+    print(x);
+
+    logicki lo;
+    lo = true;
+    print(ne lo);
+
+    // pritn(y);
+
+    kdyz (ne lo) pak {
+        print(123);
+    }
+    jiny{
+        print(-123);
+    }
+
+    cely m = 0;
+    kdyz (true) pak {
+        print(m);
+        cely m = 4;
+        print(m);
+    }
+    print(m);
+
+	cely a = 2 + 2 * 2;
+	print(a);
+
 	cislo b = 2.0;
 	cislo c = 2.0;
-	print(a, b * c + b * c);
+	print(b * c + b * c);
+
+	print( 3 wetsi 4 );
+
+    print(4+true);
+
+    print(5 wetsi 4 nebo false oba false);
+    print((5 wetsi 4 nebo false) oba false);
+
+    print(4 wetsi 4 wetsi 4);
+    */
 }

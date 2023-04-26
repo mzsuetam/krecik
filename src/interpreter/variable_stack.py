@@ -15,7 +15,7 @@ class VariableStack:
             var = self.stack[self._get_current_function()][i].get(var_name)
             if var is not None:
                 break
-        if not var:
+        if var is None:
             raise KrecikVariableUndeclaredError(name=var_name)
         return var
 

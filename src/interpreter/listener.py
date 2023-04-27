@@ -11,49 +11,32 @@ from interpreter.variable_stack import VariableStack
 class Listener(KrecikListener):
     def __init__(self, variable_stack: VariableStack) -> None:
         self.variable_stack = variable_stack
-        self.current_func: str = ""
-        self.current_stack: int = 0
 
-    # Otwieramy top level dict
     def enterFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> None:
-        func_name = ctx.VARIABLE_NAME().symbol.text
-        if self.variable_stack.stack.get(func_name):
-            raise KrecikVariableRedeclarationError(name=func_name)
-        self.variable_stack.stack.update({func_name: []})
-        self.current_func = func_name
-        self.variable_stack.stack[self.current_func].append({})  # obligatory because of arg list
-        self.current_stack = 0
+        self.variable_stack.append_frame(ctx.VARIABLE_NAME())
+        self.variable_stack.append_subframe()
 
-    # Zamykamy top level dict
     def exitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> None:
-        self.variable_stack.stack.pop(self.current_func)
-        self.current_func = ""
+        self.variable_stack.pop_frame()
 
     # Otwieramy stack
     def enterBody(self, ctx: KrecikParser.BodyContext) -> None:
-        if len(self.variable_stack.stack[self.current_func]) > 0:
-            self.variable_stack.stack[self.current_func].append({})
-            self.current_stack += 1
+        if not isinstance(ctx.parentCtx, KrecikParser.Function_declarationContext):
+            self.variable_stack.append_subframe()
 
     # Zamykamy stack
     def exitBody(self, ctx: KrecikParser.BodyContext) -> None:
-        self.variable_stack.stack[self.current_func].pop()
-        self.current_stack -= 1
+        self.variable_stack.pop_subframe()
 
     def enterDeclaration(self, ctx: KrecikParser.DeclarationContext) -> None:
-        var_type, var_name = ctx.getText().split(" ")  # @FIXME: ctx.var_type()
-        var: KrecikType | None = None
-
-        if var_type == Cely.type_name:  # TODO: dont use .type_name
-            var = Cely(None)
-        if var_type == Cislo.type_name:  # TODO: dont use .type_name
-            var = Cislo(None)
-        if var_type == Logicki.type_name:  # TODO: dont use .type_name
-            var = Logicki(None)
-        if var is None:
-            raise KrecikException()
-
-        # tylko ten sam stack, bo niżej możemy miec 'stare zmienne'
-        if self.variable_stack.stack[self.current_func][self.current_stack].get(var_name):
-            raise KrecikVariableRedeclarationError(var_name=var_name, func_name=self.current_func)
-        self.variable_stack.stack[self.current_func][self.current_stack][var_name] = var
+        var_name = ctx.VARIABLE_NAME()
+        var_type_ctx: KrecikParser.Var_typeContext = ctx.var_type()
+        if var_type_ctx.Cislo():
+            var_type = Cislo
+        elif var_type_ctx.Cely():
+            var_type = Cely
+        elif var_type_ctx.Logicki():
+            var_type = Logicki
+        else:
+            raise NotImplementedError("Unknown var type")
+        self.variable_stack.declare_variable(var_type, var_name)

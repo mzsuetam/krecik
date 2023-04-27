@@ -84,8 +84,8 @@ class KrecikValueError(KrecikException):
 
 
 class KrecikVariableRedeclarationError(KrecikException):
-    message_schema = "Redeclaration of variabvle: {var_name} in function {func_name}."
-    attrs = {"var_name": "not specified", "func_name": "not specified"}
+    message_schema = "Redeclaration of variabvle: {var_name}."
+    attrs = {"var_name": "not specified"}
 
 
 class KrecikFunctionRedeclarationError(KrecikException):
@@ -128,9 +128,14 @@ class KrecikRecognitionError(KrecikException):
     attrs = {"extra_info": "not specified"}
 
 
-class NullValueUsageError(KrecikException):
+class KrecikNullValueUsageError(KrecikException):
     message_schema = (
         "Expression {operand_number} of {operation}"
         " returns nothing thus cannot be used as operand."
     )
     attrs = {"operand_number": "not specified", "operation:": "not specified"}
+
+
+class KrecikVariableStackUsageError(KrecikException):
+    message_schema = "Could not {failed_event}! Reason: {reason}."
+    attrs = {"failed_event": "not specified", "reason": "not specified"}

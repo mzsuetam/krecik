@@ -1,0 +1,14 @@
+// do prezentacji:
+// $ python src/driver.py --debug true --display none
+
+nedostatek ahoj(cely a) {
+
+    cely m = 0;
+    kdyz (true) pak {
+        print(m);
+        cely m = 4;
+        print(m);
+    }
+    print(m);
+
+}

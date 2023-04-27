@@ -71,6 +71,6 @@ def test_visit_declaration(
     declaration_ctx = parser.declaration()
 
     visitor.visitDeclaration(declaration_ctx)
-    visitor.variable_stack.declare.assert_called_once_with(  # type: ignore[attr-defined]
+    visitor.variable_stack.declare_variable.assert_called_once_with(  # type: ignore[attr-defined]
         expected_var_type, expected_name
     )

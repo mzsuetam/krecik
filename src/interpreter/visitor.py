@@ -11,7 +11,7 @@ from interpreter.exceptions import (
     KrecikVariableAssignedTypeError,
     KrecikSyntaxError,
     KrecikIncompatibleTypes,
-    NullValueUsageError,
+    KrecikNullValueUsageError,
 )
 from interpreter.function_mapper import FunctionMapper
 
@@ -40,16 +40,18 @@ class Visitor(KrecikVisitor):
     @handle_exception
     def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> Any:
         name = str(ctx.VARIABLE_NAME())
-        self.variable_stack.enter_function(str(name))
+        self.variable_stack.append_frame(str(name))
+        self.variable_stack.append_subframe()
         return_value = self.visitChildren(ctx)
-        self.variable_stack.exit_function()
+        self.variable_stack.pop_frame()
         return return_value
 
     @handle_exception
     def visitBody(self, ctx: KrecikParser.BodyContext) -> Any:
-        self.variable_stack.enter_stack()
+        if not isinstance(ctx.parentCtx, KrecikParser.Function_declarationContext):
+            self.variable_stack.append_subframe()
         val = self.visitChildren(ctx)
-        self.variable_stack.exit_stack()
+        self.variable_stack.pop_subframe()
         return val
 
     def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
@@ -79,7 +81,7 @@ class Visitor(KrecikVisitor):
         symbol = self.visit(ctx.secondary_operator())
         expression = self.visit(ctx.expression())
         if expression is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         match symbol:
             case "+":
                 return expression
@@ -97,9 +99,9 @@ class Visitor(KrecikVisitor):
         symbol = self.visit(ctx.primary_operator())
         right = self.visit(ctx.expression(1))
         if left is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         if right is None:
-            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=1, operation=ctx.getText())
         if type(left) is type(right):
             # print(left, right, symbol)
             match symbol:
@@ -122,9 +124,9 @@ class Visitor(KrecikVisitor):
         symbol = self.visit(ctx.secondary_operator())
         right = self.visit(ctx.expression(1))
         if left is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         if right is None:
-            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=1, operation=ctx.getText())
         if type(left) is type(right):
             match symbol:
                 case "+":
@@ -146,9 +148,9 @@ class Visitor(KrecikVisitor):
         symbol = self.visit(ctx.comparison_operator())
         right = self.visit(ctx.expression(1))
         if left is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         if right is None:
-            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=1, operation=ctx.getText())
         if type(left) is type(right):
             # print(left, right, symbol)
             match symbol:
@@ -174,9 +176,9 @@ class Visitor(KrecikVisitor):
         left = self.visit(ctx.expression(0))
         right = self.visit(ctx.expression(1))
         if left is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         if right is None:
-            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=1, operation=ctx.getText())
         if type(left) is type(right):
             return left and right
         raise KrecikIncompatibleTypes(
@@ -190,9 +192,9 @@ class Visitor(KrecikVisitor):
         left = self.visit(ctx.expression(0))
         right = self.visit(ctx.expression(1))
         if left is None:
-            raise NullValueUsageError(operand_number=0, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=0, operation=ctx.getText())
         if right is None:
-            raise NullValueUsageError(operand_number=1, operation=ctx.getText())
+            raise KrecikNullValueUsageError(operand_number=1, operation=ctx.getText())
         if type(left) is type(right):
             return left or right
         raise KrecikIncompatibleTypes(
@@ -217,7 +219,7 @@ class Visitor(KrecikVisitor):
             return self.visit(literal)
         if ctx.VARIABLE_NAME():
             name = ctx.VARIABLE_NAME().symbol.text
-            var = self.variable_stack.get_var_value(name)
+            var = self.variable_stack.get_var(name)
             if var.value is None:
                 raise KrecikVariableUnassignedError(name=name)
             return var
@@ -244,16 +246,16 @@ class Visitor(KrecikVisitor):
             values = [f"[print line {ctx.start.line}] {argument.value}" for argument in arguments]
             print(", ".join(values))
             return KRECIK_TRUE
-        self.variable_stack.enter_function(name)
+        self.variable_stack.append_frame(name)
         return_value = self.function_mapper.call(name, arguments)
-        self.variable_stack.exit_function()
+        self.variable_stack.pop_frame()
         return return_value
 
     @handle_exception
     def visitDeclaration(self, ctx: KrecikParser.DeclarationContext) -> KrecikType:
         var_type = self.visit(ctx.var_type())
         name = ctx.VARIABLE_NAME().symbol.text
-        var = self.variable_stack.declare(var_type, name)
+        var = self.variable_stack.declare_variable(var_type, name)
         return var
 
     def visitVar_type(self, ctx: KrecikParser.Var_typeContext) -> Type[KrecikType]:
@@ -283,7 +285,7 @@ class Visitor(KrecikVisitor):
         if ctx.declaration():
             return self.visit(ctx.children[0])
         if ctx.VARIABLE_NAME():
-            return self.variable_stack.get_var_value(str(ctx.VARIABLE_NAME()))
+            return self.variable_stack.get_var(str(ctx.VARIABLE_NAME()))
         raise NotImplementedError("Unknown variable type")
 
     def visitErrorNode(self, error_node: ErrorNodeImpl) -> None:

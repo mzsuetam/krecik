@@ -88,8 +88,38 @@ class KrecikVariableRedeclarationError(KrecikException):
     attrs = {"var_name": "not specified"}
 
 
+class KrecikUsageOfBuiltinFunctionNameError(KrecikException):
+    message_schema = "This name is reserved for builtin function: {name}."
+    attrs = {"name": "not specified"}
+
+
 class KrecikFunctionRedeclarationError(KrecikException):
     message_schema = "Redeclaration of function: {name}."
+    attrs = {"name": "not specified"}
+
+
+class KrecikFunctionUndeclaredError(KrecikException):
+    message_schema = "Undeclared function: {name}."
+    attrs = {"name": "not specified"}
+
+
+class KrecikRecursionError(KrecikException):
+    message_schema = "Maximum recursion depth exceeded."
+    attrs = {}
+
+
+class KrecikWrongFunctionReturnTypeError(KrecikException):
+    message_schema = "Invalid return type, expected: {expected}, got {got}."
+    attrs = {"expected": "not specified", "got": "not specified"}
+
+
+class KrecikMissingFunctionReturnError(KrecikException):
+    message_schema = "Missing return statement of called function, expected: {expected}."
+    attrs = {"expected": "not specified"}
+
+
+class KrecikMissingEntryPointError(KrecikException):
+    message_schema = "Missing entry point: {name}."
     attrs = {"name": "not specified"}
 
 

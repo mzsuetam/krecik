@@ -1,4 +1,4 @@
-# Generated from Krecik.g4 by ANTLR 4.12.0
+# Generated from src/antlr/Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 from io import StringIO
 import sys

@@ -23,7 +23,7 @@ declaration_arg_list
     ;
 
 body
-    : '{' SP* body_items_list? SP* vratit? SP* body_items_list? SP*'}'
+    : '{' SP* body_items_list? SP* '}'
     ;
 
 body_items_list
@@ -41,6 +41,7 @@ body_line
     : expression
 	| declaration
 	| assignment
+	| vratit
     ;
 
 expression
@@ -82,7 +83,7 @@ expressions_list
     ;
 
 vratit
-    : Vratit (SP expression)? SP* ';'
+    : Vratit (SP+ expression)?
     ;
 
 

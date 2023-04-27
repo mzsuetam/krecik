@@ -5,7 +5,7 @@ from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikListener import KrecikListener
 from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
-from interpreter.exceptions import KrecikException, KrecikRecognitionError
+from interpreter.exceptions import KrecikException, KrecikRecognitionError, KrecikRecursionError
 
 
 class Interpreter:
@@ -57,6 +57,8 @@ class Interpreter:
             self.visitor.visit(ctx)
         except KrecikException as exc:
             self._handle_exception(exc)
+        except RecursionError:
+            raise KrecikRecursionError
 
     def _handle_exception(self, exc: KrecikException) -> None:
         if self._debug:

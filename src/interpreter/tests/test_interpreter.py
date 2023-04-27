@@ -17,7 +17,7 @@ def test_interpret_file(get_input_path: Callable[[str], str]) -> None:
     interpreter = Interpreter(
         CustomLexer(),
         CustomParser(TokenStream()),
-        Listener(variable_stack),
+        Listener(create_autospec(FunctionMapper), variable_stack),
         ParseTreeWalker(),
         Visitor(
             create_autospec(FunctionMapper),

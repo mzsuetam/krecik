@@ -50,7 +50,7 @@ def main(
     interpreter = Interpreter(
         CustomLexer(),
         CustomParser(TokenStream()),
-        Listener(variable_stack),
+        Listener(function_mapper, variable_stack),
         ParseTreeWalker(),
         Visitor(function_mapper, variable_stack, debug=debug),
         debug=debug,

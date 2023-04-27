@@ -1,3 +1,4 @@
+from types import NoneType
 from typing import Any, Type
 
 from antlr4.tree.Tree import ErrorNodeImpl
@@ -12,6 +13,13 @@ from interpreter.exceptions import (
     KrecikSyntaxError,
     KrecikIncompatibleTypes,
     KrecikNullValueUsageError,
+    KrecikFunctionRedeclarationError,
+    KrecikUsageOfBuiltinFunctionNameError,
+    KrecikMissingEntryPointError,
+    KrecikFunctionUndeclaredError,
+    IncorrectArgumentsNumberError,
+    KrecikWrongFunctionReturnTypeError,
+    KrecikMissingFunctionReturnError,
 )
 from interpreter.function_mapper import FunctionMapper
 
@@ -35,37 +43,86 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitPrimary_expression(self, ctx: KrecikParser.Primary_expressionContext) -> None:
-        return self.visitChildren(ctx)
+        self.visit(ctx.functions_declarations_list())
+
+        entry_point_name = "ahoj"
+        entry_point_type = "nedostatek"
+        entry_point = self.function_mapper.declared_function_map.get(entry_point_name)
+        if entry_point is None or len(entry_point[1]) > 0:
+            raise KrecikMissingEntryPointError(name=f"{entry_point_type} {entry_point_name}()")
+        ep_ctx, ep_arg_types, ep_return_type = entry_point
+
+        self.variable_stack.append_frame(entry_point_name)
+        self.variable_stack.append_subframe()
+        self.visit(ep_ctx.body())
+        self.variable_stack.pop_frame()
+
+    def visitFunctions_declarations_list(
+        self, ctx: KrecikParser.Functions_declarations_listContext
+    ) -> Any:
+        function_ctx: KrecikParser.Function_declarationContext = ctx.function_declaration()
+        name = function_ctx.VARIABLE_NAME().symbol.text
+        if self.function_mapper.build_in_function_map.get(name) is not None:
+            raise KrecikUsageOfBuiltinFunctionNameError(name=name)
+        if self.function_mapper.declared_function_map.get(name) is not None:
+            raise KrecikFunctionRedeclarationError(name=name)
+
+        arg_types = []
+        arg_list_ctx: KrecikParser.Declaration_arg_listContext = function_ctx.declaration_arg_list()
+        while arg_list_ctx is not None:
+            arg_ctx: KrecikParser.DeclarationContext = arg_list_ctx.declaration()
+            arg_list_ctx = arg_list_ctx.declaration_arg_list()
+            arg_types.append(self.visit(arg_ctx.var_type()))
+
+        return_type = self.visit(function_ctx.return_var_type())
+        function = (function_ctx, arg_types, return_type)
+        self.function_mapper.declared_function_map.update({name: function})
+
+        if declaration_list := ctx.functions_declarations_list():
+            self.visit(declaration_list)
 
     @handle_exception
     def visitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> Any:
-        name = str(ctx.VARIABLE_NAME())
-        self.variable_stack.append_frame(str(name))
-        self.variable_stack.append_subframe()
-        return_value = self.visitChildren(ctx)
-        self.variable_stack.pop_frame()
-        return return_value
+        pass
 
     @handle_exception
-    def visitBody(self, ctx: KrecikParser.BodyContext) -> Any:
+    def visitBody(self, ctx: KrecikParser.BodyContext) -> KrecikType | None:
         if not isinstance(ctx.parentCtx, KrecikParser.Function_declarationContext):
             self.variable_stack.append_subframe()
-        val = self.visitChildren(ctx)
-        self.variable_stack.pop_subframe()
-        return val
 
-    def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> None:
+        item_list: list[KrecikParser.Body_itemContext] = []
+        item_list_ctx: KrecikParser.Body_items_listContext = ctx.body_items_list()
+        while item_list_ctx is not None:
+            item_ctx: KrecikParser.Body_itemContext = item_list_ctx.body_item()
+            item_list_ctx = item_list_ctx.body_items_list()
+            item_list.append(item_ctx)
+
+        return_value = None
+        for child_ctx in item_list:
+            return_value = self.visit(child_ctx)
+            if self.function_mapper.is_returning():
+                self.variable_stack.pop_subframe()
+                return return_value
+        return None
+
+    def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> KrecikType | None:
         if cond_expr := ctx.conditional_instruction():
-            logicki = self.visit(cond_expr)
-            if logicki.value:
-                self.visit(ctx.body()[0])
+            expr = self.visit(cond_expr)
+            return_value = None
+            if expr.value:
+                return_value = self.visit(ctx.body()[0])
             elif len(ctx.body()) > 1:
-                self.visit(ctx.body()[1])
-            return
+                return_value = self.visit(ctx.body()[1])
+            return return_value
         if body_line := ctx.body_line():
-            self.visitChildren(body_line)
-            return
+            val = self.visit(body_line)
+            return val
         raise NotImplementedError("Unknown body item.")
+
+    def visitBody_line(self, ctx: KrecikParser.Body_lineContext) -> KrecikType | None:
+        child_ctx = ctx.children[0]
+        return_value = self.visit(child_ctx)
+        return return_value
 
     @handle_exception
     def visitExpressions_list(self, ctx: KrecikParser.Expressions_listContext) -> list[KrecikType]:
@@ -237,18 +294,72 @@ class Visitor(KrecikVisitor):
         raise NotImplementedError("Unknown literal type")
 
     @handle_exception
-    def visitFunction_call(self, ctx: KrecikParser.Function_callContext) -> KrecikType:
+    def visitFunction_call(self, ctx: KrecikParser.Function_callContext) -> KrecikType | None:
         name = ctx.VARIABLE_NAME().symbol.text
-        arguments = []
+        arguments: list[KrecikType] = []
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
         if name == "print" and self._debug:
             values = [f"[print line {ctx.start.line}] {argument.value}" for argument in arguments]
             print(", ".join(values))
             return KRECIK_TRUE
+
+        builtin = self.function_mapper.build_in_function_map.get(name)
+        declared = self.function_mapper.declared_function_map.get(name)
+        if builtin is None and declared is None:
+            raise KrecikFunctionUndeclaredError(name=name)
+        if builtin is not None:
+            return self.function_mapper.callBuiltin(name, arguments)
+        if declared is None:
+            raise KrecikFunctionUndeclaredError(name=name)
+
+        f_ctx: KrecikParser.Function_declarationContext
+        f_arg_types: list[Type[KrecikType]]
+        f_return_type: KrecikType | None
+        f_ctx, f_arg_types, f_return_type = declared
+        try:
+            self.function_mapper.validate_args(arguments, f_arg_types)
+        except IncorrectArgumentsNumberError as exc:
+            exc.attrs.update({"function_name": name})
+            raise exc
+
         self.variable_stack.append_frame(name)
-        return_value = self.function_mapper.call(name, arguments)
+        self.variable_stack.append_subframe()
+        self.visit(f_ctx.declaration_arg_list())
+
+        arg_names: list[str] = []
+        arg_list_ctx: KrecikParser.Declaration_arg_listContext = f_ctx.declaration_arg_list()
+        while arg_list_ctx is not None:
+            arg_ctx: KrecikParser.DeclarationContext = arg_list_ctx.declaration()
+            arg_list_ctx = arg_list_ctx.declaration_arg_list()
+            arg_names.append(arg_ctx.VARIABLE_NAME().symbol.text)
+        arg: KrecikType
+        for name, arg in zip(arg_names, arguments):
+            var = self.variable_stack.get_var(name)
+            var.value = arg.value
+        return_value = self.visit(f_ctx.body())
+        if self.function_mapper.is_returning():
+            self.function_mapper.reset_returning()
+        elif f_return_type is not None:
+            raise KrecikMissingFunctionReturnError(expected=f_return_type.type_name)
         self.variable_stack.pop_frame()
+        return return_value
+
+    def visitVratit(self, ctx: KrecikParser.VratitContext) -> KrecikType | None:
+        self.function_mapper.init_returning()
+        expr = ctx.expression()
+        return_value = self.visit(expr) if expr else None
+        f_name = self.variable_stack.get_curr_function_name()
+        function = self.function_mapper.declared_function_map.get(f_name)
+        if not function:
+            raise KrecikFunctionUndeclaredError(name=f_name)
+        exp_type = function[2]
+        got_type = type(return_value)
+        if exp_type != got_type:
+            got_type_str = "nedostatek" if got_type is NoneType else got_type.type_name
+            exp_type_str = "nedostatek" if exp_type is None else exp_type.type_name
+            raise KrecikWrongFunctionReturnTypeError(expected=exp_type_str, got=got_type_str)
+
         return return_value
 
     @handle_exception
@@ -257,6 +368,17 @@ class Visitor(KrecikVisitor):
         name = ctx.VARIABLE_NAME().symbol.text
         var = self.variable_stack.declare_variable(var_type, name)
         return var
+
+    def visitReturn_var_type(self, ctx: KrecikParser.Return_var_typeContext) -> Type | None:
+        if ctx.Cislo():
+            return Cislo
+        if ctx.Cely():
+            return Cely
+        if ctx.Logicki():
+            return Logicki
+        if ctx.Nedostatek():
+            return None
+        raise NotImplementedError("Unknown return type")
 
     def visitVar_type(self, ctx: KrecikParser.Var_typeContext) -> Type[KrecikType]:
         if ctx.Cislo():
@@ -285,7 +407,7 @@ class Visitor(KrecikVisitor):
         if ctx.declaration():
             return self.visit(ctx.children[0])
         if ctx.VARIABLE_NAME():
-            return self.variable_stack.get_var(str(ctx.VARIABLE_NAME()))
+            return self.variable_stack.get_var(ctx.VARIABLE_NAME().symbol.text)
         raise NotImplementedError("Unknown variable type")
 
     def visitErrorNode(self, error_node: ErrorNodeImpl) -> None:

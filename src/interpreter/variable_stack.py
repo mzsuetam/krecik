@@ -1,18 +1,20 @@
 from typing import Type
 
-from interpreter.exceptions import KrecikVariableUndeclaredError, KrecikVariableStackUsageError, \
-    KrecikVariableAssignedTypeError, KrecikVariableRedeclarationError
-from interpreter.krecik_types.cely import Cely
-from interpreter.krecik_types.cislo import Cislo
+from interpreter.exceptions import (
+    KrecikVariableUndeclaredError,
+    KrecikVariableStackUsageError,
+    KrecikVariableRedeclarationError,
+)
 from interpreter.krecik_types.krecik_type import KrecikType
-from interpreter.krecik_types.logicki import Logicki
 
 
 class Frame:
     """
     Used as frame for function.
     """
-    def __init__(self) -> None:
+
+    def __init__(self, f_name: str) -> None:
+        self.function_name: str = f_name
         self.subframes: list[SubFrame] = []
 
 
@@ -20,6 +22,7 @@ class SubFrame:
     """
     Used as frame for body.
     """
+
     def __init__(self) -> None:
         self.variables: dict[str, KrecikType] = {}
 
@@ -29,24 +32,30 @@ class VariableStack:
         self.frames: list[Frame] = []
 
     def append_frame(self, func_name: str) -> None:
-        func_frame = Frame()
+        func_frame = Frame(func_name)
         self.frames.append(func_frame)
 
     def pop_frame(self) -> None:
         if len(self.frames) == 0:
-            raise KrecikVariableStackUsageError(failed_event="pop frame", reason="frame stack empty")
+            raise KrecikVariableStackUsageError(
+                failed_event="pop frame", reason="frame stack empty"
+            )
         self.frames.pop()
 
     def append_subframe(self) -> None:
         if len(self.frames) == 0:
-            raise KrecikVariableStackUsageError(failed_event="append subframe", reason="frame stack empty")
+            raise KrecikVariableStackUsageError(
+                failed_event="append subframe", reason="frame stack empty"
+            )
         curr_frame = self.frames[-1]
         subframe = SubFrame()
         curr_frame.subframes.append(subframe)
 
     def pop_subframe(self) -> None:
         if len(self.frames) == 0:
-            raise KrecikVariableStackUsageError(failed_event="pop subframe", reason="frame stack empty")
+            raise KrecikVariableStackUsageError(
+                failed_event="pop subframe", reason="frame stack empty"
+            )
         curr_frame = self.frames[-1]
         if len(curr_frame.subframes) == 0:
             raise KrecikVariableStackUsageError(
@@ -73,6 +82,13 @@ class VariableStack:
         curr_subframe.variables.update({var_name: var})
 
         return var
+
+    def get_curr_function_name(self) -> str:
+        if len(self.frames) == 0:
+            raise KrecikVariableStackUsageError(
+                failed_event="get current function name", reason="frame stack empty"
+            )
+        return self.frames[-1].function_name
 
     def get_var(self, var_name: str) -> KrecikType:
         if len(self.frames) == 0:

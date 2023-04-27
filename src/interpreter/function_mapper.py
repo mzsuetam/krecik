@@ -1,5 +1,6 @@
 from typing import Callable, Type
 
+from antlr.KrecikParser import KrecikParser
 from board.board_manager import BoardManager
 from interpreter.exceptions import (
     IncorrectArgumentTypeError,
@@ -13,7 +14,8 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 
 class FunctionMapper:
-    default_value: tuple[None, list] = None, []
+    default_built_in_value: tuple[None, list] = None, []
+    default_declared_value: tuple[None, list, None] = None, [], None
 
     def __init__(self, board_manager: BoardManager) -> None:
         self.build_in_function_map: dict[str, tuple[Callable, list[Type[KrecikType]]]] = {
@@ -45,16 +47,25 @@ class FunctionMapper:
             "pockejte": (board_manager.wait, [Cislo]),
         }
 
-    def call(self, function_name: str, krecik_args: list[KrecikType]) -> KrecikType:
+        self.declared_function_map: dict[
+            str,
+            tuple[
+                KrecikParser.Function_declarationContext, list[Type[KrecikType]], KrecikType | None
+            ],
+        ] = {}
+
+        self._is_returning = False
+
+    def callBuiltin(self, function_name: str, krecik_args: list[KrecikType]) -> KrecikType:
         function, expected_args_types = self.build_in_function_map.get(
             function_name,
-            self.default_value,
+            self.default_built_in_value,
         )
         if function is None:
             raise NotDefinedFunctionError(unrecognized_function_name=function_name)
 
         try:
-            self._validate_args(krecik_args, expected_args_types)
+            self.validate_args(krecik_args, expected_args_types)
         except IncorrectArgumentsNumberError as exc:
             exc.attrs.update({"function_name": function_name})
             raise exc
@@ -63,7 +74,7 @@ class FunctionMapper:
         return function(*args)
 
     @staticmethod
-    def _validate_args(
+    def validate_args(
         args: list[KrecikType],
         expected_args_types: list[Type[KrecikType]],
     ) -> None:
@@ -84,3 +95,16 @@ class FunctionMapper:
                 )
             else:
                 raise NullArgumentError(expected=expected_arg_type.type_name)
+
+    def is_returning(self) -> bool:
+        return self._is_returning
+
+    def init_returning(self) -> None:
+        if self._is_returning:
+            raise Exception()
+        self._is_returning = True
+
+    def reset_returning(self) -> None:
+        if not self._is_returning:
+            raise Exception()
+        self._is_returning = False

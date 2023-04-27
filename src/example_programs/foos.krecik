@@ -1,0 +1,28 @@
+// do prezentacji:
+// $ python src/driver.py --debug true --display none
+
+cely foo(cely a){
+    kdyz ( a mensi 1 ) {
+        print(-100);
+        kdyz ( true){
+            kdyz (true){
+                vratit a;
+
+            }
+        }
+    }
+    a = a-1;
+    print(a);
+    cely b = foo(a);
+    print(a);
+    vratit b;
+}
+
+nedostatek ahoj() {
+
+    print(-1);
+    cely a = foo(5);
+    print(-1);
+    print(a);
+
+}

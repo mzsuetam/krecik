@@ -110,12 +110,42 @@ class KrecikValueError(KrecikException):
 
 
 class KrecikVariableRedeclarationError(KrecikException):
-    message_schema = "Redeclaration of variable: {var_name} in function {func_name}."
-    attrs = {"var_name": "not specified", "func_name": "not specified"}
+    message_schema = "Redeclaration of variable: {var_name}."
+    attrs = {"var_name": "not specified"}
+
+
+class KrecikUsageOfBuiltinFunctionNameError(KrecikException):
+    message_schema = "This name is reserved for builtin function: {name}."
+    attrs = {"name": "not specified"}
 
 
 class KrecikFunctionRedeclarationError(KrecikException):
     message_schema = "Redeclaration of function: {name}."
+    attrs = {"name": "not specified"}
+
+
+class KrecikFunctionUndeclaredError(KrecikException):
+    message_schema = "Undeclared function: {name}."
+    attrs = {"name": "not specified"}
+
+
+class KrecikRecursionError(KrecikException):
+    message_schema = "Maximum recursion depth exceeded."
+    attrs = {}
+
+
+class KrecikWrongFunctionReturnTypeError(KrecikException):
+    message_schema = "Invalid return type, expected: {expected}, got {got}."
+    attrs = {"expected": "not specified", "got": "not specified"}
+
+
+class KrecikMissingFunctionReturnError(KrecikException):
+    message_schema = "Missing return statement of called function, expected: {expected}."
+    attrs = {"expected": "not specified"}
+
+
+class KrecikMissingEntryPointError(KrecikException):
+    message_schema = "Missing entry point: {name}."
     attrs = {"name": "not specified"}
 
 
@@ -156,9 +186,9 @@ class UnsupportedOperationError(KrecikException):
     }
 
 
-class NullValueUsageError(KrecikException):
+class KrecikNullValueUsageError(KrecikException):
     message_schema = (
-        "Expression {operand} of {operation} " "returns nothing thus cannot be used as operand."
+        "Expression {operand} of {operation} returns nothing thus cannot be used as operand."
     )
     attrs = {"operand": "not specified", "operation:": "not specified"}
 
@@ -171,3 +201,13 @@ class KrecikZeroDivisionError(KrecikException):
 class ConditionTypeError(KrecikException):
     message_schema = "Condition must be of type logicki, got '{type}'."
     attrs = {"type": "not specified"}
+
+
+class KrecikFrameStackEmptyError(KrecikException):
+    message_schema = "Could not {failed_event}! Frame stack is empty."
+    attrs = {"failed_event": "not specified"}
+
+
+class KrecikSubFrameStackEpmtyError(KrecikException):
+    message_schema = "Could not {failed_event}! Subframe stack is empty."
+    attrs = {"failed_event": "not specified"}

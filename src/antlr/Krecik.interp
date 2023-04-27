@@ -84,7 +84,7 @@ body_items_list
 body_item
 body_line
 function_call
-vratit
+return
 expressions_list
 expression
 boolean_unary_operator

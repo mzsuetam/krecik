@@ -1,89 +1,91 @@
 from typing import Type
 
-from interpreter.exceptions import KrecikVariableUndeclaredError
+from interpreter.exceptions import (
+    KrecikVariableUndeclaredError,
+    KrecikVariableRedeclarationError,
+    KrecikFrameStackEmptyError,
+    KrecikSubFrameStackEpmtyError,
+)
 from interpreter.krecik_types.krecik_type import KrecikType
+
+
+class Frame:
+    """
+    Used as frame for function.
+    """
+
+    def __init__(self, f_name: str) -> None:
+        self.function_name: str = f_name
+        self.subframes: list[SubFrame] = []
+
+
+class SubFrame:
+    """
+    Used as frame for body.
+    """
+
+    def __init__(self) -> None:
+        self.variables: dict[str, KrecikType] = {}
 
 
 class VariableStack:
     def __init__(self) -> None:
-        self.stack: dict[str, list[dict[str, KrecikType]]] = {}
-        self.current_func_stack: list[tuple[str, int]] = []
+        self.frames: list[Frame] = []
 
-    def get_var_value(self, var_name: str) -> KrecikType:
-        var = None
-        for i in range(self._get_current_stack(), -1, -1):
-            var = self.stack[self._get_current_function()][i].get(var_name)
-            if var is not None:
-                break
-        if var is None:
-            raise KrecikVariableUndeclaredError(name=var_name)
-        return var
+    def append_frame(self, func_name: str) -> None:
+        func_frame = Frame(func_name)
+        self.frames.append(func_frame)
 
-    def set_var_value(self, var_name: str, value: KrecikType) -> None:
-        var = self.get_var_value(var_name)
-        var.value = value
+    def pop_frame(self) -> None:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="pop frame")
+        self.frames.pop()
 
-    def _get_current_function(self) -> str:
-        return self.current_func_stack[len(self.current_func_stack) - 1][0]
+    def append_subframe(self) -> None:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="append subframe")
+        curr_frame = self.frames[-1]
+        subframe = SubFrame()
+        curr_frame.subframes.append(subframe)
 
-    def _get_current_stack(self) -> int:
-        return self.current_func_stack[len(self.current_func_stack) - 1][1]
+    def pop_subframe(self) -> None:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="pop subframe")
+        curr_frame = self.frames[-1]
+        if len(curr_frame.subframes) == 0:
+            raise KrecikSubFrameStackEpmtyError(failed_event="pop subframe")
+        curr_frame.subframes.pop()
 
-    def enter_function(self, func_name: str) -> None:
-        """
-        Use to enter given function variable stack pile,
-        e.g. before calling a function
-        """
-        # dodajemy zbiór stacków funkcji i ustawiamy ją jako aktualną
-        self.stack[func_name] = [{}]
-        self.current_func_stack.append((func_name, 0))
+    def declare_variable(self, var_type: Type[KrecikType], var_name: str) -> KrecikType:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="declare variable")
+        curr_frame = self.frames[-1]
+        if len(curr_frame.subframes) == 0:
+            raise KrecikSubFrameStackEpmtyError(failed_event="declare variable")
+        curr_subframe = curr_frame.subframes[-1]
 
-    def exit_function(self) -> None:
-        """
-        Use to exit function variable stack pile
-        and automatically go to previous one.
-        e.g. after calling a function
-        """
-        # usuwamy zbiór stacków funkcji i ustawiamy poprzedni jako aktualny
-        key, val = self.current_func_stack.pop()
-        self.stack.pop(key)
+        if curr_subframe.variables.get(var_name) is not None:
+            raise KrecikVariableRedeclarationError(var_name=var_name)
 
-    def enter_stack(self) -> None:
-        """
-        Use to enter next variable stack of current function,
-        e.g. before entering if body
-        """
-        # dodajemy stack do obecnej funkcji, ustawiamy go jako aktualny
-        if len(self.current_func_stack) > 0:
-            func_name, i = self.current_func_stack[len(self.current_func_stack) - 1]
-            self.stack[func_name].append({})
-            self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i + 1)
-
-    def exit_stack(self) -> None:
-        """
-        Use to enter exit variable stack of current function
-        and automatically go to previous one.
-        e.g. after exiting if body
-        """
-        # usuwamy obecny stack z obecnej funkcji, ustawiamy poprzedni jako aktualny
-        func_name, i = self.current_func_stack[len(self.current_func_stack) - 1]
-        self.stack[func_name].pop()
-        self.current_func_stack[len(self.current_func_stack) - 1] = (func_name, i - 1)
-
-    def __str__(self) -> str:
-        string = ""
-        for key, val in self.stack.items():
-            string += f"Function {key}:\n"
-            for i, stack in enumerate(val):
-                string += f"\tStack: {i}\n"
-                for s_key, s_val in stack.items():
-                    string += f"\t\t{s_val}\n"
-        return string
-
-    def declare(self, var_type: Type[KrecikType], var_name: str) -> KrecikType:
         var = var_type(None)
-        # dodajemy zmienną do obecnego stacka w obecnej funkcji
-        func = self._get_current_function()
-        stack = self._get_current_stack()
-        self.stack[func][stack][var_name] = var
+        curr_subframe.variables.update({var_name: var})
+
         return var
+
+    def get_curr_function_name(self) -> str:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="get current function name")
+        return self.frames[-1].function_name
+
+    def get_var(self, var_name: str) -> KrecikType:
+        if len(self.frames) == 0:
+            raise KrecikFrameStackEmptyError(failed_event="get variable value")
+        curr_frame = self.frames[-1]
+        if len(curr_frame.subframes) == 0:
+            raise KrecikSubFrameStackEpmtyError(failed_event="get variable value")
+
+        for frame in reversed(curr_frame.subframes):
+            var = frame.variables.get(var_name)
+            if var is not None:
+                return var
+        raise KrecikVariableUndeclaredError(name=var_name)

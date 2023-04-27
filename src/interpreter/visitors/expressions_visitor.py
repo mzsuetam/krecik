@@ -4,7 +4,7 @@ from antlr4.tree.Tree import ParseTree, TerminalNodeImpl
 from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
 from interpreter.decorators import handle_exception
-from interpreter.exceptions import NullValueUsageError
+from interpreter.exceptions import KrecikNullValueUsageError
 from interpreter.krecik_types.krecik_type import KrecikType
 
 
@@ -168,7 +168,7 @@ class ExpressionsVisitor(KrecikVisitor):
     ) -> KrecikType:
         expression = self.visit(operand_ctx)
         if expression is None:
-            raise NullValueUsageError(
+            raise KrecikNullValueUsageError(
                 operand=operand_ctx.getText(),
                 operation=operator_ctx.getText(),
             )

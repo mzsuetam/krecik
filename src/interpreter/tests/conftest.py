@@ -6,7 +6,8 @@ import pytest
 from antlr4 import CommonTokenStream, InputStream
 
 from antlr.KrecikParser import KrecikParser
-from interpreter.function_mapper import FunctionMapper
+from interpreter.function_mappers.builtin_function_mapper import BuiltinFunctionMapper
+from interpreter.function_mappers.declared_function_mapper import DeclaredFunctionMapper
 from interpreter.recognizers.lexer import CustomLexer
 from interpreter.recognizers.parser import CustomParser
 from interpreter.variable_stack import VariableStack
@@ -15,9 +16,10 @@ from interpreter.visitors.visitor import Visitor
 
 @pytest.fixture()
 def visitor() -> Visitor:
-    function_mapper = create_autospec(FunctionMapper)
+    builtin_function_mapper = create_autospec(BuiltinFunctionMapper)
+    declared_function_mapper = create_autospec(DeclaredFunctionMapper)
     variable_stack = create_autospec(VariableStack)
-    visitor = Visitor(function_mapper, variable_stack)
+    visitor = Visitor(builtin_function_mapper, declared_function_mapper, variable_stack)
     return visitor
 
 

@@ -1,4 +1,4 @@
-# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
+# Generated from Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -48,8 +48,8 @@ class KrecikVisitor(ParseTreeVisitor):
     def visitFunction_call(self, ctx: KrecikParser.Function_callContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by KrecikParser#vratit.
-    def visitVratit(self, ctx: KrecikParser.VratitContext):
+    # Visit a parse tree produced by KrecikParser#return.
+    def visitReturn(self, ctx: KrecikParser.ReturnContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by KrecikParser#expressions_list.

@@ -2,21 +2,48 @@ from typing import Callable, Type
 
 from board.board_manager import BoardManager
 from interpreter.exceptions import (
-    IncorrectArgumentTypeError,
     IncorrectArgumentsNumberError,
     NotDefinedFunctionError,
-    NullArgumentError,
 )
 from interpreter.krecik_types.cely import Cely
 from interpreter.krecik_types.cislo import Cislo
 from interpreter.krecik_types.krecik_type import KrecikType
+from interpreter.utils import validate_args
+
+BUILTIN_FUNCTION_NAMES: set = {
+    "do_predu",
+    "v_pravo",
+    "v_zad",
+    "v_levo",
+    # interaction
+    "wzit",
+    "poloz",
+    "vykop",
+    "pohrbit",
+    "skryt",
+    "vstavej",
+    "zda_trava",
+    "zda_trava_pred",
+    "zda_kamen",
+    "zda_kamen_pred",
+    "zda_kopecek",
+    "zda_kopecek_pred",
+    "zda_rajce",
+    "zda_rajce_pred",
+    "zda_muchomur",
+    "zda_muchomur_pred",
+    # other
+    "zda_drzi_rajce",
+    "zda_drzi_muchomur",
+    "pockejte",
+}
 
 
-class FunctionMapper:
+class BuiltinFunctionMapper:
     default_value: tuple[None, list] = None, []
 
     def __init__(self, board_manager: BoardManager) -> None:
-        self.build_in_function_map: dict[str, tuple[Callable, list[Type[KrecikType]]]] = {
+        self.function_map: dict[str, tuple[Callable, list[Type[KrecikType]]]] = {
             # changing position and direction
             "do_predu": (board_manager.move_krecik_forward, [Cely]),
             "v_pravo": (board_manager.turn_krecik_right, []),
@@ -46,7 +73,7 @@ class FunctionMapper:
         }
 
     def call(self, function_name: str, krecik_args: list[KrecikType]) -> KrecikType:
-        function, expected_args_types = self.build_in_function_map.get(
+        function, expected_args_types = self.function_map.get(
             function_name,
             self.default_value,
         )
@@ -54,33 +81,10 @@ class FunctionMapper:
             raise NotDefinedFunctionError(unrecognized_function_name=function_name)
 
         try:
-            self._validate_args(krecik_args, expected_args_types)
+            validate_args(krecik_args, expected_args_types)
         except IncorrectArgumentsNumberError as exc:
             exc.attrs.update({"function_name": function_name})
             raise exc
 
         args = [krecik_arg.value for krecik_arg in krecik_args]
         return function(*args)
-
-    @staticmethod
-    def _validate_args(
-        args: list[KrecikType],
-        expected_args_types: list[Type[KrecikType]],
-    ) -> None:
-        if len(args) != len(expected_args_types):
-            raise IncorrectArgumentsNumberError(
-                expected=len(expected_args_types),
-                got=len(args),
-            )
-        parsed_args = []
-        for arg, expected_arg_type in zip(args, expected_args_types):
-            if isinstance(arg, expected_arg_type):
-                parsed_args.append(arg)
-                continue
-            if arg is not None:
-                raise IncorrectArgumentTypeError(
-                    expected=expected_arg_type.type_name,
-                    got=arg.type_name,
-                )
-            else:
-                raise NullArgumentError(expected=expected_arg_type.type_name)

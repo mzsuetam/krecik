@@ -41,14 +41,14 @@ body_line
     : expression
 	| declaration
 	| assignment
-	| vratit
+	| return
     ;
 
 function_call
 	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
 	;
 
-vratit
+return
     : Vratit (SP+ expression)?
     ;
 

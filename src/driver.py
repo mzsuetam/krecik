@@ -8,7 +8,11 @@ from board.tests.board_examples import jebus_cross, plains, random
 from display.board_publisher import BoardPublisher
 from display.terminal_display import TerminalDisplay
 from display.window import Window
-from interpreter.function_mapper import FunctionMapper
+from interpreter.function_mappers.builtin_function_mapper import (
+    BuiltinFunctionMapper,
+    BUILTIN_FUNCTION_NAMES,
+)
+from interpreter.function_mappers.declared_function_mapper import DeclaredFunctionMapper
 from interpreter.interpreter import Interpreter
 from interpreter.listener import Listener
 from interpreter.recognizers.lexer import CustomLexer
@@ -45,14 +49,15 @@ def main(
         board_publisher.subscribe(terminal)
 
     # interpreter segment
-    function_mapper = FunctionMapper(board_manager)
+    builtin_function_mapper = BuiltinFunctionMapper(board_manager)
+    declared_function_mapper = DeclaredFunctionMapper()
     variable_stack = VariableStack()
     interpreter = Interpreter(
         CustomLexer(),
         CustomParser(TokenStream()),
-        Listener(variable_stack),
+        Listener(BUILTIN_FUNCTION_NAMES, declared_function_mapper, variable_stack),
         ParseTreeWalker(),
-        Visitor(function_mapper, variable_stack, debug=debug),
+        Visitor(builtin_function_mapper, declared_function_mapper, variable_stack, debug=debug),
         debug=debug,
     )
 

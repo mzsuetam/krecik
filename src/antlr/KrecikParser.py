@@ -1,4 +1,4 @@
-# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
+# Generated from Krecik.g4 by ANTLR 4.12.0
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -4378,7 +4378,7 @@ class KrecikParser(Parser):
     RULE_body_item = 6
     RULE_body_line = 7
     RULE_function_call = 8
-    RULE_vratit = 9
+    RULE_return = 9
     RULE_expressions_list = 10
     RULE_expression = 11
     RULE_boolean_unary_operator = 12
@@ -4408,7 +4408,7 @@ class KrecikParser(Parser):
         "body_item",
         "body_line",
         "function_call",
-        "vratit",
+        "return",
         "expressions_list",
         "expression",
         "boolean_unary_operator",
@@ -5082,8 +5082,8 @@ class KrecikParser(Parser):
         def assignment(self):
             return self.getTypedRuleContext(KrecikParser.AssignmentContext, 0)
 
-        def vratit(self):
-            return self.getTypedRuleContext(KrecikParser.VratitContext, 0)
+        def return_(self):
+            return self.getTypedRuleContext(KrecikParser.ReturnContext, 0)
 
         def getRuleIndex(self):
             return KrecikParser.RULE_body_line
@@ -5130,7 +5130,7 @@ class KrecikParser(Parser):
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 182
-                self.vratit()
+                self.return_()
                 pass
 
         except RecognitionException as re:
@@ -5225,7 +5225,7 @@ class KrecikParser(Parser):
             self.exitRule()
         return localctx
 
-    class VratitContext(ParserRuleContext):
+    class ReturnContext(ParserRuleContext):
         __slots__ = "parser"
 
         def __init__(self, parser, parent: ParserRuleContext = None, invokingState: int = -1):
@@ -5245,25 +5245,25 @@ class KrecikParser(Parser):
                 return self.getToken(KrecikParser.SP, i)
 
         def getRuleIndex(self):
-            return KrecikParser.RULE_vratit
+            return KrecikParser.RULE_return
 
         def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterVratit"):
-                listener.enterVratit(self)
+            if hasattr(listener, "enterReturn"):
+                listener.enterReturn(self)
 
         def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitVratit"):
-                listener.exitVratit(self)
+            if hasattr(listener, "exitReturn"):
+                listener.exitReturn(self)
 
         def accept(self, visitor: ParseTreeVisitor):
-            if hasattr(visitor, "visitVratit"):
-                return visitor.visitVratit(self)
+            if hasattr(visitor, "visitReturn"):
+                return visitor.visitReturn(self)
             else:
                 return visitor.visitChildren(self)
 
-    def vratit(self):
-        localctx = KrecikParser.VratitContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 18, self.RULE_vratit)
+    def return_(self):
+        localctx = KrecikParser.ReturnContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 18, self.RULE_return)
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)

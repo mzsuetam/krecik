@@ -1,4 +1,4 @@
-# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
+# Generated from Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -83,12 +83,12 @@ class KrecikListener(ParseTreeListener):
     def exitFunction_call(self, ctx: KrecikParser.Function_callContext):
         pass
 
-    # Enter a parse tree produced by KrecikParser#vratit.
-    def enterVratit(self, ctx: KrecikParser.VratitContext):
+    # Enter a parse tree produced by KrecikParser#return.
+    def enterReturn(self, ctx: KrecikParser.ReturnContext):
         pass
 
-    # Exit a parse tree produced by KrecikParser#vratit.
-    def exitVratit(self, ctx: KrecikParser.VratitContext):
+    # Exit a parse tree produced by KrecikParser#return.
+    def exitReturn(self, ctx: KrecikParser.ReturnContext):
         pass
 
     # Enter a parse tree produced by KrecikParser#expressions_list.

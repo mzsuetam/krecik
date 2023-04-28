@@ -1,11 +1,11 @@
-from antlr4 import CommonTokenStream, InputStream, RecognitionException
+from antlr4 import CommonTokenStream, InputStream
 from antlr4.tree.Tree import ParseTreeWalker
 
 from antlr.KrecikLexer import KrecikLexer
 from antlr.KrecikListener import KrecikListener
 from antlr.KrecikParser import KrecikParser
 from antlr.KrecikVisitor import KrecikVisitor
-from interpreter.exceptions import KrecikException, KrecikRecognitionError
+from interpreter.exceptions import KrecikException
 
 
 class Interpreter:
@@ -44,12 +44,25 @@ class Interpreter:
         self.parser.setTokenStream(token_stream)
 
     def get_primary_expression_ctx(self) -> KrecikParser.Primary_expressionContext | None:
-        try:
-            return self.parser.primary_expression()
-        except RecognitionException as exc:
-            krecik_exc = KrecikRecognitionError(extra_info=str(exc))
-            self._handle_exception(krecik_exc)
+        primary_context = self.parser.primary_expression()
+        is_any_error = self.is_any_lexer_or_parser_error()
+        if is_any_error:
             return None
+        return primary_context
+
+    def is_any_lexer_or_parser_error(self) -> bool:
+        error_listeners = [
+            *self.lexer.getErrorListenerDispatch().delegates,
+            *self.parser.getErrorListenerDispatch().delegates,
+        ]
+        errors = []
+        for listener in error_listeners:
+            errors.extend(listener.errors)
+        if not errors:
+            return False
+        for error in errors:
+            self._handle_exception(error)
+        return True
 
     def walk_and_visit_tree(self, ctx: KrecikParser.Primary_expressionContext) -> None:
         try:

@@ -128,6 +128,19 @@ class KrecikRecognitionError(KrecikException):
     attrs = {"extra_info": "not specified"}
 
 
+class KrecikNoViableAltException(KrecikRecognitionError):
+    message_schema = "No viable alternative at input '{offending_symbol}'."
+    attrs = {"offending_symbol": "not specified"}
+
+
+class KrecikInputMismatchException(KrecikRecognitionError):
+    pass
+
+
+class KrecikFailedPredicateException(KrecikRecognitionError):
+    pass
+
+
 class NullValueUsageError(KrecikException):
     message_schema = (
         "Expression {operand_number} of {operation}"

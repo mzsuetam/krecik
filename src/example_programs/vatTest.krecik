@@ -1,0 +1,21 @@
+nedostatek ahoj() {
+
+    logicki a = true je true;
+
+    //cely x = 5*3;
+    /*
+    logicki b = false;
+    logicki c = true;
+    logicki result = true;
+
+    cely x = 5;
+    cely y = 10;
+
+    result = a neje b;
+    print(result);
+    result = a neje c;
+    print(result);
+    */
+
+
+}

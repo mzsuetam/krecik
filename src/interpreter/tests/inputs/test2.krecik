@@ -1,7 +1,8 @@
 nedostatek ahoj() {
-    kdyz(true oba true) pak{
-        do_predu(2);
-    }
+    //kdyz(true oba true) pak{
+      //  do_predu(2);
+    //}
+    do_predu
 	pockejte(3.);
     vratit;
 }

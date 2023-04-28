@@ -269,7 +269,7 @@ class Visitor(KrecikVisitor):
     def visitAssignment(self, ctx: KrecikParser.AssignmentContext) -> None:
         expr: KrecikType = self.visit(ctx.expression())
         var: KrecikType = self.visit(ctx.variable())
-        if not expr:
+        if expr is None:
             e_name = ctx.getText().split("=")[1]
             raise KrecikVariableValueUnassignableError(expr=e_name)
         if var.type_name != expr.type_name:

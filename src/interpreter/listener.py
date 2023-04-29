@@ -41,14 +41,15 @@ class Listener(KrecikListener):
         self.current_stack -= 1
 
     def enterDeclaration(self, ctx: KrecikParser.DeclarationContext) -> None:
-        var_type, var_name = ctx.getText().split(" ")  # @FIXME: ctx.var_type()
+        var_type = ctx.var_type()
+        var_name = ctx.VARIABLE_NAME().symbol.text
         var: KrecikType | None = None
 
-        if var_type == Cely.type_name:  # TODO: dont use .type_name
+        if var_type.Cely():
             var = Cely(None)
-        if var_type == Cislo.type_name:  # TODO: dont use .type_name
+        if var_type.Cislo():
             var = Cislo(None)
-        if var_type == Logicki.type_name:  # TODO: dont use .type_name
+        if var_type.Logicki():
             var = Logicki(None)
         if var is None:
             raise KrecikException()

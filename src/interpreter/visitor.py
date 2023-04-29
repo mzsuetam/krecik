@@ -108,11 +108,13 @@ class Visitor(KrecikVisitor):
                 case "/":
                     return left / right
         raise KrecikIncompatibleTypes(
-            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+            operand_type=symbol,
+            type_1=left.type_name,
+            type_2=right.type_name,
         )
 
     def visitPrimary_operator(self, ctx: KrecikParser.Primary_operatorContext) -> str:
-        return ctx.getText()
+        return ctx.children[0].symbol.text
 
     @handle_exception
     def visitExpressionSecondaryOperator(
@@ -132,11 +134,13 @@ class Visitor(KrecikVisitor):
                 case "-":
                     return left - right
         raise KrecikIncompatibleTypes(
-            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+            operand_type=symbol,
+            type_1=left.type_name,
+            type_2=right.type_name,
         )
 
     def visitSecondary_operator(self, ctx: KrecikParser.Secondary_operatorContext) -> str:
-        return ctx.getText()
+        return ctx.children[0].symbol.text
 
     @handle_exception
     def visitExpressionComparisonOperator(
@@ -161,11 +165,13 @@ class Visitor(KrecikVisitor):
                 case "neje":
                     return left != right
         raise KrecikIncompatibleTypes(
-            operand_type=symbol, type_1=left.type_name, type_2=right.type_name
+            operand_type=symbol,
+            type_1=left.type_name,
+            type_2=right.type_name,
         )
 
     def visitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext) -> str:
-        return ctx.getText()
+        return ctx.children[0].symbol.text
 
     @handle_exception
     def visitExpressionLogicalAndOperator(
@@ -180,7 +186,9 @@ class Visitor(KrecikVisitor):
         if type(left) is type(right):
             return left and right
         raise KrecikIncompatibleTypes(
-            operand_type="oba", type_1=left.type_name, type_2=right.type_name
+            operand_type="oba",
+            type_1=left.type_name,
+            type_2=right.type_name,
         )
 
     @handle_exception
@@ -196,7 +204,9 @@ class Visitor(KrecikVisitor):
         if type(left) is type(right):
             return left or right
         raise KrecikIncompatibleTypes(
-            operand_type="nebo", type_1=left.type_name, type_2=right.type_name
+            operand_type="nebo",
+            type_1=left.type_name,
+            type_2=right.type_name,
         )
 
     @handle_exception
@@ -225,7 +235,7 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitLiteral(self, ctx: KrecikParser.LiteralContext) -> KrecikType:
-        value = ctx.getText()
+        value = ctx.children[0].symbol.text
         if ctx.BOOLEAN_VAL():
             return Logicki(value)
         if ctx.FLOAT_VAL():
@@ -241,8 +251,8 @@ class Visitor(KrecikVisitor):
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
         if name == "print" and self._debug:
-            values = [f"[print line {ctx.start.line}] {argument.value}" for argument in arguments]
-            print(", ".join(values))
+            values = [str(argument) for argument in arguments]
+            print(f"[print line {ctx.start.line}]", ", ".join(values))
             return KRECIK_TRUE
         self.variable_stack.enter_function(name)
         return_value = self.function_mapper.call(name, arguments)
@@ -267,14 +277,17 @@ class Visitor(KrecikVisitor):
 
     @handle_exception
     def visitAssignment(self, ctx: KrecikParser.AssignmentContext) -> None:
-        expr: KrecikType = self.visit(ctx.expression())
         var: KrecikType = self.visit(ctx.variable())
+        expr: KrecikType = self.visit(ctx.expression())
         if not expr:
-            e_name = ctx.getText().split("=")[1]
-            raise KrecikVariableValueUnassignableError(expr=e_name)
+            expr_text = ctx.getText().split("=")[1]
+            raise KrecikVariableValueUnassignableError(expr=expr_text)
         if var.type_name != expr.type_name:
+            var_name = ctx.getText().split("=")[0]
             raise KrecikVariableAssignedTypeError(
-                name=ctx.getText().split("=")[0], type=var.type_name, val_type=expr.type_name
+                name=var_name,
+                type=var.type_name,
+                val_type=expr.type_name,
             )
         var.value = expr.value
 

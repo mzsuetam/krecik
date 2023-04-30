@@ -1,10 +1,10 @@
 nedostatek spirala(cislo a) {
-    kdyz (a wetsi 0) pak {
+    kdyz (a wetsi 0) {
         do_predu(a);
         v_levo(90);
         vratit; 
     }
-    kdyz (ne (a wetsi 0)) pak {
+    kdyz (ne (a wetsi 0)) {
         spirala(a - 10);
     }
 }

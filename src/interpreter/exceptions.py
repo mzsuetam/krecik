@@ -51,6 +51,32 @@ class KrecikException(Exception):
         self.stop_column = ctx.stop.column
 
 
+# LEXER EXCEPTIONS
+class KrecikRecognitionError(KrecikException):
+    message_schema = "Recognition error. {extra_info}"
+    attrs = {"extra_info": "not specified"}
+
+
+class KrecikNoViableAltException(KrecikRecognitionError):
+    message_schema = "No viable alternative at input '{offending_symbol}'."
+    attrs = {"offending_symbol": "not specified"}
+
+
+class KrecikInputMismatchException(KrecikRecognitionError):
+    pass
+
+
+class KrecikFailedPredicateException(KrecikRecognitionError):
+    pass
+
+
+# PARSER EXCEPTIONS
+class KrecikSyntaxError(KrecikException):
+    message_schema = "Syntax error. {extra_info}"
+    attrs = {"extra_info": "not specified"}
+
+
+# LISTENER AND VISITOR EXCEPTIONS
 class NotDefinedFunctionError(KrecikException):
     message_schema = "Function `{unrecognized_function_name}` is not defined."
     attrs = {"unrecognized_function_name": "not specified"}
@@ -84,7 +110,7 @@ class KrecikValueError(KrecikException):
 
 
 class KrecikVariableRedeclarationError(KrecikException):
-    message_schema = "Redeclaration of variabvle: {var_name} in function {func_name}."
+    message_schema = "Redeclaration of variable: {var_name} in function {func_name}."
     attrs = {"var_name": "not specified", "func_name": "not specified"}
 
 
@@ -110,40 +136,33 @@ class KrecikVariableValueUnassignableError(KrecikException):
 
 class KrecikVariableAssignedTypeError(KrecikException):
     message_schema = "Cannot assign value type {val_type} to variable {name} of type {type}."
-    attrs = {"type_name": "not specified", "name": "not specified", "type": "not specified"}
+    attrs = {"val_type": "not specified", "name": "not specified", "type": "not specified"}
 
 
-class KrecikSyntaxError(KrecikException):
-    message_schema = "Syntax error. {extra_info}"
-    attrs = {"extra_info": "not specified"}
+class KrecikIncompatibleTypesError(KrecikException):
+    message_schema = "Unsupported operand {operand} for {type_1} and {type_2}."
+    attrs = {"operand": "not specified", "type_1": "not specified", "type_2": "not specified"}
 
 
-class KrecikIncompatibleTypes(KrecikException):
-    message_schema = "Unsupported operand types for {operand_type}: {type_1} and {type_2}."
-    attrs = {"operand_type": "not specified", "type_1": "not specified", "type_2": "not specified"}
-
-
-class KrecikRecognitionError(KrecikException):
-    message_schema = "Recognition error. {extra_info}"
-    attrs = {"extra_info": "not specified"}
-
-
-class KrecikNoViableAltException(KrecikRecognitionError):
-    message_schema = "No viable alternative at input '{offending_symbol}'."
-    attrs = {"offending_symbol": "not specified"}
-
-
-class KrecikInputMismatchException(KrecikRecognitionError):
-    pass
-
-
-class KrecikFailedPredicateException(KrecikRecognitionError):
-    pass
+class UnsupportedOperationError(KrecikException):
+    message_schema = (
+        "Operation '{operation}' is unsupported for type '{type}'."
+        "Expected one of: {expected_types}."
+    )
+    attrs = {
+        "operation": "not specified",
+        "type": "not specified",
+        "expected_types": "not specified",
+    }
 
 
 class NullValueUsageError(KrecikException):
     message_schema = (
-        "Expression {operand_number} of {operation}"
-        " returns nothing thus cannot be used as operand."
+        "Expression {operand} of {operation} " "returns nothing thus cannot be used as operand."
     )
-    attrs = {"operand_number": "not specified", "operation:": "not specified"}
+    attrs = {"operand": "not specified", "operation:": "not specified"}
+
+
+class KrecikZeroDivisionError(KrecikException):
+    message_schema = "Division by zero."
+    attrs = {}

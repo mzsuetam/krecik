@@ -7,10 +7,10 @@ from antlr4 import CommonTokenStream, InputStream
 
 from antlr.KrecikParser import KrecikParser
 from interpreter.function_mapper import FunctionMapper
-from interpreter.lexer import CustomLexer
-from interpreter.parser import CustomParser
+from interpreter.recognizers.lexer import CustomLexer
+from interpreter.recognizers.parser import CustomParser
 from interpreter.variable_stack import VariableStack
-from interpreter.visitor import Visitor
+from interpreter.visitors.visitor import Visitor
 
 
 @pytest.fixture()

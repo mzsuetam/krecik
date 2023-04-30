@@ -1,4 +1,4 @@
-# Generated from Krecik.g4 by ANTLR 4.12.0
+# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -44,72 +44,52 @@ class KrecikVisitor(ParseTreeVisitor):
     def visitBody_line(self, ctx: KrecikParser.Body_lineContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by KrecikParser#expressionComparisonOperator.
-    def visitExpressionComparisonOperator(
-        self, ctx: KrecikParser.ExpressionComparisonOperatorContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#atomExpression.
-    def visitAtomExpression(self, ctx: KrecikParser.AtomExpressionContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#expressionPrimaryOperator.
-    def visitExpressionPrimaryOperator(self, ctx: KrecikParser.ExpressionPrimaryOperatorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#expressionSecondaryOperator.
-    def visitExpressionSecondaryOperator(
-        self, ctx: KrecikParser.ExpressionSecondaryOperatorContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#expressionUnaryOperator.
-    def visitExpressionUnaryOperator(self, ctx: KrecikParser.ExpressionUnaryOperatorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#expressionLogicalOrOperator.
-    def visitExpressionLogicalOrOperator(
-        self, ctx: KrecikParser.ExpressionLogicalOrOperatorContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#expressionLogicalAndOperator.
-    def visitExpressionLogicalAndOperator(
-        self, ctx: KrecikParser.ExpressionLogicalAndOperatorContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#parenthesisedExpression.
-    def visitParenthesisedExpression(self, ctx: KrecikParser.ParenthesisedExpressionContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#primary_operator.
-    def visitPrimary_operator(self, ctx: KrecikParser.Primary_operatorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#secondary_operator.
-    def visitSecondary_operator(self, ctx: KrecikParser.Secondary_operatorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#comparison_operator.
-    def visitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by KrecikParser#atom.
-    def visitAtom(self, ctx: KrecikParser.AtomContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by KrecikParser#function_call.
     def visitFunction_call(self, ctx: KrecikParser.Function_callContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#vratit.
+    def visitVratit(self, ctx: KrecikParser.VratitContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by KrecikParser#expressions_list.
     def visitExpressions_list(self, ctx: KrecikParser.Expressions_listContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by KrecikParser#vratit.
-    def visitVratit(self, ctx: KrecikParser.VratitContext):
+    # Visit a parse tree produced by KrecikParser#expression.
+    def visitExpression(self, ctx: KrecikParser.ExpressionContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#boolean_unary_operator.
+    def visitBoolean_unary_operator(self, ctx: KrecikParser.Boolean_unary_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#numeric_unary_operator.
+    def visitNumeric_unary_operator(self, ctx: KrecikParser.Numeric_unary_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#multiplication_operator.
+    def visitMultiplication_operator(self, ctx: KrecikParser.Multiplication_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#addition_operator.
+    def visitAddition_operator(self, ctx: KrecikParser.Addition_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#comparison_operator.
+    def visitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#and_operator.
+    def visitAnd_operator(self, ctx: KrecikParser.And_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#or_operator.
+    def visitOr_operator(self, ctx: KrecikParser.Or_operatorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by KrecikParser#atom.
+    def visitAtom(self, ctx: KrecikParser.AtomContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by KrecikParser#conditional_instruction.

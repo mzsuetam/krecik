@@ -1,8 +1,8 @@
 nedostatek ahoj() {
-    kdyz(true) pak
+    kdyz(true)
     {
        do_predu(2);
-        kdyz(false) pak
+        kdyz(false)
         {
         }
         jiny

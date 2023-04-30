@@ -11,10 +11,10 @@ nedostatek ahoj() {
     v_pravo();
     v_levo();
 	pockejte(2.+2.*2.);
-    kdyz(l) pak
+    kdyz(l)
     {
        do_predu(2);
-       kdyz(18 mensi 88 nebo 18 wetsi -2) pak
+       kdyz(18 mensi 88 nebo 18 wetsi -2)
        {
            do_predu(2);
            pockejte(3.);
@@ -28,7 +28,7 @@ nedostatek ahoj() {
     jiny {
         do_predu(1);
         pockejte(2.);
-        kdyz(true nebo true oba false) pak 
+        kdyz(true nebo true oba false)
         {
             do_predu(1);
             pockejte(2.);

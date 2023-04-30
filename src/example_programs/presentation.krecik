@@ -19,7 +19,7 @@ nedostatek ahoj() {
 
     // pritn(y);
 
-    kdyz (ne lo) pak {
+    kdyz (ne lo) {
         print(123);
     }
     jiny{
@@ -27,7 +27,7 @@ nedostatek ahoj() {
     }
 
     cely m = 0;
-    kdyz (true) pak {
+    kdyz (true) {
         print(m);
         cely m = 4;
         print(m);

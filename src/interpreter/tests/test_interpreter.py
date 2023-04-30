@@ -1,18 +1,33 @@
 from typing import Callable
 from unittest.mock import create_autospec
 
+import pytest
 from antlr4 import ParseTreeWalker, TokenStream
 
 from interpreter.function_mapper import FunctionMapper
 from interpreter.interpreter import Interpreter
-from interpreter.lexer import CustomLexer
 from interpreter.listener import Listener
-from interpreter.parser import CustomParser
+from interpreter.recognizers.lexer import CustomLexer
+from interpreter.recognizers.parser import CustomParser
 from interpreter.variable_stack import VariableStack
-from interpreter.visitor import Visitor
+from interpreter.visitors.visitor import Visitor
 
 
-def test_interpret_file(get_input_path: Callable[[str], str]) -> None:
+@pytest.mark.parametrize(
+    "file_name",
+    [
+        # "incorrect.krecik",
+        "simple.krecik",
+        "test.krecik",
+        "test2.krecik",
+        "test3.krecik",
+        "testVariables.krecik",
+    ],
+)
+def test_interpret_file(
+    file_name: str,
+    get_input_path: Callable[[str], str],
+) -> None:
     variable_stack = VariableStack()
     interpreter = Interpreter(
         CustomLexer(),
@@ -23,6 +38,7 @@ def test_interpret_file(get_input_path: Callable[[str], str]) -> None:
             create_autospec(FunctionMapper),
             variable_stack,
         ),
+        debug=True,
     )
-    input_path = get_input_path("simple.krecik")
+    input_path = get_input_path(file_name)
     interpreter.interpret_file(input_path)

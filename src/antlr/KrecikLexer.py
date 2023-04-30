@@ -1,4 +1,4 @@
-# Generated from Krecik.g4 by ANTLR 4.12.0
+# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 from io import StringIO
 import sys
@@ -1242,7 +1242,7 @@ def serializedATN():
         89,
         90,
         5,
-        42,
+        43,
         0,
         0,
         90,
@@ -1254,7 +1254,7 @@ def serializedATN():
         91,
         92,
         5,
-        47,
+        45,
         0,
         0,
         92,
@@ -1266,7 +1266,7 @@ def serializedATN():
         93,
         94,
         5,
-        43,
+        42,
         0,
         0,
         94,
@@ -1278,7 +1278,7 @@ def serializedATN():
         95,
         96,
         5,
-        45,
+        47,
         0,
         0,
         96,
@@ -2560,10 +2560,10 @@ class KrecikLexer(Lexer):
         "'{'",
         "'}'",
         "';'",
-        "'*'",
-        "'/'",
         "'+'",
         "'-'",
+        "'*'",
+        "'/'",
         "'='",
         "'cislo'",
         "'cely'",

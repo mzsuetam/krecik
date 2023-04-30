@@ -30,7 +30,7 @@ nedostatek ahoj() {
 		
 		kdyz(true){
 			
-			opakujte az 4 {	
+			opakujte 4 {
 				// młody jeżyk,
 				// bo chciałbym tylko przeżyć
 				vlevo(678.8);

@@ -1,5 +1,5 @@
 logicki kwadrat(cely a) {
-    opakujte az 4 {
+    opakujte 4 {
         do_predu(a);
         v_pravo(90);
     }

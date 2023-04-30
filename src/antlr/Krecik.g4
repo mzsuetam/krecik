@@ -33,8 +33,8 @@ body_items_list
 
 body_item
 	: body_line SP* ';'
-	| conditional_instruction SP* body SP* (else_instruction SP* body SP*)?
-	| loop_instruction SP* body
+	| conditional_instruction
+	| loop_instruction
 	;
 
 body_line
@@ -114,15 +114,11 @@ atom
 
 // INSTRUCTIONS
 conditional_instruction
-    : Kdyz SP? '(' SP* expression SP* ')' SP*
-    ;
-
-else_instruction
-    : Jiny
+    : Kdyz SP? '(' SP* expression SP* ')' SP* body SP* (Jiny SP* body SP*)?
     ;
 
 loop_instruction
-	: Opakujte SP Az SP expression
+	: Opakujte SP? '(' SP* expression SP* ')' SP* body
 	;
 
 
@@ -172,10 +168,8 @@ Neje: 'neje';
 Wetsi: 'wetsi';
 Mensi: 'mensi';
 Kdyz: 'kdyz';
-Pak: 'pak';
 Jiny: 'jiny';
 Opakujte: 'opakujte';
-Az: 'az';
 Vratit: 'vratit';
 Nedostatek: 'nedostatek';
 

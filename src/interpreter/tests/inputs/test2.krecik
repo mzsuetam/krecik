@@ -1,5 +1,5 @@
 nedostatek ahoj() {
-    kdyz(true oba true) pak{
+    kdyz(true oba true){
         do_predu(2);
     }
 	pockejte(3.);

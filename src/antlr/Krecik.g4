@@ -1,18 +1,18 @@
 grammar Krecik;
 
 
-// PRIMARY EXPRESSION AND MAIN FUNCTION
+// PRIMARY EXPRESSION
 primary_expression
 	: SP* functions_declarations_list SP* EOF
 	;
 
+
+// FUNCTIONS
 functions_declarations_list
     : function_declaration SP* functions_declarations_list
     | function_declaration
     ;
 
-
-// FUNCTIONS
 function_declaration
 	:  return_var_type SP VARIABLE_NAME SP* '(' SP* declaration_arg_list? SP* ')' SP* body
 	;
@@ -23,7 +23,7 @@ declaration_arg_list
     ;
 
 body
-    : '{' SP* body_items_list? SP* vratit? SP* body_items_list? SP*'}'
+    : '{' SP* (body_items_list SP*)? '}'
     ;
 
 body_items_list
@@ -33,7 +33,7 @@ body_items_list
 
 body_item
 	: body_line SP* ';'
-	| conditional_instruction SP* body SP* (Jiny SP* body SP*)?
+	| conditional_instruction SP* body SP* (else_instruction SP* body SP*)?
 	| loop_instruction SP* body
 	;
 
@@ -41,29 +41,68 @@ body_line
     : expression
 	| declaration
 	| assignment
+	| vratit
+    ;
+
+function_call
+	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
+	;
+
+vratit
+    : Vratit (SP+ expression)?
+    ;
+
+
+// EXPRESSIONS
+expressions_list
+    : expression SP* ',' SP* expressions_list
+    | expression
     ;
 
 expression
-    :   secondary_operator SP* expression                   # expressionUnaryOperator
-    |   expression SP* primary_operator SP* expression      # expressionPrimaryOperator
-    |   expression SP* secondary_operator SP* expression    # expressionSecondaryOperator
-    |   expression SP* comparison_operator SP* expression   # expressionComparisonOperator
-    |   expression SP* Oba SP* expression                   # expressionLogicalAndOperator
-    |   expression SP* Nebo SP* expression                  # expressionLogicalOrOperator
-    |   '(' SP* expression SP* ')'                          # parenthesisedExpression
-    |   atom                                                # atomExpression
+    :   boolean_unary_operator SP* expression
+    |   numeric_unary_operator SP* expression
+    |   expression SP* multiplication_operator SP* expression
+    |   expression SP* addition_operator SP* expression
+    |   expression SP* comparison_operator SP* expression
+    |   expression SP* and_operator SP* expression
+    |   expression SP* or_operator SP* expression
+    |   '(' SP* expression SP* ')'
+    |   atom
     ;
 
-primary_operator
-    : ( '*' | '/' )
+boolean_unary_operator
+    : Ne
     ;
 
-secondary_operator
-    : ( '+' | '-' | Ne)
+numeric_unary_operator
+    : '+'
+    | '-'
+    ;
+
+multiplication_operator
+    : '*'
+    | '/'
+    ;
+
+addition_operator
+    : '+'
+    | '-'
     ;
 
 comparison_operator
-    :  ( Mensi | Wetsi | Je | Neje )
+    : Mensi
+    | Wetsi
+    | Je
+    | Neje
+    ;
+
+and_operator
+    : Oba
+    ;
+
+or_operator
+    : Nebo
     ;
 
 atom
@@ -72,23 +111,10 @@ atom
     | function_call
     ;
 
-function_call
-	: VARIABLE_NAME '(' SP* expressions_list? SP* ')'
-	;
 
-expressions_list
-    : expression SP* ',' SP* expressions_list
-    | expression
-    ;
-
-vratit
-    : Vratit (SP expression)? SP* ';'
-    ;
-
-
-// CONDITIONAL INSTRUCTIONS AND LOOPS
+// INSTRUCTIONS
 conditional_instruction
-    : Kdyz SP? '(' SP* expression SP* ')' SP* Pak
+    : Kdyz SP? '(' SP* expression SP* ')' SP*
     ;
 
 else_instruction
@@ -98,6 +124,7 @@ else_instruction
 loop_instruction
 	: Opakujte SP Az SP expression
 	;
+
 
 // VARIABLES AND TYPES
 return_var_type

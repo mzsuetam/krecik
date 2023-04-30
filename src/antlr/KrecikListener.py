@@ -1,4 +1,4 @@
-# Generated from Krecik.g4 by ANTLR 4.12.0
+# Generated from D:/Studia/Semestr 4/TKK/krecik/src/antlr\Krecik.g4 by ANTLR 4.12.0
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -75,120 +75,20 @@ class KrecikListener(ParseTreeListener):
     def exitBody_line(self, ctx: KrecikParser.Body_lineContext):
         pass
 
-    # Enter a parse tree produced by KrecikParser#expressionComparisonOperator.
-    def enterExpressionComparisonOperator(
-        self, ctx: KrecikParser.ExpressionComparisonOperatorContext
-    ):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionComparisonOperator.
-    def exitExpressionComparisonOperator(
-        self, ctx: KrecikParser.ExpressionComparisonOperatorContext
-    ):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#atomExpression.
-    def enterAtomExpression(self, ctx: KrecikParser.AtomExpressionContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#atomExpression.
-    def exitAtomExpression(self, ctx: KrecikParser.AtomExpressionContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#expressionPrimaryOperator.
-    def enterExpressionPrimaryOperator(self, ctx: KrecikParser.ExpressionPrimaryOperatorContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionPrimaryOperator.
-    def exitExpressionPrimaryOperator(self, ctx: KrecikParser.ExpressionPrimaryOperatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#expressionSecondaryOperator.
-    def enterExpressionSecondaryOperator(
-        self, ctx: KrecikParser.ExpressionSecondaryOperatorContext
-    ):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionSecondaryOperator.
-    def exitExpressionSecondaryOperator(self, ctx: KrecikParser.ExpressionSecondaryOperatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#expressionUnaryOperator.
-    def enterExpressionUnaryOperator(self, ctx: KrecikParser.ExpressionUnaryOperatorContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionUnaryOperator.
-    def exitExpressionUnaryOperator(self, ctx: KrecikParser.ExpressionUnaryOperatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#expressionLogicalOrOperator.
-    def enterExpressionLogicalOrOperator(
-        self, ctx: KrecikParser.ExpressionLogicalOrOperatorContext
-    ):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionLogicalOrOperator.
-    def exitExpressionLogicalOrOperator(self, ctx: KrecikParser.ExpressionLogicalOrOperatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#expressionLogicalAndOperator.
-    def enterExpressionLogicalAndOperator(
-        self, ctx: KrecikParser.ExpressionLogicalAndOperatorContext
-    ):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#expressionLogicalAndOperator.
-    def exitExpressionLogicalAndOperator(
-        self, ctx: KrecikParser.ExpressionLogicalAndOperatorContext
-    ):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#parenthesisedExpression.
-    def enterParenthesisedExpression(self, ctx: KrecikParser.ParenthesisedExpressionContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#parenthesisedExpression.
-    def exitParenthesisedExpression(self, ctx: KrecikParser.ParenthesisedExpressionContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#primary_operator.
-    def enterPrimary_operator(self, ctx: KrecikParser.Primary_operatorContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#primary_operator.
-    def exitPrimary_operator(self, ctx: KrecikParser.Primary_operatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#secondary_operator.
-    def enterSecondary_operator(self, ctx: KrecikParser.Secondary_operatorContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#secondary_operator.
-    def exitSecondary_operator(self, ctx: KrecikParser.Secondary_operatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#comparison_operator.
-    def enterComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#comparison_operator.
-    def exitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
-        pass
-
-    # Enter a parse tree produced by KrecikParser#atom.
-    def enterAtom(self, ctx: KrecikParser.AtomContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#atom.
-    def exitAtom(self, ctx: KrecikParser.AtomContext):
-        pass
-
     # Enter a parse tree produced by KrecikParser#function_call.
     def enterFunction_call(self, ctx: KrecikParser.Function_callContext):
         pass
 
     # Exit a parse tree produced by KrecikParser#function_call.
     def exitFunction_call(self, ctx: KrecikParser.Function_callContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#vratit.
+    def enterVratit(self, ctx: KrecikParser.VratitContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#vratit.
+    def exitVratit(self, ctx: KrecikParser.VratitContext):
         pass
 
     # Enter a parse tree produced by KrecikParser#expressions_list.
@@ -199,12 +99,76 @@ class KrecikListener(ParseTreeListener):
     def exitExpressions_list(self, ctx: KrecikParser.Expressions_listContext):
         pass
 
-    # Enter a parse tree produced by KrecikParser#vratit.
-    def enterVratit(self, ctx: KrecikParser.VratitContext):
+    # Enter a parse tree produced by KrecikParser#expression.
+    def enterExpression(self, ctx: KrecikParser.ExpressionContext):
         pass
 
-    # Exit a parse tree produced by KrecikParser#vratit.
-    def exitVratit(self, ctx: KrecikParser.VratitContext):
+    # Exit a parse tree produced by KrecikParser#expression.
+    def exitExpression(self, ctx: KrecikParser.ExpressionContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#boolean_unary_operator.
+    def enterBoolean_unary_operator(self, ctx: KrecikParser.Boolean_unary_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#boolean_unary_operator.
+    def exitBoolean_unary_operator(self, ctx: KrecikParser.Boolean_unary_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#numeric_unary_operator.
+    def enterNumeric_unary_operator(self, ctx: KrecikParser.Numeric_unary_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#numeric_unary_operator.
+    def exitNumeric_unary_operator(self, ctx: KrecikParser.Numeric_unary_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#multiplication_operator.
+    def enterMultiplication_operator(self, ctx: KrecikParser.Multiplication_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#multiplication_operator.
+    def exitMultiplication_operator(self, ctx: KrecikParser.Multiplication_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#addition_operator.
+    def enterAddition_operator(self, ctx: KrecikParser.Addition_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#addition_operator.
+    def exitAddition_operator(self, ctx: KrecikParser.Addition_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#comparison_operator.
+    def enterComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#comparison_operator.
+    def exitComparison_operator(self, ctx: KrecikParser.Comparison_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#and_operator.
+    def enterAnd_operator(self, ctx: KrecikParser.And_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#and_operator.
+    def exitAnd_operator(self, ctx: KrecikParser.And_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#or_operator.
+    def enterOr_operator(self, ctx: KrecikParser.Or_operatorContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#or_operator.
+    def exitOr_operator(self, ctx: KrecikParser.Or_operatorContext):
+        pass
+
+    # Enter a parse tree produced by KrecikParser#atom.
+    def enterAtom(self, ctx: KrecikParser.AtomContext):
+        pass
+
+    # Exit a parse tree produced by KrecikParser#atom.
+    def exitAtom(self, ctx: KrecikParser.AtomContext):
         pass
 
     # Enter a parse tree produced by KrecikParser#conditional_instruction.

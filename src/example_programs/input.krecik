@@ -24,11 +24,11 @@ nedostatek ahoj() {
 	
 	cislo d =43;
 	
-	kdyz(true)pak {
+	kdyz(true){
 
 		dopredu(d+4);
 		
-		kdyz(true)pak {
+		kdyz(true){
 			
 			opakujte az 4 {	
 				// młody jeżyk,

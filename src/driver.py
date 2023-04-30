@@ -3,18 +3,18 @@ from pathlib import Path
 
 from antlr4 import ParseTreeWalker, TokenStream
 
-from board.tests.board_examples import jebus_cross, plains, random
 from board.board_manager import BoardManager
+from board.tests.board_examples import jebus_cross, plains, random
 from display.board_publisher import BoardPublisher
 from display.terminal_display import TerminalDisplay
+from display.window import Window
 from interpreter.function_mapper import FunctionMapper
 from interpreter.interpreter import Interpreter
-from interpreter.lexer import CustomLexer
 from interpreter.listener import Listener
-from interpreter.parser import CustomParser
+from interpreter.recognizers.lexer import CustomLexer
+from interpreter.recognizers.parser import CustomParser
 from interpreter.variable_stack import VariableStack
-from interpreter.visitor import Visitor
-from display.window import Window
+from interpreter.visitors.visitor import Visitor
 
 
 def main(

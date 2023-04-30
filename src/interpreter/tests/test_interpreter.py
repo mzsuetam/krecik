@@ -16,12 +16,12 @@ from interpreter.visitors.visitor import Visitor
 @pytest.mark.parametrize(
     "file_name",
     [
-        # "incorrect.krecik",
+        "loop.krecik",
         "simple.krecik",
         "test.krecik",
         "test2.krecik",
         "test3.krecik",
-        "testVariables.krecik",
+        "test_variables.krecik",
     ],
 )
 def test_interpret_file(
@@ -37,6 +37,7 @@ def test_interpret_file(
         Visitor(
             create_autospec(FunctionMapper),
             variable_stack,
+            debug=True,
         ),
         debug=True,
     )

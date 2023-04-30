@@ -166,3 +166,8 @@ class NullValueUsageError(KrecikException):
 class KrecikZeroDivisionError(KrecikException):
     message_schema = "Division by zero."
     attrs = {}
+
+
+class ConditionTypeError(KrecikException):
+    message_schema = "Condition must be of type logicki, got '{type}'."
+    attrs = {"type": "not specified"}

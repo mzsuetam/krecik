@@ -1,0 +1,8 @@
+nedostatek ahoj() {
+
+    cely a = 5;
+    opakujte (a wetsi 0) {
+        print(a);
+        a = a - 1;
+    }
+}

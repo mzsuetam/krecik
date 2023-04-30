@@ -9,6 +9,7 @@ from interpreter.exceptions import (
     KrecikVariableAssignedTypeError,
     KrecikVariableUnassignedError,
     KrecikVariableValueUnassignableError,
+    ConditionTypeError,
 )
 from interpreter.function_mapper import FunctionMapper
 from interpreter.krecik_types.cely import Cely
@@ -60,22 +61,6 @@ class Visitor(ExpressionsVisitor):
         self.variable_stack.exit_stack()
         return val
 
-    def visitBody_item(
-        self,
-        ctx: KrecikParser.Body_itemContext,
-    ) -> None:
-        if cond_expr := ctx.conditional_instruction():
-            logicki = self.visit(cond_expr)
-            if logicki.value:
-                self.visit(ctx.body()[0])
-            elif len(ctx.body()) > 1:
-                self.visit(ctx.body()[1])
-            return
-        if body_line := ctx.body_line():
-            self.visitChildren(body_line)
-            return
-        raise NotImplementedError("Unknown body item.")
-
     @handle_exception
     def visitFunction_call(
         self,
@@ -86,8 +71,8 @@ class Visitor(ExpressionsVisitor):
         if ctx.expressions_list():
             arguments = self.visit(ctx.expressions_list())
         if name == "print" and self._debug:
-            values = [f"[print line {ctx.start.line}] {argument.value}" for argument in arguments]
-            print(", ".join(values))
+            values = [str(argument) for argument in arguments]
+            print(f"[print line {ctx.start.line}]", ", ".join(values))
             return KRECIK_TRUE
         self.variable_stack.enter_function(name)
         return_value = self.function_mapper.call(name, arguments)
@@ -117,8 +102,30 @@ class Visitor(ExpressionsVisitor):
     def visitConditional_instruction(
         self,
         ctx: KrecikParser.Conditional_instructionContext,
-    ) -> KrecikType:
-        return self.visit(ctx.expression())
+    ) -> None:
+        expression_ctx = ctx.expression()
+        if self.check_condition(expression_ctx):
+            self.visitBody(ctx.body(0))
+        elif ctx.Jiny():
+            self.visitBody(ctx.body(1))
+
+    @handle_exception
+    def visitLoop_instruction(
+        self,
+        ctx: KrecikParser.Loop_instructionContext,
+    ) -> None:
+        expression_ctx = ctx.expression()
+        body_ctx = ctx.body()
+        while self.check_condition(expression_ctx):
+            self.visitBody(body_ctx)
+
+    def check_condition(self, condition_ctx: KrecikParser.ExpressionContext) -> bool:
+        condition_value: KrecikType = self.visit(condition_ctx)
+        if not isinstance(condition_value, Logicki):
+            raise ConditionTypeError(type=condition_value.type_name)
+        if condition_value != KRECIK_TRUE:
+            return False
+        return True
 
     # VARIABLES AND TYPES
     def visitVar_type(self, ctx: KrecikParser.Var_typeContext) -> Type[KrecikType]:
@@ -145,7 +152,7 @@ class Visitor(ExpressionsVisitor):
         self,
         ctx: KrecikParser.LiteralContext,
     ) -> KrecikType:
-        value = ctx.getText()
+        value = ctx.children[0].symbol.text
         if ctx.BOOLEAN_VAL():
             return Logicki(value)
         if ctx.FLOAT_VAL():

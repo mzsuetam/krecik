@@ -179,14 +179,6 @@ class KrecikListener(ParseTreeListener):
     def exitConditional_instruction(self, ctx: KrecikParser.Conditional_instructionContext):
         pass
 
-    # Enter a parse tree produced by KrecikParser#else_instruction.
-    def enterElse_instruction(self, ctx: KrecikParser.Else_instructionContext):
-        pass
-
-    # Exit a parse tree produced by KrecikParser#else_instruction.
-    def exitElse_instruction(self, ctx: KrecikParser.Else_instructionContext):
-        pass
-
     # Enter a parse tree produced by KrecikParser#loop_instruction.
     def enterLoop_instruction(self, ctx: KrecikParser.Loop_instructionContext):
         pass

@@ -1,7 +1,7 @@
 nedostatek ahoj() {
     cislo a = 200;
-    opakujte az 4 {
-        opakujte az 4 {
+    opakujte 4 {
+        opakujte 4 {
             do_predu(a);
             v_levo(90);
         }

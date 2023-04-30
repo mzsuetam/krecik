@@ -96,10 +96,6 @@ class KrecikVisitor(ParseTreeVisitor):
     def visitConditional_instruction(self, ctx: KrecikParser.Conditional_instructionContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by KrecikParser#else_instruction.
-    def visitElse_instruction(self, ctx: KrecikParser.Else_instructionContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by KrecikParser#loop_instruction.
     def visitLoop_instruction(self, ctx: KrecikParser.Loop_instructionContext):
         return self.visitChildren(ctx)

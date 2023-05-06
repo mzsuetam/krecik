@@ -145,6 +145,8 @@ class Visitor(ExpressionsVisitor):
         if body_line := ctx.body_line():
             val = self.visit(body_line)
             return val
+        if for_instr_ctx := ctx.for_instruction():
+            return self.visit(for_instr_ctx)
         raise NotImplementedError("Unknown body item.")
 
     @handle_exception
@@ -280,6 +282,23 @@ class Visitor(ExpressionsVisitor):
         if condition_value != KRECIK_TRUE:
             return False
         return True
+
+    def visitFor_instruction(
+            self,
+            ctx: KrecikParser.For_instructionContext,
+    ) -> None:
+        body_ctx = ctx.body()
+        is_infinite = not ctx.expression()
+
+        if assignment_ctx := ctx.assignment():
+            self.visitAssignment(assignment_ctx)
+
+        while is_infinite or self.check_condition(ctx.expression()):
+            val = self.visitBody(body_ctx)
+            if update_ctx := ctx.update_statement():
+                self.visitUpdate_statement(update_ctx)
+            if self.declared_function_mapper.is_returning():
+                return val
 
     # VARIABLES AND TYPES
 

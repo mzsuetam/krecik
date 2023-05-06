@@ -35,6 +35,7 @@ body_item
 	: body_line SP* ';'
 	| conditional_instruction
 	| loop_instruction
+	| for_instruction
 	;
 
 body_line
@@ -121,6 +122,9 @@ loop_instruction
 	: Opakujte SP? '(' SP* expression SP* ')' SP* body
 	;
 
+for_instruction
+    : Pro SP? '(' SP* assignment? SP* ';' SP* expression? SP* ';' SP* update_statement? SP* ')' SP* body
+    ;
 
 // VARIABLES AND TYPES
 return_var_type
@@ -146,6 +150,11 @@ literal
     | INT_VAL
     ;
 
+update_statement
+    : assignment
+    ;
+
+
 assignment
     : variable SP? '=' SP? expression
     ;
@@ -170,6 +179,7 @@ Mensi: 'mensi';
 Kdyz: 'kdyz';
 Jiny: 'jiny';
 Opakujte: 'opakujte';
+Pro: 'pro';
 Vratit: 'vratit';
 Nedostatek: 'nedostatek';
 

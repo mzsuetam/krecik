@@ -1,0 +1,9 @@
+nedostatek ahoj() {
+    cely k=7;
+
+    pro(;k mensi 10; )
+    {
+        print(k);
+
+    }
+}

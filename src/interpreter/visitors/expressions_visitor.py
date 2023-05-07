@@ -12,9 +12,9 @@ class ExpressionsVisitor(KrecikVisitor):
     # EXPRESSIONS
     @handle_exception
     def visitExpressions_list(self, ctx: KrecikParser.Expressions_listContext) -> list[KrecikType]:
-        expr_list = [self.visit(ctx.expression())]
+        expr_list = [self.visitExpression(ctx.expression())]
         if rest := ctx.expressions_list():
-            expr_list += self.visit(rest)
+            expr_list += self.visitExpressions_list(rest)
         return expr_list
 
     @handle_exception
@@ -22,7 +22,7 @@ class ExpressionsVisitor(KrecikVisitor):
         children = list(filter(self.is_not_empty_terminal, ctx.children))
         match children:
             case [atom_ctx]:
-                return self.visit(atom_ctx)
+                return self.visitAtom(atom_ctx)
 
             case [bool_unary, expr] if ctx.boolean_unary_operator():
                 return self.handle_boolean_unary_operator(bool_unary, expr)
@@ -48,7 +48,7 @@ class ExpressionsVisitor(KrecikVisitor):
             case [parentheses_start, expr, parentheses_end] if (
                 parentheses_start.symbol.text == "(" and parentheses_end.symbol.text == ")"
             ):
-                return self.visit(expr)
+                return self.visitExpression(expr)
 
         raise NotImplementedError(f"Unknown expression type. {ctx.getText()}")
 
@@ -66,7 +66,7 @@ class ExpressionsVisitor(KrecikVisitor):
         expr_ctx: KrecikParser.ExpressionContext,
     ) -> KrecikType:
         expression = self.get_operand(expr_ctx, boolean_unary_op_ctx)
-        match self.visit(boolean_unary_op_ctx):
+        match self.visitBoolean_unary_operator(boolean_unary_op_ctx):
             case "ne":
                 return ~expression
         raise NotImplementedError(
@@ -79,7 +79,7 @@ class ExpressionsVisitor(KrecikVisitor):
         expr_ctx: KrecikParser.ExpressionContext,
     ) -> KrecikType:
         expression = self.get_operand(expr_ctx, numeric_unary_op_ctx)
-        match self.visit(numeric_unary_op_ctx):
+        match self.visitNumeric_unary_operator(numeric_unary_op_ctx):
             case "+":
                 return +expression
             case "-":
@@ -96,7 +96,7 @@ class ExpressionsVisitor(KrecikVisitor):
     ) -> KrecikType:
         left = self.get_operand(left_expr_ctx, mult_op_ctx)
         right = self.get_operand(right_expr_ctx, mult_op_ctx)
-        match self.visit(mult_op_ctx):
+        match self.visitMultiplication_operator(mult_op_ctx):
             case "*":
                 return left * right
             case "/":
@@ -113,7 +113,7 @@ class ExpressionsVisitor(KrecikVisitor):
     ) -> KrecikType:
         left = self.get_operand(left_expr_ctx, add_op_ctx)
         right = self.get_operand(right_expr_ctx, add_op_ctx)
-        match self.visit(add_op_ctx):
+        match self.visitAddition_operator(add_op_ctx):
             case "+":
                 return left + right
             case "-":
@@ -128,7 +128,7 @@ class ExpressionsVisitor(KrecikVisitor):
     ) -> KrecikType:
         left = self.get_operand(left_expr_ctx, comp_op_ctx)
         right = self.get_operand(right_expr_ctx, comp_op_ctx)
-        match self.visit(comp_op_ctx):
+        match self.visitComparison_operator(comp_op_ctx):
             case "mensi":
                 return left < right
             case "wetsi":
@@ -166,7 +166,7 @@ class ExpressionsVisitor(KrecikVisitor):
         operand_ctx: KrecikParser.ExpressionContext,
         operator_ctx: ParserRuleContext,
     ) -> KrecikType:
-        expression = self.visit(operand_ctx)
+        expression = self.visitExpression(operand_ctx)
         if expression is None:
             raise KrecikNullValueUsageError(
                 operand=operand_ctx.getText(),

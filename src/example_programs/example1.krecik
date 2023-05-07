@@ -1,12 +1,14 @@
 logicki kwadrat(cely a) {
-    opakujte 4 {
+    cely siema = 5;
+    opakujte (siema wetsi 0) {
         do_predu(a);
-        v_pravo(90);
+        v_pravo();
+        siema = siema - 1;
     }
 
-    cislo a = 4;
+    a = 4;
 
-    vratit 1234; 
+    vratit false;
 }
 
 nedostatek ahoj() {

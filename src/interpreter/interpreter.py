@@ -16,14 +16,14 @@ class Interpreter:
         listener: KrecikListener,
         walker: ParseTreeWalker,
         visitor: KrecikVisitor,
-        debug: bool = False,
+        print_stacktraces: bool = False,
     ) -> None:
         self.lexer = lexer
         self.parser = parser
         self.listener = listener
         self.walker = walker
         self.visitor = visitor
-        self._debug = debug
+        self._print_stacktraces = print_stacktraces
 
     def interpret_file(self, file_path: str) -> None:
         with open(file_path, "r") as file:
@@ -67,13 +67,13 @@ class Interpreter:
     def walk_and_visit_tree(self, ctx: KrecikParser.Primary_expressionContext) -> None:
         try:
             self.walker.walk(self.listener, ctx)
-            self.visitor.visit(ctx)
+            self.visitor.visitPrimary_expression(ctx)
         except KrecikException as exc:
             self._handle_exception(exc)
         except RecursionError:
             raise KrecikRecursionError
 
     def _handle_exception(self, exc: KrecikException) -> None:
-        if self._debug:
+        if self._print_stacktraces:
             raise exc
         print(exc)

@@ -10,7 +10,6 @@ from display.terminal_display import TerminalDisplay
 from display.window import Window
 from interpreter.function_mappers.builtin_function_mapper import (
     BuiltinFunctionMapper,
-    BUILTIN_FUNCTION_NAMES,
 )
 from interpreter.function_mappers.declared_function_mapper import DeclaredFunctionMapper
 from interpreter.interpreter import Interpreter
@@ -26,7 +25,8 @@ def main(
     height: int,
     board_type: str,
     file_path: str,
-    debug: bool,
+    allow_prints: bool,
+    print_stacktraces: bool,
     display: str,
 ) -> None:
     # board segment
@@ -55,13 +55,14 @@ def main(
     interpreter = Interpreter(
         CustomLexer(),
         CustomParser(TokenStream()),
-        Listener(BUILTIN_FUNCTION_NAMES, declared_function_mapper, variable_stack),
+        Listener(declared_function_mapper, variable_stack),
         ParseTreeWalker(),
-        Visitor(builtin_function_mapper, declared_function_mapper, variable_stack, debug=debug),
-        debug=debug,
+        Visitor(builtin_function_mapper, declared_function_mapper, variable_stack, allow_prints),
+        print_stacktraces,
     )
 
     # running interpreter
+    file_path = file_path if file_path.endswith(".krecik") else file_path + ".krecik"
     interpreter.interpret_file(file_path)
 
 
@@ -72,9 +73,10 @@ if __name__ == "__main__":
     Example usages:
     $ python driver.py
     $ python driver.py ./example_programs/example1.krecik
-    $ python driver.py ./example_programs/example1.krecik --width 12 --height 12 --board-type random
-    $ python driver.py ./example_programs/example1.krecik --display window
-    $ python driver.py ./example_programs/example2.krecik --debug true
+    $ python driver.py ./example_programs/example1
+    $ python driver.py ./example_programs/example1 --width 12 --height 12 --board-type random
+    $ python driver.py ./example_programs/example1 --display window
+    $ python driver.py ./example_programs/example2 --allow-prints true
     """
 
     parser = ArgumentParser()
@@ -107,8 +109,15 @@ if __name__ == "__main__":
         default="plains",
     )
     parser.add_argument(
-        "--debug",
-        metavar="is debug mode",
+        "--allow-prints",
+        metavar="is prints allowed in code",
+        type=bool,
+        nargs="?",
+        default=False,
+    )
+    parser.add_argument(
+        "--print-stacktraces",
+        metavar="should stacktraces be printed in python convention",
         type=bool,
         nargs="?",
         default=False,
@@ -128,6 +137,7 @@ if __name__ == "__main__":
         height=args.height,
         board_type=args.board_type,
         file_path=str(source_file_path),
-        debug=args.debug,
+        allow_prints=args.allow_prints,
+        print_stacktraces=args.print_stacktraces,
         display=args.display,
     )

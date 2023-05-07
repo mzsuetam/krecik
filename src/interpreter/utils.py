@@ -1,5 +1,3 @@
-from typing import Type
-
 from interpreter.exceptions import (
     IncorrectArgumentsNumberError,
     IncorrectArgumentTypeError,
@@ -10,7 +8,7 @@ from interpreter.krecik_types.krecik_type import KrecikType
 
 def validate_args(
     args: list[KrecikType],
-    expected_args_types: list[Type[KrecikType]],
+    expected_args_types: list[type[KrecikType]],
 ) -> None:
     if len(args) != len(expected_args_types):
         raise IncorrectArgumentsNumberError(

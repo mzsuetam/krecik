@@ -1,10 +1,8 @@
-from typing import Type
-
 from interpreter.exceptions import (
     KrecikVariableUndeclaredError,
     KrecikVariableRedeclarationError,
     KrecikFrameStackEmptyError,
-    KrecikSubFrameStackEpmtyError,
+    KrecikSubFrameStackEmptyError,
 )
 from interpreter.krecik_types.krecik_type import KrecikType
 
@@ -53,15 +51,15 @@ class VariableStack:
             raise KrecikFrameStackEmptyError(failed_event="pop subframe")
         curr_frame = self.frames[-1]
         if len(curr_frame.subframes) == 0:
-            raise KrecikSubFrameStackEpmtyError(failed_event="pop subframe")
+            raise KrecikSubFrameStackEmptyError(failed_event="pop subframe")
         curr_frame.subframes.pop()
 
-    def declare_variable(self, var_type: Type[KrecikType], var_name: str) -> KrecikType:
+    def declare_variable(self, var_type: type[KrecikType], var_name: str) -> KrecikType:
         if len(self.frames) == 0:
             raise KrecikFrameStackEmptyError(failed_event="declare variable")
         curr_frame = self.frames[-1]
         if len(curr_frame.subframes) == 0:
-            raise KrecikSubFrameStackEpmtyError(failed_event="declare variable")
+            raise KrecikSubFrameStackEmptyError(failed_event="declare variable")
         curr_subframe = curr_frame.subframes[-1]
 
         if curr_subframe.variables.get(var_name) is not None:
@@ -82,7 +80,7 @@ class VariableStack:
             raise KrecikFrameStackEmptyError(failed_event="get variable value")
         curr_frame = self.frames[-1]
         if len(curr_frame.subframes) == 0:
-            raise KrecikSubFrameStackEpmtyError(failed_event="get variable value")
+            raise KrecikSubFrameStackEmptyError(failed_event="get variable value")
 
         for frame in reversed(curr_frame.subframes):
             var = frame.variables.get(var_name)

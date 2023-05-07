@@ -208,6 +208,6 @@ class KrecikFrameStackEmptyError(KrecikException):
     attrs = {"failed_event": "not specified"}
 
 
-class KrecikSubFrameStackEpmtyError(KrecikException):
+class KrecikSubFrameStackEmptyError(KrecikException):
     message_schema = "Could not {failed_event}! Subframe stack is empty."
     attrs = {"failed_event": "not specified"}

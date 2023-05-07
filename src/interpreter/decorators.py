@@ -5,7 +5,7 @@ from interpreter.exceptions import KrecikException
 if TYPE_CHECKING:
     from typing import Any, Callable
     from antlr4 import ParserRuleContext
-    from interpreter.visitor.visitor import Visitor
+    from interpreter.visitors.visitor import Visitor
 
 
 def handle_exception(method: "Callable") -> "Callable":

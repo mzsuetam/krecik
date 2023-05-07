@@ -1,7 +1,7 @@
-nedostatek spirala(cislo a) {
+nedostatek spirala(cely a) {
     kdyz (a wetsi 0) {
         do_predu(a);
-        v_levo(90);
+        v_levo();
         vratit; 
     }
     kdyz (ne (a wetsi 0)) {

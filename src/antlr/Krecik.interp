@@ -98,7 +98,7 @@ and_operator
 or_operator
 atom
 conditional_instruction
-loop_instruction
+while_instruction
 for_instruction
 return_var_type
 var_type

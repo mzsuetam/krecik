@@ -114,8 +114,8 @@ class KrecikVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by KrecikParser#loop_instruction.
-    def visitLoop_instruction(self, ctx:KrecikParser.Loop_instructionContext):
+    # Visit a parse tree produced by KrecikParser#while_instruction.
+    def visitWhile_instruction(self, ctx:KrecikParser.While_instructionContext):
         return self.visitChildren(ctx)
 
 

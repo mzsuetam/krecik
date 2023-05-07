@@ -140,8 +140,8 @@ class Visitor(ExpressionsVisitor):
     def visitBody_item(self, ctx: KrecikParser.Body_itemContext) -> KrecikType | None:
         if cond_instr_ctx := ctx.conditional_instruction():
             return self.visit(cond_instr_ctx)
-        if loop_instr_ctx := ctx.loop_instruction():
-            return self.visit(loop_instr_ctx)
+        if while_instr_ctx := ctx.while_instruction():
+            return self.visit(while_instr_ctx)
         if body_line := ctx.body_line():
             val = self.visit(body_line)
             return val
@@ -264,9 +264,9 @@ class Visitor(ExpressionsVisitor):
                 return val
 
     @handle_exception
-    def visitLoop_instruction(
+    def visitWhile_instruction(
         self,
-        ctx: KrecikParser.Loop_instructionContext,
+        ctx: KrecikParser.While_instructionContext,
     ) -> None:
         expression_ctx = ctx.expression()
         body_ctx = ctx.body()

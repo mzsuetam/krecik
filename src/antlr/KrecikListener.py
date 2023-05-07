@@ -197,12 +197,12 @@ class KrecikListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by KrecikParser#loop_instruction.
-    def enterLoop_instruction(self, ctx:KrecikParser.Loop_instructionContext):
+    # Enter a parse tree produced by KrecikParser#while_instruction.
+    def enterWhile_instruction(self, ctx:KrecikParser.While_instructionContext):
         pass
 
-    # Exit a parse tree produced by KrecikParser#loop_instruction.
-    def exitLoop_instruction(self, ctx:KrecikParser.Loop_instructionContext):
+    # Exit a parse tree produced by KrecikParser#while_instruction.
+    def exitWhile_instruction(self, ctx:KrecikParser.While_instructionContext):
         pass
 
 

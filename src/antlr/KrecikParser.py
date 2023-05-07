@@ -262,7 +262,7 @@ class KrecikParser ( Parser ):
     RULE_or_operator = 18
     RULE_atom = 19
     RULE_conditional_instruction = 20
-    RULE_loop_instruction = 21
+    RULE_while_instruction = 21
     RULE_for_instruction = 22
     RULE_return_var_type = 23
     RULE_var_type = 24
@@ -278,7 +278,7 @@ class KrecikParser ( Parser ):
                    "return", "expressions_list", "expression", "boolean_unary_operator", 
                    "numeric_unary_operator", "multiplication_operator", 
                    "addition_operator", "comparison_operator", "and_operator", 
-                   "or_operator", "atom", "conditional_instruction", "loop_instruction", 
+                   "or_operator", "atom", "conditional_instruction", "while_instruction", 
                    "for_instruction", "return_var_type", "var_type", "declaration", 
                    "literal", "update_statement", "assignment", "variable" ]
 
@@ -904,8 +904,8 @@ class KrecikParser ( Parser ):
             return self.getTypedRuleContext(KrecikParser.Conditional_instructionContext,0)
 
 
-        def loop_instruction(self):
-            return self.getTypedRuleContext(KrecikParser.Loop_instructionContext,0)
+        def while_instruction(self):
+            return self.getTypedRuleContext(KrecikParser.While_instructionContext,0)
 
 
         def for_instruction(self):
@@ -966,7 +966,7 @@ class KrecikParser ( Parser ):
             elif token in [24]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 180
-                self.loop_instruction()
+                self.while_instruction()
                 pass
             elif token in [25]:
                 self.enterOuterAlt(localctx, 4)
@@ -2263,7 +2263,7 @@ class KrecikParser ( Parser ):
         return localctx
 
 
-    class Loop_instructionContext(ParserRuleContext):
+    class While_instructionContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -2288,29 +2288,29 @@ class KrecikParser ( Parser ):
                 return self.getToken(KrecikParser.SP, i)
 
         def getRuleIndex(self):
-            return KrecikParser.RULE_loop_instruction
+            return KrecikParser.RULE_while_instruction
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterLoop_instruction" ):
-                listener.enterLoop_instruction(self)
+            if hasattr( listener, "enterWhile_instruction" ):
+                listener.enterWhile_instruction(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitLoop_instruction" ):
-                listener.exitLoop_instruction(self)
+            if hasattr( listener, "exitWhile_instruction" ):
+                listener.exitWhile_instruction(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitLoop_instruction" ):
-                return visitor.visitLoop_instruction(self)
+            if hasattr( visitor, "visitWhile_instruction" ):
+                return visitor.visitWhile_instruction(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def loop_instruction(self):
+    def while_instruction(self):
 
-        localctx = KrecikParser.Loop_instructionContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 42, self.RULE_loop_instruction)
+        localctx = KrecikParser.While_instructionContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 42, self.RULE_while_instruction)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)

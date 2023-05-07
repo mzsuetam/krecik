@@ -34,7 +34,7 @@ body_items_list
 body_item
 	: body_line SP* ';'
 	| conditional_instruction
-	| loop_instruction
+	| while_instruction
 	| for_instruction
 	;
 
@@ -118,7 +118,7 @@ conditional_instruction
     : Kdyz SP? '(' SP* expression SP* ')' SP* body SP* (Jiny SP* body SP*)?
     ;
 
-loop_instruction
+while_instruction
 	: Opakujte SP? '(' SP* expression SP* ')' SP* body
 	;
 

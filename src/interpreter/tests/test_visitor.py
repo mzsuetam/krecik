@@ -218,10 +218,10 @@ def test_visit_loop_instruction(
     mocker: MockFixture,
 ) -> None:
     parser = get_parser_from_input("opakujte (dupa) {}")
-    loop_instruction_ctx = parser.loop_instruction()
+    while_instruction_ctx = parser.while_instruction()
     visitor.variable_stack.get_var.side_effect = dupa_values  # type: ignore[attr-defined]
     visit_body_mock = mocker.patch("interpreter.visitors.visitor.Visitor.visitBody")
     visitor.declared_function_mapper.is_returning.return_value = False  # type: ignore[attr-defined]
 
-    visitor.visit(loop_instruction_ctx)
+    visitor.visit(while_instruction_ctx)
     assert visit_body_mock.call_count == expected_call_number

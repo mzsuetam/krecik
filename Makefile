@@ -9,3 +9,4 @@ test:
 fix:
 	black ./src
 	ruff check ./src --fix
+	black ./src

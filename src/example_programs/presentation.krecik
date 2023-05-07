@@ -1,5 +1,5 @@
 // do prezentacji:
-// $ python src/driver.py --debug true --display none
+// $ python src/driver.py --allow-prints true --display none
 
 nedostatek ahoj() {
 

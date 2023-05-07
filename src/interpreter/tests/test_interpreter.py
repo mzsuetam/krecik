@@ -6,7 +6,6 @@ from antlr4 import ParseTreeWalker, TokenStream
 
 from interpreter.function_mappers.builtin_function_mapper import (
     BuiltinFunctionMapper,
-    BUILTIN_FUNCTION_NAMES,
 )
 from interpreter.function_mappers.declared_function_mapper import DeclaredFunctionMapper
 from interpreter.interpreter import Interpreter
@@ -37,15 +36,15 @@ def test_interpret_file(
     interpreter = Interpreter(
         CustomLexer(),
         CustomParser(TokenStream()),
-        Listener(BUILTIN_FUNCTION_NAMES, declared_function_mapper, variable_stack),
+        Listener(declared_function_mapper, variable_stack),
         ParseTreeWalker(),
         Visitor(
             create_autospec(BuiltinFunctionMapper),
             declared_function_mapper,
             variable_stack,
-            debug=True,
+            allow_prints=True,
         ),
-        debug=True,
+        print_stacktraces=True,
     )
     input_path = get_input_path(file_name)
     interpreter.interpret_file(input_path)

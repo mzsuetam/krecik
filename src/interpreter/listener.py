@@ -1,7 +1,6 @@
-from typing import Type
-
 from antlr.KrecikListener import KrecikListener
 from antlr.KrecikParser import KrecikParser
+from interpreter.builtin_function_names import BuiltinFunctionName
 from interpreter.decorators import handle_exception
 from interpreter.exceptions import (
     KrecikUsageOfBuiltinFunctionNameError,
@@ -18,11 +17,9 @@ from interpreter.variable_stack import VariableStack
 class Listener(KrecikListener):
     def __init__(
         self,
-        builtin_names: set[str],
         declared_function_mapper: DeclaredFunctionMapper,
         variable_stack: VariableStack,
     ) -> None:
-        self.builtin_names = builtin_names
         self.declared_function_mapper = declared_function_mapper
         self.variable_stack = variable_stack
 
@@ -33,12 +30,15 @@ class Listener(KrecikListener):
     @handle_exception
     def enterFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> None:
         name = ctx.VARIABLE_NAME().symbol.text
-        if name in self.builtin_names:
-            raise KrecikUsageOfBuiltinFunctionNameError(name=name)
-        self.declared_function_mapper.declare_function(name, ctx, [], Nedostatek)
+        try:
+            BuiltinFunctionName[name]
+        except KeyError:
+            self.declared_function_mapper.declare_function(name, ctx, [], Nedostatek)
+            self.variable_stack.append_frame(name)
+            self.variable_stack.append_subframe()
+            return None
 
-        self.variable_stack.append_frame(name)
-        self.variable_stack.append_subframe()
+        raise KrecikUsageOfBuiltinFunctionNameError(name=name)
 
     @handle_exception
     def exitFunction_declaration(self, ctx: KrecikParser.Function_declarationContext) -> None:
@@ -57,7 +57,7 @@ class Listener(KrecikListener):
     def enterDeclaration(self, ctx: KrecikParser.DeclarationContext) -> None:
         var_name = ctx.VARIABLE_NAME().symbol.text
         var_type_ctx: KrecikParser.Var_typeContext = ctx.var_type()
-        var_type: Type[KrecikType]
+        var_type: type[KrecikType]
 
         if var_type_ctx.Cislo():
             var_type = Cislo

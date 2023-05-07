@@ -1,0 +1,27 @@
+from enum import Enum
+
+
+class BuiltinFunctionName(Enum):
+    do_predu = ("do_predu",)
+    v_pravo = ("v_pravo",)
+    v_zad = ("v_zad",)
+    v_levo = ("v_levo",)
+    wzit = ("wzit",)
+    poloz = ("poloz",)
+    vykop = ("vykop",)
+    pohrbit = ("pohrbit",)
+    skryt = ("skryt",)
+    vstavej = ("vstavej",)
+    zda_trava = ("zda_trava",)
+    zda_trava_pred = ("zda_trava_pred",)
+    zda_kamen = ("zda_kamen",)
+    zda_kamen_pred = ("zda_kamen_pred",)
+    zda_kopecek = ("zda_kopecek",)
+    zda_kopecek_pred = ("zda_kopecek_pred",)
+    zda_rajce = ("zda_rajce",)
+    zda_rajce_pred = ("zda_rajce_pred",)
+    zda_muchomur = ("zda_muchomur",)
+    zda_muchomur_pred = ("zda_muchomur_pred",)
+    zda_drzi_rajce = ("zda_drzi_rajce",)
+    zda_drzi_muchomur = ("zda_drzi_muchomur",)
+    pockejte = ("pockejte",)

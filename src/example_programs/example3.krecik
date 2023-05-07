@@ -1,10 +1,14 @@
 nedostatek ahoj() {
-    cislo a = 200;
-    opakujte 4 {
-        opakujte 4 {
+    cely a = 200;
+    cely b = 4;
+    cely c = 4;
+    opakujte (b wetsi 0) {
+        opakujte (c wetsi 0) {
             do_predu(a);
-            v_levo(90);
+            v_levo();
+            c = c - 1;
         }
+        b = b - 1;
         do_predu(a * 2);
     }
 }

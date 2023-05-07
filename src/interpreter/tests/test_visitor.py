@@ -1,4 +1,4 @@
-from typing import Callable, Type
+from typing import Callable
 
 import pytest
 from pytest_mock import MockFixture
@@ -22,7 +22,7 @@ from interpreter.visitors.visitor import Visitor
 )
 def test_visit_var_type(
     input_string: str,
-    expected: Type[KrecikType],
+    expected: type[KrecikType],
     get_parser_from_input: Callable[[str], KrecikParser],
     visitor: Visitor,
 ) -> None:
@@ -65,7 +65,7 @@ def test_visit_var_type_incorrect(
 )
 def test_visit_declaration(
     input_string: str,
-    expected_var_type: Type[KrecikType],
+    expected_var_type: type[KrecikType],
     expected_name: str,
     get_parser_from_input: Callable[[str], KrecikParser],
     visitor: Visitor,

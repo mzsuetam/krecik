@@ -105,7 +105,7 @@ class Window(BaseDisplay):
                 )
             ),
             "krecik_idle_S": ImageTk.PhotoImage(
-                Image.open(current_parent_path / "assets" / "krecikv3_E.png").resize(
+                Image.open(current_parent_path / "assets" / "krecikv3_S.png").resize(
                     (self._field_size, self._field_size), Image.ANTIALIAS
                 )
             ),

@@ -1,9 +1,11 @@
 nedostatek ahoj() {
-    cely k=7;
+   // cely k=7;
 
-    pro(;k mensi 10; )
-    {
-        print(k);
+    logicki k = true je false;
+    print(k);
+ //   pro(cely k=0;k mensi 10; k = k+1)
+   // {
+     //   print(k);
 
-    }
+    //}
 }

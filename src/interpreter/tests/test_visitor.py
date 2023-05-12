@@ -21,10 +21,10 @@ from interpreter.visitors.visitor import Visitor
     ],
 )
 def test_visit_var_type(
-    input_string: str,
-    expected: Type[KrecikType],
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        expected: Type[KrecikType],
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     var_type_ctx = parser.var_type()
@@ -44,9 +44,9 @@ def test_visit_var_type(
     ],
 )
 def test_visit_var_type_incorrect(
-    input_string: str,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     var_type_ctx = parser.var_type()
@@ -64,11 +64,11 @@ def test_visit_var_type_incorrect(
     ],
 )
 def test_visit_declaration(
-    input_string: str,
-    expected_var_type: Type[KrecikType],
-    expected_name: str,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        expected_var_type: Type[KrecikType],
+        expected_name: str,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     declaration_ctx = parser.declaration()
@@ -89,11 +89,11 @@ def test_visit_declaration(
     ],
 )
 def test_visit_assignment(
-    input_string: str,
-    value_from_stack: KrecikType,
-    expected_value: KrecikType,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        value_from_stack: KrecikType,
+        expected_value: KrecikType,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     assignment_ctx = parser.assignment()
@@ -113,11 +113,11 @@ def test_visit_assignment(
     ],
 )
 def test_visit_assignment_with_declaration(
-    input_string: str,
-    value_from_stack: KrecikType,
-    expected_value: KrecikType,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        value_from_stack: KrecikType,
+        expected_value: KrecikType,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     assignment_ctx = parser.assignment()
@@ -139,10 +139,10 @@ def test_visit_assignment_with_declaration(
     ],
 )
 def test_visit_assignment_incorrect_types(
-    input_string: str,
-    value_from_stack: KrecikType,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
+        input_string: str,
+        value_from_stack: KrecikType,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
 ) -> None:
     parser = get_parser_from_input(input_string)
     assignment_ctx = parser.assignment()
@@ -165,12 +165,12 @@ def test_visit_assignment_incorrect_types(
     ],
 )
 def test_visit_conditional_instruction(
-    input_string: str,
-    dupa_value: KrecikType,
-    expected_body_number: int | None,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
-    mocker: MockFixture,
+        input_string: str,
+        dupa_value: KrecikType,
+        expected_body_number: int | None,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
+        mocker: MockFixture,
 ) -> None:
     parser = get_parser_from_input(input_string)
     cond_instruction_ctx = parser.conditional_instruction()
@@ -210,12 +210,12 @@ def test_visit_conditional_instruction(
         ),
     ],
 )
-def test_visit_loop_instruction(
-    dupa_values: list[KrecikType],
-    expected_call_number: int,
-    get_parser_from_input: Callable[[str], KrecikParser],
-    visitor: Visitor,
-    mocker: MockFixture,
+def test_visit_while_instruction(
+        dupa_values: list[KrecikType],
+        expected_call_number: int,
+        get_parser_from_input: Callable[[str], KrecikParser],
+        visitor: Visitor,
+        mocker: MockFixture,
 ) -> None:
     parser = get_parser_from_input("opakujte (dupa) {}")
     while_instruction_ctx = parser.while_instruction()
@@ -225,3 +225,34 @@ def test_visit_loop_instruction(
 
     visitor.visit(while_instruction_ctx)
     assert visit_body_mock.call_count == expected_call_number
+
+
+# @pytest.mark.parametrize(
+#     ("values_from_stack", "expected_call_number"),
+#     [
+#         pytest.param(
+#                      # [[Cislo(None), KRECIK_FALSE, Cislo(None)]],
+#                      [KRECIK_FALSE],
+#                      0, id="No repetitions"),
+#         pytest.param(
+#                      # [[Cislo(None), KRECIK_TRUE, Cislos(None)]],
+#                      [KRECIK_TRUE,KRECIK_FALSE],
+#                      1, id="Condition met after 2 cycles"),
+#
+#     ],
+# )
+# def test_visit_for_instruction(
+#         values_from_stack: list[KrecikType],
+#         expected_call_number: int,
+#         get_parser_from_input: Callable[[str], KrecikParser],
+#         visitor: Visitor,
+#         mocker: MockFixture,
+# ) -> None:
+#     parser = get_parser_from_input("pro (dupaleft;dupa;duparight) {}")
+#     for_instruction_ctx = parser.for_instruction().expression()
+#     visitor.variable_stack.get_var.side_effect = values_from_stack  # type: ignore[attr-defined]
+#     visit_body_mock = mocker.patch("interpreter.visitors.visitor.Visitor.visitBody")
+#     visitor.declared_function_mapper.is_returning.return_value = False  # type: ignore[attr-defined]
+#
+#     visitor.visit(for_instruction_ctx)
+#     assert visit_body_mock.call_count == expected_call_number

@@ -129,6 +129,7 @@ class Visitor(ExpressionsVisitor):
             if self.declared_function_mapper.is_returning():
                 self.variable_stack.pop_subframe()
                 return return_value
+        self.variable_stack.pop_subframe()
         return KRECIK_NONE
 
     def visitBody_items_list(

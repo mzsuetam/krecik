@@ -36,8 +36,6 @@ ANTLR 4
 
 ## Opis języka:
 
----
-
 ### Zmienne:
 
 - Zmienne typowane statycznie
@@ -48,13 +46,11 @@ ANTLR 4
 
 ### Operacje arytmetyczne i logiczne:
 
----
-
 Operacje na zmiennych cislo i cely:
 
-- +
-- -
-- *
+- \+
+- \-
+- \*
 - /
 - ()
 - operacje arytmetyczne zwracają typ cislo lub cely
@@ -73,23 +69,14 @@ Operacje na zmiennych logicki:
 
 ### Funkcje:
 
----
-
-<zwracany_typ> nazwa_funkcji(<typ_zmiennej> <nazwa_zmiennej>, … ) {}
-
-nazwa funkcji musi być unikalna w skali pliku
-
-wywołanie: <nazwa_funkcji>(<nazwa_zmiennej>, … )
-
-wywołanie funkcji jest operacją
-
-możliwe jest wywoływanie rekurencyjne
-
-argumenty są przekazywane poprzez wartość
-
-zwracany_typ - typy zmiennych oraz dodatkowo *nedostatek* (void)
-
-Słowo kluczowe *vratit* (return)
+- <zwracany_typ> nazwa_funkcji(<typ_zmiennej> <nazwa_zmiennej>, … ) {}
+- nazwa funkcji musi być unikalna w skali pliku
+- wywołanie: <nazwa_funkcji>(<nazwa_zmiennej>, … )
+- wywołanie funkcji jest operacją
+- możliwe jest wywoływanie rekurencyjne
+- argumenty są przekazywane poprzez wartość
+- zwracany_typ - typy zmiennych oraz dodatkowo *nedostatek* (void)
+- Słowo kluczowe *vratit* (return)
 
 ### Funkcje wbudowane
 

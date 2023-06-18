@@ -71,7 +71,7 @@ Operacje na zmiennych logicki:
 - ()
 - operacje logiczne zwracają typ logicki
 
-## Funkcje:
+### Funkcje:
 
 ---
 

@@ -20,3 +20,15 @@ class TerminalDisplay(BaseDisplay):
 
     def update_krecik_rotation(self) -> None:
         print(f"krecik face {self.board.krecik.rotation}")
+
+    def update_make_mound(self) -> None:
+        print(f"krecik makes mound at {self.board.krecik.position}")
+
+    def update_remove_mound(self) -> None:
+        print(f"krecik removes mound at {self.board.krecik.position}")
+
+    def update_hide(self) -> None:
+        print(f"krecik hides in mound at {self.board.krecik.position}")
+
+    def update_get_out(self) -> None:
+        print(f"krecik gets out from mound at {self.board.krecik.position}")

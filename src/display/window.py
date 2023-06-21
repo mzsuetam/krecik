@@ -171,6 +171,44 @@ class Window(BaseDisplay):
         self.update_command_label_text(command_label_text)
         self.update()
 
+    def update_make_mound(self) -> None:
+        pos = self.board.krecik.position
+        mound_image = self._images["mound"]
+        label: Label = self._tiles[pos.row][pos.col]
+        label.configure(image=mound_image)
+        command_label_text = f"krecik makes mound at {self.board.krecik.position}"
+        self.update_command_label_text(command_label_text)
+        self.update()
+
+    def update_remove_mound(self) -> None:
+        pos = self.board.krecik.position
+        dirt_image = self._images["dirt"]
+        label: Label = self._tiles[pos.row][pos.col]
+        label.configure(image=dirt_image)
+        command_label_text = f"krecik removes mound at {self.board.krecik.position}"
+        self.update_command_label_text(command_label_text)
+        self.update()
+
+    def update_hide(self) -> None:
+        mound_image = self._images["mound"]
+        self._krecik_label.config(image=mound_image)
+        command_label_text = f"krecik hides in mound at {self.board.krecik.position}"
+        self.update_command_label_text(command_label_text)
+        self.update()
+
+    def update_get_out(self) -> None:
+        rot = self.board.krecik.rotation
+        image_name = Window.ROTATION_TO_IMAGE_NAME_MAP.get(rot)
+        if image_name is None:
+            raise NotImplementedError()
+        image = self._images.get(image_name)
+        if image is None:
+            raise NotImplementedError()
+        self._krecik_label.config(image=image)
+        command_label_text = f"krecik gets out from mound at {self.board.krecik.position}"
+        self.update_command_label_text(command_label_text)
+        self.update()
+
     def update_command_label_text(self, command_label_text: str) -> None:
         self._cmd_label.config(text=command_label_text)
 

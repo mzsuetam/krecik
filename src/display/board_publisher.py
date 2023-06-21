@@ -20,6 +20,10 @@ class BoardPublisher:
         self._event_type_to_method_map = {
             EventType.POSITION: self.notify_position,
             EventType.ROTATION: self.notify_rotation,
+            EventType.MAKE_MOUND: self.notify_make_mound,
+            EventType.REMOVE_MOUND: self.notify_remove_mound,
+            EventType.HIDE: self.notify_hide,
+            EventType.GET_OUT: self.notify_get_out,
         }
 
     def subscribe(self, display: BaseDisplay) -> None:
@@ -42,3 +46,19 @@ class BoardPublisher:
     @staticmethod
     def notify_rotation(display: BaseDisplay) -> None:
         display.update_krecik_rotation()
+
+    @staticmethod
+    def notify_make_mound(display: BaseDisplay) -> None:
+        display.update_make_mound()
+
+    @staticmethod
+    def notify_remove_mound(display: BaseDisplay) -> None:
+        display.update_remove_mound()
+
+    @staticmethod
+    def notify_hide(display: BaseDisplay) -> None:
+        display.update_hide()
+
+    @staticmethod
+    def notify_get_out(display: BaseDisplay) -> None:
+        display.update_get_out()

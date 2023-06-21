@@ -1,53 +1,58 @@
 // do prezentacji:
 // $ python src/driver.py --allow-prints true --display none
 
+logicki foo(cely a){
+    kdyz (a wetsi 0){
+        vratit true;
+    }
+    vratit false;
+}
+
 nedostatek ahoj() {
 
-    cely x;
-    // cely x = x;
-    // x = x;
-    // print(x);
-
-    /*
-    x = 4;
-    x = -x;
-    print(x);
-
-    logicki lo;
-    lo = true;
-    print(ne lo);
-
-    // pritn(y);
-
-    kdyz (ne lo) {
-        print(123);
+    logicki l = false;
+    kdyz (ne l){
+        print(l);
+        logicki l = foo(1); // true
+        print(l);
     }
-    jiny{
-        print(-123);
+    print(l);
+
+    print(2+2*2);
+
+    cely i = 5;
+    opakujte (i wetsi 0){
+        do_predu(1);pockejte(.5);
+        v_levo();
+        do_predu(1);pockejte(.5);
+        v_pravo();
+        i = i - 1;
     }
 
-    cely m = 0;
-    kdyz (true) {
-        print(m);
-        cely m = 4;
-        print(m);
-    }
-    print(m);
+    do_predu(1);pockejte(.5);do_predu(1);
+    pockejte(.5);
+    vykop();
+    do_predu(1);pockejte(.5);do_predu(1);
+    pockejte(.5);
+    v_zad();
+    pockejte(.5);
 
-	cely a = 2 + 2 * 2;
-	print(a);
+    do_predu(1);pockejte(.5);do_predu(1);
+    skryt();
+    pockejte(2.);
+    vstavej();
+    pockejte(.5);
+    do_predu(1);pockejte(.5);do_predu(1);
+    pockejte(.5);
+    v_zad();
+    pockejte(.5);
 
-	cislo b = 2.0;
-	cislo c = 2.0;
-	print(b * c + b * c);
+    do_predu(1);pockejte(.5);do_predu(1);
+    pockejte(.5);
+    pohrbit();
+    pockejte(.5);
+    do_predu(1);pockejte(.5);do_predu(1);
+    pockejte(.5);
 
-	print( 3 wetsi 4 );
 
-    print(4+true);
-
-    print(5 wetsi 4 nebo false oba false);
-    print((5 wetsi 4 nebo false) oba false);
-
-    print(4 wetsi 4 wetsi 4);
-    */
 }

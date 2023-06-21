@@ -14,3 +14,19 @@ class BaseDisplay(ABC):
     @abstractmethod
     def update_krecik_rotation(self) -> None:
         pass
+
+    @abstractmethod
+    def update_make_mound(self) -> None:
+        pass
+
+    @abstractmethod
+    def update_remove_mound(self) -> None:
+        pass
+
+    @abstractmethod
+    def update_hide(self) -> None:
+        pass
+
+    @abstractmethod
+    def update_get_out(self) -> None:
+        pass

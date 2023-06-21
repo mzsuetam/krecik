@@ -85,25 +85,12 @@ do_predu(Cely n) - przesunięcie krecika do przodu o n pól
 v_pravo() - obrót krecika w prawo
 v_zad() - obrót krecika do tyłu
 v_levo() - obrót krecika w lewo
-wzit() - weź do ekwipunku
-poloz() - odłóż z ekwipunku
 vykop() - wykop kopiec
 pohrbit() - zakop kopiec
 skryt() - wejdź do kopca
 vstavej() - wyjdź z kopca
-zda_trava() - czy krecik jest na trawie
-zda_trava_pred() - czy krecik stoi przed trawą
-zda_kamen() - czy krecik jest na kamieniu
-zda_kamen_pred() - czy krecik stoi przed kamieniem
 zda_kopecek() - czy krecik jest na kopcu
 zda_kopecek_pred() - czy krecik jest przed kopcem
-zda_rajce() - czy krecik jest na pomidorku
-zda_rajce_pred() - czy krecik jest przed pomidorkiem
-zda_muchomur() - czy krecik jest na muchomorku
-zda_muchomur_pred() - czy krecik jest przed muchomorkiem
-zda_drzi_rajce() - czy krecik trzyma w ekwipunku pomidorka
-zda_drzi_muchomur() - czy krecik trzyma w ekwipunku muchomorka
-pockejte(Cislo f) - poczekaj o f sekund
 print(<variable>) - wypisz wartość zmiennej (tylko dla flagi-allow-prints true)
 ```
 
